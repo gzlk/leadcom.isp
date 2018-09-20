@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CorneredButton;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.activity.MainActivity;
@@ -98,6 +99,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private static final String PARAM_DRAFT = "adwvf_draft";
     private static final String PARAM_INNER_OPEN = "adwvf_inner_open";
     private static final String PARAM_CLASSIFY_TYPE = "adwvf_classify_type";
+    private static final String PARAM_REPORT_STATUS = "adwvf_act_report_status";
     private static boolean isCollected = false;
     private static boolean isLoaded = false;
 
@@ -180,6 +182,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         groupId = mArchive.getGroupId();
         authorId = mArchive.getUserId();
         pushingType = bundle.getInt(PARAM_CLASSIFY_TYPE, 0);
+        activityStatus = bundle.getInt(PARAM_REPORT_STATUS, 0);
     }
 
     @Override
@@ -189,6 +192,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         bundle.putBoolean(PARAM_DRAFT, isDraft);
         bundle.putBoolean(PARAM_INNER_OPEN, innerOpen);
         bundle.putInt(PARAM_CLASSIFY_TYPE, pushingType);
+        bundle.putInt(PARAM_REPORT_STATUS, activityStatus);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -220,6 +224,10 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             }
         });
         initializeActivityControlPosition();
+        if (null != mArchive && mArchive.isActivity()) {
+            // 管理员才可以查看报名统计
+            reportButton.setVisibility(isManager() ? View.VISIBLE : View.GONE);
+        }
     }
 
     @Override
@@ -239,7 +247,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         super.onDestroy();
     }
 
-    private int archiveType;
+    private int archiveType, activityStatus;
     private boolean isDraft;
     private String groupId, authorId;
     private int pushingType = 0;
@@ -258,6 +266,12 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private WebView webView;
     @ViewId(R.id.ui_archive_details_activity_control)
     private View activityControl;
+    @ViewId(R.id.ui_archive_details_activity_sign_in)
+    private CorneredButton signButton;
+    @ViewId(R.id.ui_archive_details_activity_leave)
+    private CorneredButton leaveButton;
+    @ViewId(R.id.ui_archive_details_activity_report)
+    private CorneredButton reportButton;
 
     @Click({R.id.ui_archive_details_activity_sign_in,
             R.id.ui_archive_details_activity_leave,
@@ -265,9 +279,11 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private void viewClick(View view) {
         switch (view.getId()) {
             case R.id.ui_archive_details_activity_sign_in:
+                view.setEnabled(false);
                 warningSingInOrLeave(true);
                 break;
             case R.id.ui_archive_details_activity_leave:
+                view.setEnabled(false);
                 warningSingInOrLeave(false);
                 break;
             case R.id.ui_archive_details_activity_report:
@@ -276,13 +292,19 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     }
 
     private void warningSingInOrLeave(final boolean signIn) {
+        int title;
+        if (signIn) {
+            title = activityStatus == Member.ActivityStatus.LEAVE ? R.string.ui_group_activity_details_sign_up_warning_title_leaved : R.string.ui_group_activity_details_sign_up_warning_title;
+        } else {
+            title = activityStatus == Member.ActivityStatus.JOINED ? R.string.ui_group_activity_details_leave_warning_title_joined : R.string.ui_group_activity_details_leave_warning_title;
+        }
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 tryJoinInActivity(signIn);
                 return true;
             }
-        }).setTitleText(signIn ? R.string.ui_group_activity_details_sign_up_warning_title : R.string.ui_group_activity_details_leave_warning_title).setConfirmText(R.string.ui_base_text_confirm).show();
+        }).setTitleText(title).setConfirmText(R.string.ui_base_text_confirm).show();
     }
 
     private void tryJoinInActivity(final boolean signIn) {
@@ -292,6 +314,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 super.onResponse(member, success, message);
                 if (success) {
                     ToastHelper.make().showMsg(signIn ? R.string.ui_group_activity_details_sign_up_succeed : R.string.ui_group_activity_details_leave_succeed);
+                    member.setStatus(String.valueOf(signIn ? Member.ActivityStatus.JOINED : Member.ActivityStatus.LEAVE));
+                    refreshReportButtons(member);
                 }
             }
         }).joinActivity(mArchive.getGroupId(), mArchive.getGroActivityId(), signIn ? Member.ActivityStatus.JOINED : Member.ActivityStatus.LEAVE);
@@ -604,8 +628,10 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             super.onPageFinished(view, url);
             log(format("loading archive content used: %dms", System.currentTimeMillis() - archiveLoadingStart));
             // 活动时显示报名按钮
-            if (null != mArchive && !isEmpty(mArchive.getGroActivityId())) {
+            if (mArchive.isActivity()) {
                 displayActivityControl(true);
+                // 拉取当前用户是否已报名
+                checkActivityReported();
             }
             setJsEvents(view);
         }
@@ -635,6 +661,36 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     "})()";
             view.loadUrl(jsCode);
         }
+    }
+
+    /**
+     * 查询当前用户在活动中的报名情况
+     */
+    private void checkActivityReported() {
+        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
+            @Override
+            public void onResponse(Member member, boolean success, String message) {
+                super.onResponse(member, success, message);
+                if (success) {
+                    if (null == member) {
+                        // 返回的member为空则说明还没有报过名，此时生成一个就可以
+                        member = new Member();
+                        member.setStatus(String.valueOf(Member.ActivityStatus.ABSENT));
+                    }
+                    refreshReportButtons(member);
+                }
+            }
+        }).findActivityStatus(mArchive.getGroupId(), mArchive.getGroActivityId());
+    }
+
+    private void refreshReportButtons(Member member) {
+        activityStatus = Integer.valueOf(member.getStatus());
+        // 未报名或请假状态下可以继续报名（请假后也可以报名）
+        signButton.setEnabled(activityStatus >= Member.ActivityStatus.LEAVE);
+        signButton.setText(activityStatus >= Member.ActivityStatus.LEAVE ? R.string.ui_group_activity_details_sign_up : R.string.ui_group_activity_details_signed_up);
+        // 未报名或已报名状态下可以请假
+        leaveButton.setEnabled(activityStatus != Member.ActivityStatus.LEAVE);
+        leaveButton.setText(activityStatus != Member.ActivityStatus.LEAVE ? R.string.ui_group_activity_details_leave : R.string.ui_group_activity_details_leaved);
     }
 
     private String local, extension, name, url;

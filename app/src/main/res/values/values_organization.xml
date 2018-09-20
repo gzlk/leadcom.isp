@@ -141,10 +141,14 @@
         <![CDATA[全选<font color="#3cbaff">(支部成员)</font>]]>
     </string>
     <string name="ui_group_activity_details_sign_up">报名</string>
+    <string name="ui_group_activity_details_signed_up">已报名</string>
     <string name="ui_group_activity_details_leave">请假</string>
+    <string name="ui_group_activity_details_leaved">已请假</string>
     <string name="ui_group_activity_details_report">报名统计</string>
     <string name="ui_group_activity_details_sign_up_warning_title">您确定要报名参加这个活动吗？</string>
+    <string name="ui_group_activity_details_sign_up_warning_title_leaved">您已经请假了，确定现在要继续报名参加这个活动吗？</string>
     <string name="ui_group_activity_details_leave_warning_title">您确定请假不参与这个活动吗？</string>
+    <string name="ui_group_activity_details_leave_warning_title_joined">您已报名参加了这个活动，确定现在要请假吗？</string>
     <string name="ui_group_activity_details_sign_up_succeed">报名成功</string>
     <string name="ui_group_activity_details_leave_succeed">已替您请假了</string>
     <string name="ui_group_activity_details_transform_dialog_title">下发到：</string>
