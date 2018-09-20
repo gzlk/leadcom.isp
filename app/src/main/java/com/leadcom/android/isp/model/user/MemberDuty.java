@@ -15,7 +15,7 @@ import com.leadcom.android.isp.model.Model;
  */
 public class MemberDuty extends Model {
 
-    private String userId, userName;
+    private String userId, userName, squadId, squadName;
     private long docNum, activityNum;
 
     public String getUserId() {
@@ -32,6 +32,22 @@ public class MemberDuty extends Model {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getSquadId() {
+        return squadId;
+    }
+
+    public void setSquadId(String squadId) {
+        this.squadId = squadId;
+    }
+
+    public String getSquadName() {
+        return squadName;
+    }
+
+    public void setSquadName(String squadName) {
+        this.squadName = squadName;
     }
 
     public long getDocNum() {

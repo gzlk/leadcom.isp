@@ -25,10 +25,10 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class MemberDutyMainFragment extends GroupBaseFragment {
+public class MemberDutyFragment extends GroupBaseFragment {
 
-    public static MemberDutyMainFragment newInstance(Bundle bundle) {
-        MemberDutyMainFragment gmdmf = new MemberDutyMainFragment();
+    public static MemberDutyFragment newInstance(Bundle bundle) {
+        MemberDutyFragment gmdmf = new MemberDutyFragment();
         gmdmf.setArguments(bundle);
         return gmdmf;
     }
@@ -37,7 +37,7 @@ public class MemberDutyMainFragment extends GroupBaseFragment {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putString(PARAM_NAME, groupName);
-        fragment.openActivity(MemberDutyMainFragment.class.getName(), bundle, true, false);
+        fragment.openActivity(MemberDutyFragment.class.getName(), bundle, true, false);
     }
 
     private ItemAdapter mAdapter;
@@ -105,9 +105,11 @@ public class MemberDutyMainFragment extends GroupBaseFragment {
             switch (index) {
                 case 0:
                     // 本组成员履职统计
-                    ArchiveSearchFragment.open(MemberDutyMainFragment.this, ArchiveSearchFragment.SEARCH_DUTY, mQueryId, "", mGroupName);
+                    ArchiveSearchFragment.open(MemberDutyFragment.this, ArchiveSearchFragment.SEARCH_DUTY, mQueryId, "", mGroupName);
                     break;
                 case 1:
+                    // 本组支部履职统计
+                    ArchiveSearchFragment.open(MemberDutyFragment.this, ArchiveSearchFragment.SEARCH_DUTY_SQUAD, mQueryId, "", mGroupName);
                     break;
             }
         }
@@ -117,7 +119,7 @@ public class MemberDutyMainFragment extends GroupBaseFragment {
 
         @Override
         public GroupDetailsViewHolder onCreateViewHolder(View itemView, int viewType) {
-            GroupDetailsViewHolder gdvh = new GroupDetailsViewHolder(itemView, MemberDutyMainFragment.this);
+            GroupDetailsViewHolder gdvh = new GroupDetailsViewHolder(itemView, MemberDutyFragment.this);
             gdvh.setOnViewHolderElementClickListener(elementClickListener);
             return gdvh;
         }

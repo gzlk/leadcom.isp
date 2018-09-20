@@ -37,7 +37,7 @@ public class GroupMemberDutyViewHolder extends BaseViewHolder {
     }
 
     public void showContent(MemberDuty duty) {
-        nameView.setText(duty.getUserName());
+        nameView.setText(isEmpty(duty.getUserName()) ? duty.getSquadName() : duty.getUserName());
         nameView.setSelected(true);
         archiveView.setText(String.valueOf(duty.getDocNum()));
         activityView.setText(String.valueOf(duty.getActivityNum()));

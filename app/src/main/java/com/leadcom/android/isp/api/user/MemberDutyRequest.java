@@ -75,15 +75,35 @@ public class MemberDutyRequest extends Request<MemberDuty> {
     public static final int YEAR_LAST = 2;
 
     /**
-     * 拉取指定某人的履职记录
+     * 拉取指定组织成员的履职记录
      *
      * @param groupId    组织id
      * @param createYear 年份:0.全部,1.今年,2.去年
      * @param classifyId 档案性质
      * @param category   档案类型
      */
-    public void list(String groupId, int createYear, String classifyId, String category) {
-        String url = format("%s/count?groupId=%s", url(LIST), groupId);
+    public void list(String groupId, String squadId, int createYear, String classifyId, String category) {
+        String url = format("%s/count?groupId=%s%s", url(LIST), groupId, (isEmpty(squadId) ? "" : format("&squadId=%s", squadId)));
+        url = format("%s&createDate=%d", url, createYear);
+        if (!isEmpty(classifyId)) {
+            url = format("%s&docClassifyId=%s", url, classifyId);
+        }
+        if (!isEmpty(category)) {
+            url = format("%s&category=%s", url, category);
+        }
+        executeHttpRequest(getRequest(PageDuty.class, url, "", HttpMethods.Get));
+    }
+
+    /**
+     * 拉取指定组织的所有支部履职记录
+     *
+     * @param groupId    组织id
+     * @param createYear 年份:0.全部,1.今年,2.去年
+     * @param classifyId 档案性质
+     * @param category   档案类型
+     */
+    public void listSquads(String groupId, int createYear, String classifyId, String category) {
+        String url = format("%s/squadCount?groupId=%s", url(LIST), groupId);
         url = format("%s&createDate=%d", url, createYear);
         if (!isEmpty(classifyId)) {
             url = format("%s&docClassifyId=%s", url, classifyId);

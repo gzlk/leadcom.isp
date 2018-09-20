@@ -36,7 +36,7 @@ import com.leadcom.android.isp.fragment.organization.ContactFragment;
 import com.leadcom.android.isp.fragment.organization.GroupCreateFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
 import com.leadcom.android.isp.fragment.organization.GroupConstructFragment;
-import com.leadcom.android.isp.fragment.organization.MemberDutyMainFragment;
+import com.leadcom.android.isp.fragment.organization.MemberDutyFragment;
 import com.leadcom.android.isp.fragment.organization.MemberNatureMainFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -822,7 +822,7 @@ public class GroupFragment extends GroupBaseFragment {
                 break;
             case 3:
                 // 成员履职统计
-                MemberDutyMainFragment.open(this, group.getId(), group.getName());
+                MemberDutyFragment.open(this, group.getId(), group.getName());
                 //ArchivesFragment.open(this, group.getId(), getString(R.string.ui_group_archive_fragment_title));
                 break;
             case 4:

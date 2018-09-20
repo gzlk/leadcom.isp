@@ -286,6 +286,8 @@
     <string name="ui_group_member_duty_count_nothing">暂时没有更多统计数据</string>
     <string name="ui_group_member_duty_count_no_archive">该成员没有发布过档案</string>
     <string name="ui_group_member_duty_count_no_activity">该成员没有参加过活动</string>
+    <string name="ui_group_member_duty_count_no_archive_squad">该支部没有发布过档案</string>
+    <string name="ui_group_member_duty_count_no_activity_squad">该支部没有参加过活动</string>
 
     <string name="ui_group_member_duty_details_title" formatted="false">%s - %s (%d)</string>
 </resources>

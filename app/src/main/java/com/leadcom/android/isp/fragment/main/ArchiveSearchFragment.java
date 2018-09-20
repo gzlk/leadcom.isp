@@ -74,6 +74,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_TYPE = "param_searching_type";
     private static final String PARAM_TEXT = "param_searching_text";
     private static final String PARAM_GROUP_NAME = "param_group_name";
+    private static final String PARAM_SQUAD_ID = "param_searching_squad_id";
 
     public static ArchiveSearchFragment newInstance(Bundle bundle) {
         ArchiveSearchFragment asf = new ArchiveSearchFragment();
@@ -82,6 +83,10 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     public static void open(BaseFragment fragment, int searchType, String searchGroupId, String searchText, String searchGroupName) {
+        open(fragment, searchType, searchGroupId, "", searchText, searchGroupName);
+    }
+
+    public static void open(BaseFragment fragment, int searchType, String searchGroupId, String searchSquadId, String searchText, String searchGroupName) {
         Bundle bundle = new Bundle();
         // 搜索方式
         bundle.putInt(PARAM_TYPE, searchType);
@@ -91,6 +96,8 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putString(PARAM_TEXT, searchText);
         // 传过来的组织名称
         bundle.putString(PARAM_GROUP_NAME, searchGroupName);
+        // 传过来的支部id
+        bundle.putString(PARAM_SQUAD_ID, searchSquadId);
         fragment.openActivity(ArchiveSearchFragment.class.getName(), bundle, true, false);
     }
 
@@ -148,14 +155,14 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     /**
      * 搜索对象：首页、组织内部、个人
      */
-    public static final int SEARCH_HOME = 0, SEARCH_GROUP = 1, SEARCH_USER = 2, SEARCH_DUTY = 3;
+    public static final int SEARCH_HOME = 0, SEARCH_GROUP = 1, SEARCH_USER = 2, SEARCH_DUTY = 3, SEARCH_DUTY_SQUAD = 4;
     /**
      * 当前搜索方式
      */
     private int searchingFunction = SEARCH_HOME;
     private String searchingYear = "", searchingNature = "", searchingNature1 = "", searchingType = "";
 
-    private String searchingText, mGroupName;
+    private String searchingText, mGroupName, mSquadId;
     private boolean stillLoading = false;
 
     @Override
@@ -164,6 +171,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         searchingFunction = bundle.getInt(PARAM_TYPE, SEARCH_HOME);
         searchingText = bundle.getString(PARAM_TEXT, "");
         mGroupName = bundle.getString(PARAM_GROUP_NAME, "");
+        mSquadId = bundle.getString(PARAM_SQUAD_ID, "");
     }
 
     @Override
@@ -172,6 +180,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putInt(PARAM_TYPE, searchingFunction);
         bundle.putString(PARAM_TEXT, searchingText);
         bundle.putString(PARAM_GROUP_NAME, mGroupName);
+        bundle.putString(PARAM_SQUAD_ID, mSquadId);
     }
 
     @Override
@@ -186,7 +195,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String title = StringHelper.getString(searchingFunction == SEARCH_HOME ? R.string.ui_text_archive_searching_home_title : (searchingFunction == SEARCH_DUTY ? R.string.ui_group_member_duty_count_title : R.string.ui_group_archive_fragment_title));
+        String title = StringHelper.getString(searchingFunction == SEARCH_HOME ? R.string.ui_text_archive_searching_home_title : (searchingFunction >= SEARCH_DUTY ? R.string.ui_group_member_duty_count_title : R.string.ui_group_archive_fragment_title));
         if (!isEmpty(mGroupName)) {
             title = format("%s(%s)", title, mGroupName);
         }
@@ -194,7 +203,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
 
         selectedFunction = FUNC_NONE;
 
-        if (searchingFunction != SEARCH_DUTY) {
+        if (searchingFunction < SEARCH_DUTY) {
             Role role = Cache.cache().getGroupRole(mQueryId);
             if (null != role) {
                 setRightIcon(R.string.ui_icon_comment);
@@ -697,6 +706,10 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                 // 成员履职
                 searchUserDuty();
                 break;
+            case SEARCH_DUTY_SQUAD:
+                // 支部履职统计
+                searchSquadDuty();
+                break;
         }
     }
 
@@ -843,7 +856,34 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() <= 0);
             }
-        }).list(mQueryId, Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
+        }).list(mQueryId, mSquadId, Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
+    }
+
+    private void searchSquadDuty() {
+        if (isStillLoading()) {
+            return;
+        }
+        stillLoading = true;
+        setNothingText(R.string.ui_group_member_duty_count_nothing);
+        displayNothing(false);
+        mAdapter.clear();
+        MemberDutyRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<MemberDuty>() {
+            @Override
+            public void onResponse(List<MemberDuty> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success && null != list) {
+                    for (MemberDuty duty : list) {
+                        duty.setId(duty.getSquadId());
+                        mAdapter.update(duty);
+                    }
+                }
+                isLoadingComplete(true);
+                stillLoading = false;
+                stopRefreshing();
+                displayLoading(false);
+                displayNothing(mAdapter.getItemCount() <= 0);
+            }
+        }).listSquads(mQueryId, Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
     }
 
     private void restoreSearchingResult() {
@@ -1084,23 +1124,32 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onClick(View view, int index) {
             MemberDuty duty = (MemberDuty) mAdapter.get(index);
+            boolean isSquad = !isEmpty(duty.getSquadId());
             switch (view.getId()) {
                 case R.id.ui_holder_view_group_member_duty_count_archive:
                     // 查看用户的档案列表
                     if (duty.getDocNum() <= 0) {
-                        ToastHelper.make().showMsg(R.string.ui_group_member_duty_count_no_archive);
+                        ToastHelper.make().showMsg(isSquad ? R.string.ui_group_member_duty_count_no_archive_squad : R.string.ui_group_member_duty_count_no_archive);
                     } else {
-                        MemberDutyDetailsFragment.open(ArchiveSearchFragment.this, mQueryId, duty.getUserId(), duty.getUserName(), MemberDutyRequest.OPE_ARCHIVE,
-                                duty.getDocNum(), Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
+                        if (isSquad) {
+                            open(ArchiveSearchFragment.this, SEARCH_DUTY, mQueryId, duty.getSquadId(), "", mGroupName);
+                        } else {
+                            MemberDutyDetailsFragment.open(ArchiveSearchFragment.this, mQueryId, duty.getUserId(), duty.getUserName(), MemberDutyRequest.OPE_ARCHIVE,
+                                    duty.getDocNum(), Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
+                        }
                     }
                     break;
                 case R.id.ui_holder_view_group_member_duty_count_activity:
                     // 查看用户加入的活动列表
                     if (duty.getActivityNum() <= 0) {
-                        ToastHelper.make().showMsg(R.string.ui_group_member_duty_count_no_activity);
+                        ToastHelper.make().showMsg(isSquad ? R.string.ui_group_member_duty_count_no_activity_squad : R.string.ui_group_member_duty_count_no_activity);
                     } else {
-                        MemberDutyDetailsFragment.open(ArchiveSearchFragment.this, mQueryId, duty.getUserId(), duty.getUserName(), MemberDutyRequest.OPE_ACTIVITY,
-                                duty.getActivityNum(), Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
+                        if (isSquad) {
+                            open(ArchiveSearchFragment.this, SEARCH_DUTY, mQueryId, duty.getSquadId(), "", mGroupName);
+                        } else {
+                            MemberDutyDetailsFragment.open(ArchiveSearchFragment.this, mQueryId, duty.getUserId(), duty.getUserName(), MemberDutyRequest.OPE_ACTIVITY,
+                                    duty.getActivityNum(), Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
+                        }
                     }
                     break;
             }
