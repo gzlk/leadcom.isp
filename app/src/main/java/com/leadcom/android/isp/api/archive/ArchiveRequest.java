@@ -492,11 +492,11 @@ public class ArchiveRequest extends Request<Archive> {
      * @param category   档案类型
      */
     public void listMemberDuty(int ope, String groupId, String squadId, String userId, int createYear, String classifyId, String category) {
-        String url = format("/user/appUserRecord/list?ope=%d&", ope);
+        String url = format("/user/appUserRecord/list?ope=%d&userId=%s&", ope, userId);
         if (!isEmpty(squadId)) {
             url = format("%ssquadId=%s", url, squadId);
         } else {
-            url = format("%sgroupIdId=%s", url, groupId);
+            url = format("%sgroupId=%s", url, groupId);
         }
         url = format("%s&createDate=%d", url, createYear);
         if (!isEmpty(classifyId)) {
