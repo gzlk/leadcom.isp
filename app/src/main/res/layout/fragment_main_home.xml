@@ -49,7 +49,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/ui_static_dp_10"
-                android:layout_marginStart="@dimen/ui_static_dp_10">
+                android:layout_marginStart="@dimen/ui_static_dp_10"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/ui_main_home_top_channel_2"
@@ -74,7 +75,8 @@
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/ui_main_home_top_channel_3"

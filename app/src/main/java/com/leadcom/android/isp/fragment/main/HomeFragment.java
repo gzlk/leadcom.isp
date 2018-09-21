@@ -66,9 +66,9 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
             // 推荐
             mFragments.add(HomeFeaturedFragment.newInstance(format("%d", HomeFeaturedFragment.TYPE_ARCHIVE)));
             // 关注
-            mFragments.add(IndividualFragment.newInstance(String.valueOf(IndividualFragment.TYPE_ARCHIVE_HOME)));
+            //mFragments.add(IndividualFragment.newInstance(String.valueOf(IndividualFragment.TYPE_ARCHIVE_HOME)));
             // 动态
-            mFragments.add(IndividualFragment.newInstance(String.valueOf(IndividualFragment.TYPE_MOMENT)));
+            //mFragments.add(IndividualFragment.newInstance(String.valueOf(IndividualFragment.TYPE_MOMENT)));
         }
     }
 
