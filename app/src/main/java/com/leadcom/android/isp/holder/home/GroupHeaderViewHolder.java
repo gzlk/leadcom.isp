@@ -64,17 +64,16 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
         showEditorIcon = shown;
     }
 
-    public void showContent(Organization organization) {
-        String logo = organization.getLogo();
+    public void showContent(Organization group) {
+        String logo = group.getLogo();
         if (isEmpty(logo)) {
             logo = "drawable://" + R.drawable.img_default_group_icon;
         }
-        minmentTag.setVisibility(isMinMeng(organization.getName()) ? View.VISIBLE : View.GONE);
+        minmentTag.setVisibility(isMinMeng(group.getName()) ? View.VISIBLE : View.GONE);
         logoView.displayImage(logo, getDimension(R.dimen.ui_static_dp_60), false, false);
-        logo = organization.getIntro();
+        logo = group.getIntro();
         introView.setText(isEmpty(logo) ? "" : Html.fromHtml(logo.replaceAll("\n", "<br/>")));
-        Role role = Cache.cache().getGroupRole(organization.getId());
-        editIcon.setVisibility((showEditorIcon && null != role && role.hasOperation(GRPOperation.GROUP_PROPERTY)) ? View.VISIBLE : View.INVISIBLE);
+        editIcon.setVisibility((showEditorIcon && Role.hasOperation(group.getId(), GRPOperation.GROUP_PROPERTY)) ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Click({R.id.ui_holder_view_group_header_logo, R.id.ui_holder_view_group_header_edit_icon, R.id.ui_holder_view_group_header_container})

@@ -13,7 +13,6 @@ import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.user.UserMsgRequest;
 import com.leadcom.android.isp.application.App;
-import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -77,8 +76,7 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         searchView.setVisibility(View.GONE);
-        Role role = Cache.cache().getGroupRole(mQueryId);
-        if (null != role) {
+        if (Role.isMember(mQueryId)) {
             setRightIcon(R.string.ui_icon_comment);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override

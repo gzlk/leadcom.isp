@@ -26,12 +26,11 @@ import com.leadcom.android.isp.api.archive.DictionaryRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.user.MemberDutyRequest;
 import com.leadcom.android.isp.api.user.UserMsgRequest;
-import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
+import com.leadcom.android.isp.fragment.organization.GroupBaseFragment;
 import com.leadcom.android.isp.fragment.organization.MemberDutyDetailsFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -48,7 +47,6 @@ import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.archive.Dictionary;
-import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.user.MemberDuty;
 
 import java.util.ArrayList;
@@ -69,7 +67,7 @@ import java.util.Locale;
  * <b>修改备注：</b><br />
  */
 
-public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
+public class ArchiveSearchFragment extends GroupBaseFragment {
 
     private static final String PARAM_TYPE = "param_searching_type";
     private static final String PARAM_TEXT = "param_searching_text";
@@ -204,15 +202,14 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         if (!isEmpty(mSquadName)) {
             title = format("支部%s(%s)", title, mSquadName);
         } else if (!isEmpty(mGroupName)) {
-            title = format("组织%s(%s)", title, mGroupName);
+            title = format("%s%s(%s)", (searchingFunction == SEARCH_DUTY_SQUAD ? "支部" : "组织"), title, mGroupName);
         }
         setCustomTitle(title);
 
         selectedFunction = FUNC_NONE;
 
         if (searchingFunction < SEARCH_DUTY) {
-            Role role = Cache.cache().getGroupRole(mQueryId);
-            if (null != role) {
+            if (isMember(mQueryId)) {
                 setRightIcon(R.string.ui_icon_comment);
                 setRightTitleClickListener(new OnTitleButtonClickListener() {
                     @Override

@@ -470,9 +470,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             isUserArchive = false;
             maxSelectable = 8;
             initializeTemplate();
-            timeHolder.showContent(format(templateItems[0], formatDate(mArchive.getHappenDate())));
-            addressHolder.showContent(format(templateItems[1], mArchive.getSite()));
-            participantHolder.showContent(format(templateItems[2], mArchive.getParticipant()));
+            timeHolder.showContent(format(templateItems[0], (mArchive.isDefaultHappenDate() ? "选择时间(必填)" : formatDate(mArchive.getHappenDate()))));
+            addressHolder.showContent(format(templateItems[1], (isEmpty(mArchive.getSite()) ? "" : mArchive.getSite())));
+            participantHolder.showContent(format(templateItems[2], (isEmpty(mArchive.getParticipant()) ? "" : mArchive.getParticipant())));
             authorHolder.showContent(format(templateItems[3], mArchive.getUserName()));
             topicContent.setText(mArchive.getTopic());
             minuteContent.setText(mArchive.getResolution());
@@ -647,7 +647,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 if (!isEmpty(string)) {
                     Squad squad = Squad.fromJson(string);
                     if (null != squad && !isEmpty(squad.getId())) {
-                        mArchive.setBranch(squad.getName());
+                        mArchive.setBranch(squad.getId());
                         branchText.setText(squad.getName());
                     }
                 }
@@ -759,7 +759,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         mArchive.setOwnType(Archive.Type.GROUP);
         // 设置模板档案的各个属性值
         if (returnAble) {
-            if (mArchive.getHappenDate().equals(Model.DFT_DATE)) {
+            if (mArchive.isDefaultHappenDate()) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_happen_date_null);
                 return false;
             }
@@ -817,7 +817,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             ToastHelper.make().showMsg(R.string.ui_group_activity_editor_title_is_blank);
             return false;
         }
-        if (mArchive.getHappenDate().equals(Model.DFT_DATE)) {
+        if (mArchive.isDefaultHappenDate()) {
             ToastHelper.make().showMsg(R.string.ui_group_activity_editor_happen_date_is_blank);
             return false;
         }
@@ -873,7 +873,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_null);
                 return;
             }
-            if (isEmpty(mArchive.getHappenDate()) || mArchive.getHappenDate().equals(Model.DFT_DATE)) {
+            if (mArchive.isDefaultHappenDate()) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_happen_date_null);
                 return;
             }
@@ -1072,7 +1072,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     participantText.setValue(mArchive.getParticipant());
                 }
                 participantText.focusEnd();
-                if (isEmpty(mArchive.getHappenDate())) {
+                if (mArchive.isDefaultHappenDate()) {
                     happenDate.setText(R.string.ui_text_archive_details_editor_setting_time_title);
                 } else {
                     happenDate.setText(mArchive.getHappenDate().substring(0, 10));

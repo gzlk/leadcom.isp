@@ -79,11 +79,6 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
     private String name, groupId, header, date, intro;
     private boolean isGroup, isEditable;
 
-    private boolean hasOperation(String groupId, String operation) {
-        Role role = Cache.cache().getGroupRole(groupId);
-        return null != role && role.hasOperation(operation);
-    }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -101,7 +96,7 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
     }
 
     private void resetTitleEvent() {
-        if ((isGroup && isEditable && hasOperation(groupId, GRPOperation.GROUP_PROPERTY)) || (!isGroup && Cache.cache().userId.equals(groupId))) {
+        if ((isGroup && isEditable && Role.hasOperation(groupId, GRPOperation.GROUP_PROPERTY)) || (!isGroup && Cache.cache().userId.equals(groupId))) {
             setRightText(R.string.ui_base_text_edit);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override

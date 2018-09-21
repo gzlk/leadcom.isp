@@ -163,15 +163,12 @@ public class ContactFragment extends GroupBaseFragment {
     private boolean isCreator = false;
     private int dialIndex = -1;
 
-    private Role myRole;
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (isOpenable) {
-            myRole = Cache.cache().getGroupRole(mQueryId);
             // 有权限添加成员时，显示手机通讯录入口
-            if (showType == TYPE_ORG && hasOperation(GRPOperation.MEMBER_ADD)) {
+            if (showType == TYPE_ORG && hasOperation(mQueryId, GRPOperation.MEMBER_ADD)) {
                 setRightIcon(R.string.ui_icon_add);
                 setRightTitleClickListener(new OnTitleButtonClickListener() {
                     @Override
@@ -181,7 +178,7 @@ public class ContactFragment extends GroupBaseFragment {
                 });
                 //phoneContactView.setVisibility(View.VISIBLE);
                 setCustomTitle(R.string.ui_group_member_fragment_title);
-            } else if (showType == TYPE_SQUAD && hasOperation(GRPOperation.SQUAD_MEMBER_INVITE)) {
+            } else if (showType == TYPE_SQUAD && hasOperation(mQueryId, GRPOperation.SQUAD_MEMBER_INVITE)) {
                 setRightIcon(R.string.ui_icon_add);
                 setRightTitleClickListener(new OnTitleButtonClickListener() {
                     @Override
@@ -205,13 +202,6 @@ public class ContactFragment extends GroupBaseFragment {
             sub.add(new SubMember(member));
         }
         return sub;
-    }
-
-    /**
-     * 登录者是否具有某项组织权限
-     */
-    private boolean hasOperation(String operation) {
-        return null != myRole && myRole.hasOperation(operation);
     }
 
     @Override
@@ -744,7 +734,7 @@ public class ContactFragment extends GroupBaseFragment {
                 // 组织内可以显示设为档案管理员或取消档案管理员
                 // 对方不是管理员且不是档案管理员时，可以将其设为档案管理员
                 holder.button0d5Text((null != member && member.isArchiveManager()) ? R.string.ui_organization_contact_unset_archive_manager : R.string.ui_organization_contact_set_archive_manager);
-                holder.showButton0d5(!isMe && hasOperation(GRPOperation.MEMBER_ROLE) && (null != member && !member.isGroupManager()));
+                holder.showButton0d5(!isMe && hasOperation(mQueryId, GRPOperation.MEMBER_ROLE) && (null != member && !member.isGroupManager()));
             } else {
                 holder.showButton0d5(false);
             }
@@ -753,17 +743,17 @@ public class ContactFragment extends GroupBaseFragment {
                 // 显示设为管理员或取消管理员
                 holder.button1Text((null != member && member.isGroupManager()) ? R.string.ui_squad_contact_unset_to_admin : R.string.ui_squad_contact_set_to_admin);
                 // 我是群主或管理员且有编辑成员角色属性时，可以设置
-                holder.showButton1(!isMe && hasOperation(GRPOperation.MEMBER_ROLE));
+                holder.showButton1(!isMe && hasOperation(mQueryId, GRPOperation.MEMBER_ROLE));
             } else {
                 holder.showButton1(false);
             }
 
             if (showType == TYPE_ORG) {
                 // 我且具有删除成员权限，且对方是普通成员时显示删除按钮
-                holder.showButton2(!isMe && hasOperation(GRPOperation.MEMBER_DELETE) && (null != member && !member.isGroupManager()));
+                holder.showButton2(!isMe && hasOperation(mQueryId, GRPOperation.MEMBER_DELETE) && (null != member && !member.isGroupManager()));
             } else {
                 // 小组成员删除权限
-                holder.showButton2(!isMe && (hasOperation(GRPOperation.SQUAD_MEMBER_DELETE) || (null != mSquad && null != mSquad.getGroRole() && mSquad.getGroRole().hasOperation(GRPOperation.SQUAD_MEMBER_DELETE))));
+                holder.showButton2(!isMe && (hasOperation(mQueryId, GRPOperation.SQUAD_MEMBER_DELETE) || (null != mSquad && null != mSquad.getGroRole() && mSquad.getGroRole().hasOperation(GRPOperation.SQUAD_MEMBER_DELETE))));
             }
 
             holder.showContent(member, searchingText);

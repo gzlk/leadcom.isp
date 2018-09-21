@@ -11,7 +11,6 @@ import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
-import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -19,7 +18,7 @@ import com.leadcom.android.isp.holder.organization.ActivityItemViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.archive.Archive;
-import com.leadcom.android.isp.model.organization.Role;
+import com.leadcom.android.isp.model.operation.GRPOperation;
 
 import java.util.List;
 
@@ -60,25 +59,20 @@ public class ActivitiesFragment extends GroupBaseFragment {
 
     private ActivityAdapter mAdapter;
 
-    private boolean isManager() {
-        Role role = Cache.cache().getGroupRole(mQueryId);
-        return null != role && role.isManager();
-    }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isLoadingComplete(true);
         setCustomTitle(R.string.ui_group_activity_fragment_title);
-        //if (isManager()) {
-        setRightText(R.string.ui_base_text_launch);
-        setRightTitleClickListener(new OnTitleButtonClickListener() {
-            @Override
-            public void onClick() {
-                ArchiveEditorFragment.open(ActivitiesFragment.this, mQueryId, Archive.ArchiveType.ACTIVITY);
-            }
-        });
-        //}
+        if (hasOperation(mQueryId, GRPOperation.ACTIVITY_PUBLISH)) {
+            setRightText(R.string.ui_base_text_launch);
+            setRightTitleClickListener(new OnTitleButtonClickListener() {
+                @Override
+                public void onClick() {
+                    ArchiveEditorFragment.open(ActivitiesFragment.this, mQueryId, Archive.ArchiveType.ACTIVITY);
+                }
+            });
+        }
     }
 
     @Override

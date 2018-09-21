@@ -11,6 +11,7 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
+import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
@@ -114,6 +115,10 @@ public class GroupConstructFragment extends GroupBaseFragment {
             OverScrollDecoratorHelper.setUpOverScroll(mRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
 
             for (String string : items) {
+                if (string.startsWith("1|") && !hasOperation(mQueryId, GRPOperation.GROUP_PROPERTY_SUBORDINATE)) {
+                    // 没有权限查看下级组织时，不显示
+                    continue;
+                }
                 SimpleClickableItem item = new SimpleClickableItem(string);
                 mAdapter.add(item);
             }

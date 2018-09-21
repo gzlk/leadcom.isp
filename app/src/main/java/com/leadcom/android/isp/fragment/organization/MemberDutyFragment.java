@@ -9,9 +9,11 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.main.ArchiveSearchFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
+import com.leadcom.android.isp.model.operation.GRPOperation;
 
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
@@ -105,11 +107,19 @@ public class MemberDutyFragment extends GroupBaseFragment {
             switch (index) {
                 case 0:
                     // 本组成员履职统计
-                    ArchiveSearchFragment.open(MemberDutyFragment.this, ArchiveSearchFragment.SEARCH_DUTY, mQueryId, "", mGroupName);
+                    if (hasOperation(mQueryId, GRPOperation.MEMBER_DUTY)) {
+                        ArchiveSearchFragment.open(MemberDutyFragment.this, ArchiveSearchFragment.SEARCH_DUTY, mQueryId, "", mGroupName);
+                    } else {
+                        ToastHelper.make().showMsg(R.string.ui_group_details_no_permission_to_member_duty);
+                    }
                     break;
                 case 1:
                     // 本组支部履职统计
-                    ArchiveSearchFragment.open(MemberDutyFragment.this, ArchiveSearchFragment.SEARCH_DUTY_SQUAD, mQueryId, "", mGroupName);
+                    if (hasOperation(mQueryId, GRPOperation.SQUAD_DUTY)) {
+                        ArchiveSearchFragment.open(MemberDutyFragment.this, ArchiveSearchFragment.SEARCH_DUTY_SQUAD, mQueryId, "", mGroupName);
+                    } else {
+                        ToastHelper.make().showMsg(R.string.ui_group_details_no_permission_to_squad_duty);
+                    }
                     break;
             }
         }

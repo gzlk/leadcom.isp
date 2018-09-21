@@ -22,13 +22,13 @@ import com.leadcom.android.isp.api.user.UserRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.individual.SettingFragment;
 import com.leadcom.android.isp.fragment.individual.UserIntroductionFragment;
 import com.leadcom.android.isp.fragment.individual.UserNameEditFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentListFragment;
 import com.leadcom.android.isp.fragment.login.CodeVerifyFragment;
 import com.leadcom.android.isp.fragment.organization.ContactFragment;
+import com.leadcom.android.isp.fragment.organization.GroupBaseFragment;
 import com.leadcom.android.isp.fragment.organization.MemberNatureMainFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -47,7 +47,6 @@ import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Quantity;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.operation.GRPOperation;
-import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.user.User;
 import com.leadcom.android.isp.model.user.UserExtra;
 import com.leadcom.android.isp.view.SwipeItemLayout;
@@ -66,7 +65,7 @@ import java.util.Iterator;
  * <b>修改备注：</b><br />
  */
 
-public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
+public class PersonalityFragment extends GroupBaseFragment {
 
     private static final String PARAM_OPENED = "pf_opened";
     private static final String PARAM_GROUP_ID = "pf_group_id";
@@ -160,11 +159,6 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         super.saveParamsToBundle(bundle);
         bundle.putBoolean(PARAM_OPENED, isOpened);
         bundle.putString(PARAM_GROUP_ID, mGroupId);
-    }
-
-    private boolean hasOperation(String groupId, String operation) {
-        Role role = Cache.cache().getGroupRole(groupId);
-        return null != role && role.hasOperation(operation);
     }
 
     @Override

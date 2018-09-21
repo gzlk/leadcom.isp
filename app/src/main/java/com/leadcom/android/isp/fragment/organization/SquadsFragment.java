@@ -15,7 +15,6 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.SquadRequest;
 import com.leadcom.android.isp.application.App;
-import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -32,7 +31,6 @@ import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Member;
-import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.organization.Squad;
 import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.view.SwipeItemLayout;
@@ -112,11 +110,6 @@ public class SquadsFragment extends GroupBaseFragment {
         bundle.putBoolean(PARAM_SELECTABLE, selectable);
     }
 
-    private boolean hasOperation(String operation) {
-        Role role = Cache.cache().getGroupRole(mQueryId);
-        return null != role && role.hasOperation(operation);
-    }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -127,7 +120,7 @@ public class SquadsFragment extends GroupBaseFragment {
         isLoadingComplete(true);
         if (!selectable) {
             setCustomTitle(R.string.ui_group_squad_fragment_title);
-            if (hasOperation(GRPOperation.SQUAD_ADD)) {
+            if (hasOperation(mQueryId, GRPOperation.SQUAD_ADD)) {
                 setRightText(R.string.ui_base_text_add);
                 setRightTitleClickListener(new OnTitleButtonClickListener() {
                     @Override
@@ -312,7 +305,8 @@ public class SquadsFragment extends GroupBaseFragment {
                     }
                 } else {
                     // 在取消全选时，保持原有的传进来的选择项目
-                    if (!selected.contains(member.getUserId())) {
+                    SubMember sub = new SubMember(member);
+                    if (!selected.contains(sub)) {
                         member.setSelected(false);
                         if (mAdapter.exist(member)) {
                             mAdapter.update(member);
@@ -576,7 +570,7 @@ public class SquadsFragment extends GroupBaseFragment {
                     svh.setOnViewHolderElementClickListener(elementClickListener);
                     svh.showPicker(selectable);
                     // 有修改小组资料的权限时，才能编辑小组名称
-                    svh.showEdit(hasOperation(GRPOperation.SQUAD_PROPERTY));
+                    svh.showEdit(hasOperation(mQueryId, GRPOperation.SQUAD_PROPERTY));
                     return svh;
                 case VT_MEMBER:
                     ContactViewHolder cvh = new ContactViewHolder(itemView, SquadsFragment.this);
@@ -611,7 +605,7 @@ public class SquadsFragment extends GroupBaseFragment {
                 if (null != squad.getGroRole() && squad.getGroRole().hasOperation(GRPOperation.SQUAD_DELETE)) {
                     return VT_DELETABLE;
                 } else
-                    return hasOperation(GRPOperation.SQUAD_DELETE) ? VT_DELETABLE : VT_SQUAD;
+                    return hasOperation(mQueryId, GRPOperation.SQUAD_DELETE) ? VT_DELETABLE : VT_SQUAD;
             } else return VT_MEMBER;
         }
 

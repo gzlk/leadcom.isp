@@ -953,6 +953,10 @@ public class Archive extends Additional {
         return happenDate;
     }
 
+    public boolean isDefaultHappenDate() {
+        return isEmpty(happenDate) || happenDate.equals(DFT_DATE);
+    }
+
     public void setHappenDate(String happenDate) {
         this.happenDate = happenDate;
     }

@@ -226,9 +226,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             }
         });
         initializeActivityControlPosition();
-        if (null != mArchive && mArchive.isActivity()) {
-            // 管理员才可以查看报名统计
-            reportButton.setVisibility(isManager() ? View.VISIBLE : View.GONE);
+        if (null != mArchive && mArchive.isActivity() && Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_REPORT_COLLECT)) {
+            // 有权限时才可以查看报名统计
+            reportButton.setVisibility(Role.isManager(mArchive.getGroupId()) ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -263,7 +263,6 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
      */
     private boolean innerOpen;
     private Archive mArchive;
-    private Role myRole;
     private ArrayList<Squad> squads = new ArrayList<>();
 
     @ViewId(R.id.ui_archive_details_content)
@@ -417,11 +416,6 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         });
     }
 
-    private boolean isManager() {
-        Role role = Cache.cache().getGroupRole(mArchive.getGroupId());
-        return null != role && role.isManager();
-    }
-
     private void rightIconClick() {
         if (isDraft) {
             ArchiveEditorFragment.open(ArchiveDetailsFragment.this, mQueryId, mArchive.getDocType());
@@ -432,7 +426,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 enableShareTimeLine = false;
                 enableShareQQ = false;
                 enableShareQZone = false;
-                enableTransform = isManager();
+                enableTransform = Role.isManager(mArchive.getGroupId());
                 openShareDialog();
             } else {
                 loadingArchivePermission();
@@ -462,13 +456,6 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         }).permission(mQueryId);
     }
 
-    /**
-     * 当前角色是否具有某项权限
-     */
-    private boolean hasOperation(String operation) {
-        return null != myRole && myRole.hasOperation(operation);
-    }
-
     private void displayArchive(Archive archive) {
 
         setCustomTitle(archive.getTitle());
@@ -479,8 +466,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 resetRightIconEvent(0, R.string.ui_base_text_edit);
             }
         } else if (mArchive.isActivity()) {
-            if (isManager()) {
-                // 组织管理员才有下发活动的权限
+            if (Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_DELIVER)) {
+                // 有下发活动的权限时才显示更多按钮
                 resetRightIconEvent(R.string.ui_icon_more, 0);
             }
         } else if (!isCollected && !isH5(archive.getH5())) {
@@ -488,7 +475,6 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             // 非草稿档案，可以分享等等
             resetRightIconEvent(R.string.ui_icon_more, 0);
         }
-        myRole = Cache.cache().getGroupRole(archive.getGroupId());
         // 设置收藏的参数为档案
         if (!isCollected) {
             Collectable.resetArchiveCollectionParams(archive);
@@ -521,17 +507,18 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     }
 
     private void prepareShareDialogElement(Archive archive) {
+        String groupId = archive.getGroupId();
         // 档案管理员/组织管理员/档案作者可以删除档案
-        if (isEmpty(archive.getGroupId())) {
+        if (isEmpty(groupId)) {
             // 个人档案且当前用户是作者时，允许删除
             enableShareDelete = archive.isAuthor();
         } else {
             // 组织档案
             // 是否可以删除档案
-            enableShareDelete = archive.isAuthor() || hasOperation(GRPOperation.ARCHIVE_DELETE);
-            enableShareForward = hasOperation(GRPOperation.ARCHIVE_FORWARD);
-            enableShareRecommend = archive.isPublic() && !archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
-            enableShareRecommended = archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
+            enableShareDelete = archive.isAuthor() || Role.hasOperation(groupId, GRPOperation.ARCHIVE_DELETE);
+            enableShareForward = Role.hasOperation(groupId, GRPOperation.ARCHIVE_FORWARD);
+            enableShareRecommend = archive.isPublic() && !archive.isRecommend() && Role.hasOperation(groupId, GRPOperation.ARCHIVE_RECOMMEND);
+            enableShareRecommended = archive.isRecommend() && Role.hasOperation(groupId, GRPOperation.ARCHIVE_RECOMMEND);
 
         }
     }

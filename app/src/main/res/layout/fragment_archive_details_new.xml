@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:alpha="1"
+        android:alpha="0"
         android:animateLayoutChanges="true"
         android:background="@color/textColorLight"
         android:clickable="true"

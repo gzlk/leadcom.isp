@@ -31,11 +31,11 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserIntroductionFragment;
 import com.leadcom.android.isp.fragment.organization.ActivitiesFragment;
 import com.leadcom.android.isp.fragment.organization.ArchivesFragment;
-import com.leadcom.android.isp.fragment.organization.GroupBaseFragment;
 import com.leadcom.android.isp.fragment.organization.ContactFragment;
-import com.leadcom.android.isp.fragment.organization.GroupCreateFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
+import com.leadcom.android.isp.fragment.organization.GroupBaseFragment;
 import com.leadcom.android.isp.fragment.organization.GroupConstructFragment;
+import com.leadcom.android.isp.fragment.organization.GroupCreateFragment;
 import com.leadcom.android.isp.fragment.organization.MemberDutyFragment;
 import com.leadcom.android.isp.fragment.organization.MemberNatureMainFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
@@ -57,7 +57,6 @@ import com.leadcom.android.isp.model.common.Quantity;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Organization;
-import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
@@ -213,20 +212,6 @@ public class GroupFragment extends GroupBaseFragment {
             }
         }
     };
-
-    private boolean hasOperation(String groupId, String operation) {
-        Role role = Cache.cache().getGroupRole(groupId);
-        return null != role && role.hasOperation(operation);
-    }
-
-    private boolean isMember(String groupId) {
-        return null != Cache.cache().getGroupRole(groupId);
-    }
-
-    private boolean isManager(String groupId) {
-        Role role = Cache.cache().getGroupRole(groupId);
-        return null != role && role.isManager();
-    }
 
     @Override
     protected void onDelayRefreshComplete(int type) {
@@ -574,9 +559,9 @@ public class GroupFragment extends GroupBaseFragment {
         }
         // 是否有查看成员信息统计权限
         item = new SimpleClickableItem(items[5]);
-        boolean hasNatureCount = false;
+        //boolean hasNatureCount = false;
         if (hasOperation(group.getId(), GRPOperation.MEMBER_NATURE_COUNT)) {
-            hasNatureCount = true;
+            //hasNatureCount = true;
             // 成员信息统计在组织档案后面
             int in = dAdapter.indexOf(new SimpleClickableItem(items[4]));
             if (dAdapter.indexOf(item) < 0) {
@@ -822,7 +807,11 @@ public class GroupFragment extends GroupBaseFragment {
                 break;
             case 3:
                 // 成员履职统计
-                MemberDutyFragment.open(this, group.getId(), group.getName());
+                if (hasOperation(group.getId(), GRPOperation.MEMBER_DUTY) || hasOperation(group.getId(), GRPOperation.SQUAD_DUTY)) {
+                    MemberDutyFragment.open(this, group.getId(), group.getName());
+                } else {
+                    ToastHelper.make().showMsg(R.string.ui_group_details_no_permission_to_duty);
+                }
                 //ArchivesFragment.open(this, group.getId(), getString(R.string.ui_group_archive_fragment_title));
                 break;
             case 4:

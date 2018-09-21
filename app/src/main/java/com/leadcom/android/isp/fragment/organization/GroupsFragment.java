@@ -16,7 +16,6 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.RelationRequest;
-import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -28,7 +27,6 @@ import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.RelateGroup;
-import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.organization.SubMember;
 
 import java.util.ArrayList;
@@ -85,11 +83,6 @@ public class GroupsFragment extends GroupBaseFragment {
     private boolean isSearching = false, mSelectable, mAllSelected = false;
     private ArrayList<String> mSelected;
 
-    private boolean hasOperation(String operation) {
-        Role role = Cache.cache().getGroupRole(mQueryId);
-        return null != role && role.hasOperation(operation);
-    }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -100,7 +93,7 @@ public class GroupsFragment extends GroupBaseFragment {
         if (mSelectable) {
             selectAllTitle.setText(Html.fromHtml(StringHelper.getString(R.string.ui_group_activity_editor_participator_select_all_1)));
         }
-        if (mRelateType == RelateGroup.RelationType.SUPERIOR && hasOperation(GRPOperation.GROUP_ASSOCIATION)) {
+        if (mRelateType == RelateGroup.RelationType.SUPERIOR && hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION)) {
             setRightText(R.string.ui_base_text_add);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override

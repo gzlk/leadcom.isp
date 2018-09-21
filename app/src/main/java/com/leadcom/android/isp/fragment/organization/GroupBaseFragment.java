@@ -12,6 +12,7 @@ import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Organization;
+import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.organization.Squad;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
@@ -33,6 +34,20 @@ public abstract class GroupBaseFragment extends BaseSwipeRefreshSupportFragment 
     protected static final String PARAM_SQUAD_ID = "bof_squad_id";
     protected static final String PARAM_NAME = "bof_name";
     protected String mOrganizationId, mSquadId;
+
+    /**
+     * 查找当前用户在指定组织中是否具有某项权限
+     */
+    protected boolean hasOperation(String groupId, String operation) {
+        return Role.hasOperation(groupId, operation);
+    }
+
+    /**
+     * 查找当前用户是否是指定组织的成员
+     */
+    protected boolean isMember(String groupId) {
+        return Role.isMember(groupId);
+    }
 
     @Override
     protected String getLocalPageTag() {

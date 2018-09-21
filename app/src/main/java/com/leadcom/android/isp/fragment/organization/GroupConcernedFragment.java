@@ -14,7 +14,6 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.ConcernRequest;
-import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.main.GroupFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -26,7 +25,6 @@ import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Organization;
-import com.leadcom.android.isp.model.organization.Role;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -216,11 +214,6 @@ public class GroupConcernedFragment extends GroupBaseFragment {
             }
         }
         displayNothing(mAdapter.getItemCount() < 1);
-    }
-
-    private boolean hasOperation(String groupId, String operation) {
-        Role role = Cache.cache().getGroupRole(groupId);
-        return null != role && role.hasOperation(operation);
     }
 
     private void checkConcern(int index) {

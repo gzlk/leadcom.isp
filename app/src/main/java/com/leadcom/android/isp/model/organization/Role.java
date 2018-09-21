@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.model.organization;
 
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.litesuits.orm.db.annotation.Column;
@@ -26,6 +27,26 @@ public class Role extends Model {
         String RoleName = "roleName";
         String RoleCode = "roleCode";
         String PermissionIds = "permissionIds";
+    }
+
+    public static boolean hasOperation(String groupId, String operation) {
+        Role role = Cache.cache().getGroupRole(groupId);
+        return null != role && role.hasOperation(operation);
+    }
+
+    /**
+     * 查找当前用户是否是指定组织的成员
+     */
+    public static boolean isMember(String groupId) {
+        return null != Cache.cache().getGroupRole(groupId);
+    }
+
+    /**
+     * 查找当前用户是否是指定组织的管理员
+     */
+    public static boolean isManager(String groupId) {
+        Role role = Cache.cache().getGroupRole(groupId);
+        return null != role && role.isManager();
     }
 
     /**

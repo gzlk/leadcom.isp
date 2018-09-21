@@ -32,6 +32,10 @@ public interface GRPOperation {
      * 自定义栏目
      */
     String GROUP_DEFINE = "ROLE_801d4f3691c0471886a9fa804530e0de";
+    /**
+     * 查看下级组织资料
+     */
+    String GROUP_PROPERTY_SUBORDINATE = "ROLE_3e687640bba544cfb0f40739c2185456";
 
     /* ***********************************************************
        组织成员相关权限
@@ -56,6 +60,10 @@ public interface GRPOperation {
      * 查看成员资料统计信息
      */
     String MEMBER_NATURE_COUNT = "ROLE_df944ab35a214d64adbdb35fc035374c";
+    /**
+     * 成员履职统计
+     */
+    String MEMBER_DUTY = "ROLE_883b357d05c94aaf878a2929cef9f44c";
 
     /* ***********************************************************
        档案管理相关
@@ -108,6 +116,10 @@ public interface GRPOperation {
      * 删除小组成员
      */
     String SQUAD_MEMBER_DELETE = "ROLE_4d90a8ecec404d1280112fd907c6ae73";
+    /**
+     * 支部履职统计
+     */
+    String SQUAD_DUTY = "ROLE_4b998331c7444f26ad61d36c027952d2";
 
     /* ***********************************************************
        档案相关
@@ -124,4 +136,24 @@ public interface GRPOperation {
      * 分享档案
      */
     String ARCHIVE_SHARE = "ROLE_d10c0bff7cbf41f7a2247e4788996024";
+
+    /* ***********************************************************
+       活动相关
+    *************************************************************/
+    /**
+     * 发布活动
+     */
+    String ACTIVITY_PUBLISH = "ROLE_80025bd3b04a45d8996057d9a0feb371";
+    /**
+     * 回复活动
+     */
+    String ACTIVITY_REPLY = "ROLE_1eac6b8e7cff4d31b1666eb86f0a055c";
+    /**
+     * 下发活动
+     */
+    String ACTIVITY_DELIVER = "ROLE_4d49991f45f8434ca51cb33d1f145f7e";
+    /**
+     * 活动报名统计
+     */
+    String ACTIVITY_REPORT_COLLECT = "ROLE_d96a905589c944d09640422b0c3a978f";
 }
