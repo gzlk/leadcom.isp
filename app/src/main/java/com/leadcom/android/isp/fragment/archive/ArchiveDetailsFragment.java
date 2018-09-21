@@ -61,6 +61,7 @@ import com.leadcom.android.isp.listener.OnTaskCompleteListener;
 import com.leadcom.android.isp.listener.OnTaskFailureListener;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
@@ -75,6 +76,7 @@ import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.organization.Squad;
+import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.model.user.Collection;
 
 import java.io.File;
@@ -262,6 +264,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private boolean innerOpen;
     private Archive mArchive;
     private Role myRole;
+    private ArrayList<Squad> squads = new ArrayList<>();
+
     @ViewId(R.id.ui_archive_details_content)
     private WebView webView;
     @ViewId(R.id.ui_archive_details_activity_control)
@@ -925,14 +929,24 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             // 显示组织的支部和成员列表
             private void showSquadsMember() {
                 nothingText.setText(R.string.ui_group_activity_details_transform_dialog_no_squad);
+                if (squads.size() > 0) {
+                    for (Squad squad : squads) {
+                        cAdapter.add(squad);
+                    }
+                    return;
+                }
                 SquadRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Squad>() {
                     @Override
                     public void onResponse(List<Squad> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                         super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                         if (success && null != list) {
                             for (Squad squad : list) {
+                                // 设置可选
+                                squad.setSelectable(true);
+                                squad.setLocalDeleted(true);
                                 cAdapter.add(squad);
                             }
+                            squads.addAll(list);
                         }
                         nothingView.setVisibility(null == list || list.size() <= 0 ? View.VISIBLE : View.GONE);
                     }
@@ -977,6 +991,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                         prepareClassify();
                         break;
                     case PUSH_TRANSFORM:
+                        prepareMembers();
                         break;
                 }
                 return true;
@@ -1023,7 +1038,41 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     classifyArchive(classifyId, classifyName);
                 }
             }
+
+            private void prepareMembers() {
+                ArrayList<SubMember> members = new ArrayList<>();
+                Iterator<Model> iterator = cAdapter.iterator();
+                while (iterator.hasNext()) {
+                    Model model = iterator.next();
+                    if (model instanceof Squad) {
+                        Squad squad = (Squad) model;
+                        for (Member member : squad.getGroSquMemberList()) {
+                            if (member.isSelected()) {
+                                SubMember sub = new SubMember(member);
+                                members.add(sub);
+                            }
+                        }
+                    }
+                }
+                if (members.size() > 0) {
+                    tryTransferActivity(members);
+                } else {
+                    ToastHelper.make().showMsg(R.string.ui_group_activity_details_transform_dialog_member_select_empty);
+                }
+            }
         }).setConfirmText(pushingType == PUSH_GROUPS ? R.string.ui_base_text_forward : (pushingType == PUSH_CLASSIFY ? R.string.ui_base_text_classify : R.string.ui_base_text_confirm)).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
+    }
+
+    private void tryTransferActivity(ArrayList<SubMember> members) {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(R.string.ui_group_activity_details_transform_success);
+                }
+            }
+        }).transferActivity("", mArchive.getGroupId(), mArchive.getGroActivityId(), members);
     }
 
     private void tryPushArchive(ArrayList<String> groupIds) {
@@ -1060,6 +1109,16 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 }
             }
         }).classify(mQueryId, classifyId);
+    }
+
+    @Override
+    protected void onLikeComplete(boolean success, Model model) {
+
+    }
+
+    @Override
+    protected void onCollectComplete(boolean success, Model model) {
+
     }
 
     private OnViewHolderClickListener clickListener = new OnViewHolderClickListener() {
@@ -1113,19 +1172,85 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                         }
                     }
                 }
+            } else if (model instanceof Squad) {
+                // 显示或隐藏小组的成员列表
+                if (hasSquadMembers(model.getId())) {
+                    model.setRead(false);
+                    clearSquadMember((Squad) model);
+                } else {
+                    model.setRead(true);
+                    appendSquadMembers((Squad) model);
+                }
+                cAdapter.update(model);
+            } else if (model instanceof Member) {
+                model.setSelected(!model.isSelected());
+                cAdapter.update(model);
+                checkSquadMemberAllSelected(((Member) model).getSquadId());
             }
+        }
+
+        private void checkSquadMemberAllSelected(String squadId) {
+            Squad squad = (Squad) cAdapter.get(squadId);
+            int count = 0;
+            for (Member member : squad.getGroSquMemberList()) {
+                count += member.isSelected() ? 1 : 0;
+            }
+            squad.setSelected(count == squad.getGroSquMemberList().size());
+            cAdapter.update(squad);
+        }
+
+        private void clearSquadMember(Squad squad) {
+            for (Member member : squad.getGroSquMemberList()) {
+                cAdapter.remove(member);
+            }
+        }
+
+        private void appendSquadMembers(Squad squad) {
+            int index = cAdapter.indexOf(squad);
+            int cnt = 0;
+            for (Member member : squad.getGroSquMemberList()) {
+                cnt++;
+                cAdapter.add(member, index + cnt);
+            }
+        }
+
+        private boolean hasSquadMembers(String squadId) {
+            Iterator<Model> iterator = cAdapter.iterator();
+            while (iterator.hasNext()) {
+                Model model = iterator.next();
+                if (model instanceof Member) {
+                    Member member = (Member) model;
+                    if (member.getSquadId().equals(squadId)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     };
 
-    @Override
-    protected void onLikeComplete(boolean success, Model model) {
-
-    }
-
-    @Override
-    protected void onCollectComplete(boolean success, Model model) {
-
-    }
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
+        @Override
+        public void onClick(View view, int index) {
+            switch (view.getId()) {
+                case R.id.ui_holder_view_group_interest_root:
+                    clickListener.onClick(index);
+                    break;
+                case R.id.ui_holder_view_group_interest_select:
+                    // 小组的全选和取消全选
+                    Squad squad = (Squad) cAdapter.get(index);
+                    squad.setSelected(!squad.isSelected());
+                    for (Member member : squad.getGroSquMemberList()) {
+                        member.setSelected(squad.isSelected());
+                        if (cAdapter.exist(member)) {
+                            cAdapter.update(member);
+                        }
+                    }
+                    cAdapter.update(squad);
+                    break;
+            }
+        }
+    };
 
     private class ConcernAdapter extends RecyclerViewAdapter<GroupInterestViewHolder, Model> {
 
@@ -1133,7 +1258,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         public GroupInterestViewHolder onCreateViewHolder(View itemView, int viewType) {
             GroupInterestViewHolder holder = new GroupInterestViewHolder(itemView, ArchiveDetailsFragment.this);
             holder.setSelectable(true);
-            holder.addOnViewHolderClickListener(clickListener);
+            holder.setOnViewHolderElementClickListener(elementClickListener);
             return holder;
         }
 
@@ -1150,6 +1275,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 holder.showContent((Classify) item);
             } else if (item instanceof Squad) {
                 holder.showContent((Squad) item);
+            } else if (item instanceof Member) {
+                holder.showContent((Member) item);
             }
         }
 

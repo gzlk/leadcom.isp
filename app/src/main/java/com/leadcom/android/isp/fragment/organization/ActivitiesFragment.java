@@ -1,11 +1,13 @@
 package com.leadcom.android.isp.fragment.organization;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
@@ -39,11 +41,21 @@ public class ActivitiesFragment extends GroupBaseFragment {
         return fragment;
     }
 
-    public static void open(BaseFragment fragment, String groupId, String groupName) {
+    private static Bundle getBundle(String groupId, String groupName) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putString(PARAM_NAME, groupName);
+        return bundle;
+    }
+
+    public static void open(BaseFragment fragment, String groupId, String groupName) {
+        Bundle bundle = getBundle(groupId, groupName);
         fragment.openActivity(ActivitiesFragment.class.getName(), bundle, true, false);
+    }
+
+    public static void open(Context context, String groupId, String groupName) {
+        Bundle bundle = getBundle(groupId, groupName);
+        BaseActivity.openActivity(context, ActivitiesFragment.class.getName(), bundle, true, false);
     }
 
     private ActivityAdapter mAdapter;
@@ -107,6 +119,7 @@ public class ActivitiesFragment extends GroupBaseFragment {
                 if (success && null != list) {
                     for (Archive archive : list) {
                         archive.setDocType(Archive.ArchiveType.ACTIVITY);
+                        archive.setAccessToken(mQueryId);
                         if (isEmpty(archive.getGroupId())) {
                             archive.setGroupId(mQueryId);
                         }

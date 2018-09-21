@@ -12,6 +12,7 @@ import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.organization.Concern;
+import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -43,6 +44,8 @@ public class GroupInterestViewHolder extends BaseViewHolder {
     private TextView nameView;
     @ViewId(R.id.ui_holder_view_group_interest_button)
     private CorneredButton buttonView;
+    @ViewId(R.id.ui_holder_view_group_interest_desc)
+    private TextView descView;
     @ViewId(R.id.ui_holder_view_group_interest_right_icon)
     private CustomTextView rightIcon;
     @ViewId(R.id.ui_holder_view_item_left_blank)
@@ -95,15 +98,52 @@ public class GroupInterestViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Squad squad) {
+        leftBlank.setVisibility(View.GONE);
         coverView.setVisibility(selectable ? View.GONE : View.VISIBLE);
         buttonView.setVisibility(selectable || squad.isSelectable() ? View.GONE : View.VISIBLE);
-        selector.setVisibility(selectable && !squad.isSelectable() ? View.VISIBLE : View.GONE);
+        selector.setVisibility(squad.isLocalDeleted() || (selectable && !squad.isSelectable()) ? View.VISIBLE : View.GONE);
         selector.setTextColor(getColor(squad.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
         // 勾选颜色
-        selectorLine.setVisibility(squad.isSelectable() ? View.VISIBLE : View.GONE);
+        selectorLine.setVisibility(!squad.isLocalDeleted() && squad.isSelectable() ? View.VISIBLE : View.GONE);
         selectorLine.setTextColor(getColor(squad.isSelected() ? R.color.colorPrimary : R.color.transparent_00));
+        descView.setText(format("%d/%d人", getSquadMemberSelected(squad), squad.getGroSquMemberList().size()));
+        rightIcon.setVisibility(squad.isLocalDeleted() ? View.VISIBLE : View.GONE);
+//        rightIcon.clearAnimation();
+//        final boolean read = squad.isRead();
+//        rightIcon.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                rightIcon.animate().rotation(read ? 90.0f : 0.0f).setDuration(fragment().duration()).start();
+//            }
+//        });
+        rightIcon.setRotation(squad.isRead() ? 90.0f : 0.0f);
         String name = squad.getName();
         nameView.setText(Html.fromHtml(name));
+    }
+
+    private int getSquadMemberSelected(Squad squad) {
+        int count = 0;
+        for (Member member : squad.getGroSquMemberList()) {
+            count += member.isSelected() ? 1 : 0;
+        }
+        return count;
+    }
+
+    public void showContent(Member member) {
+        leftBlank.setVisibility(View.VISIBLE);
+        rightIcon.setVisibility(View.GONE);
+        coverView.setVisibility(View.VISIBLE);
+        String header = member.getHeadPhoto();
+        if (isEmpty(header) || header.length() < 20) {
+            header = "drawable://" + R.drawable.img_default_user_header;
+        }
+        coverView.displayImage(header, getDimension(R.dimen.ui_static_dp_35), false, false);
+        buttonView.setVisibility(View.GONE);
+        selector.setVisibility(View.GONE);
+        // 勾选颜色
+        selectorLine.setVisibility(View.VISIBLE);
+        selectorLine.setTextColor(getColor(member.isSelected() ? R.color.colorPrimary : R.color.transparent_00));
+        nameView.setText(member.getUserName());
     }
 
     public void showContent(Concern concern, String searchingText) {
@@ -188,7 +228,7 @@ public class GroupInterestViewHolder extends BaseViewHolder {
         nameView.setText(Html.fromHtml(name));
     }
 
-    @Click({R.id.ui_holder_view_group_interest_root, R.id.ui_holder_view_group_interest_button})
+    @Click({R.id.ui_holder_view_group_interest_root, R.id.ui_holder_view_group_interest_button, R.id.ui_holder_view_group_interest_select})
     private void elementClick(View view) {
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());

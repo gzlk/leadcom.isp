@@ -35,6 +35,7 @@ public class PushMessage extends Model {
         private String groupId;
         private String userMmtId;
         private String messageCode;
+        private String groActivityId;
 
         public String getMsgId() {
             return msgId;
@@ -90,6 +91,14 @@ public class PushMessage extends Model {
 
         public void setMessageCode(String messageCode) {
             this.messageCode = messageCode;
+        }
+
+        public String getGroActivityId() {
+            return groActivityId;
+        }
+
+        public void setGroActivityId(String groActivityId) {
+            this.groActivityId = groActivityId;
         }
     }
 
@@ -149,6 +158,18 @@ public class PushMessage extends Model {
          * 组织被别的组织取消授权了
          */
         String GROUP_AUTHORIZE_CANCEL = "GROUP_AUTHORIZE_CANCEL_CODE";
+        /**
+         * 活动发布通知
+         */
+        String GROUP_ACTIVITY_PUBLISH = "GROUP_ACTIVITY_NOTICE_ADD_CODE";
+        /**
+         * 活动下发通知
+         */
+        String GROUP_ACTIVITY_DELIVER = "GROUP_ACTIVITY_NOTICE_ISSUE_CODE";
+        /**
+         * 活动回复通知
+         */
+        String GROUP_ACTIVITY_REPLY = "GROUP_ACTIVITY_REPLY_CODE";
     }
 
     private String userId, userName, headPhoto, templateCode, title, content, createDate;

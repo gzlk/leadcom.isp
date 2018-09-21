@@ -38,7 +38,7 @@ public class ActivityItemViewHolder extends BaseViewHolder {
     public void showContent(Archive activity) {
         titleView.setText(activity.getTitle());
         titleView.setSelected(true);
-        timeView.setText(StringHelper.getString(R.string.ui_group_activity_item_time, fragment().formatDate(activity.getCreateDate())));
+        timeView.setText(StringHelper.getString(R.string.ui_group_activity_item_time, fragment().formatTimeAgo(activity.getCreateDate())));
     }
 
     @Click({R.id.ui_holder_view_group_activity_item_layout})

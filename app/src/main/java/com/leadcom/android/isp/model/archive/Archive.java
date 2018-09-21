@@ -154,6 +154,9 @@ public class Archive extends Additional {
         String Site = "site";
         String Recorder = "recorder";
         String GroupActivityId = "groupActivityId";
+        String FromGroupId = "fromGroupId";
+        String FromGroupName = "fromGroupName";
+        String Awardable = "awardable";
     }
 
     /**
@@ -505,6 +508,7 @@ public class Archive extends Additional {
     private String category;
 
     // 是否获奖档案
+    @Column(Field.Awardable)
     private int awardable;
 
     // 排序
@@ -523,8 +527,11 @@ public class Archive extends Additional {
     @Column(Field.ToUserId)
     private ArrayList<String> shareUserIds;
 
+    @Column(Field.FromGroupId)
     private String fromGroupId;
+    @Column(Field.FromGroupName)
     private String fromGroupName;
+    @Ignore
     private ArrayList<Suggest> suggest;
 
     public boolean isPublic() {

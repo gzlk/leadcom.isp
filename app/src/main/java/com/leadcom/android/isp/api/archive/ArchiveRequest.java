@@ -537,4 +537,20 @@ public class ArchiveRequest extends Request<Archive> {
         String url = format("/group/groActivityNotice%s?groupId=%s&pageNumber=%d", LIST, groupId, pageNumber);
         executeHttpRequest(getRequest(ListArchive.class, url, "", HttpMethods.Get));
     }
+
+    /**
+     * 下发活动
+     */
+    public void transferActivity(String groupId, String fromGroupId, String activityId, ArrayList<SubMember> members) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("groupId", groupId)
+                    .put("fromGroupId", fromGroupId)
+                    .put("groActivityId", activityId)
+                    .put("groSquMemberList", new JSONArray(SubMember.toJson(members, new String[]{"userName", "type"})));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        executeHttpRequest(getRequest(BoolArchive.class, "/group/groActivityNotice/add", object.toString(), HttpMethods.Post));
+    }
 }

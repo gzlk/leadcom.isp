@@ -12,6 +12,7 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
+import com.leadcom.android.isp.fragment.organization.ActivitiesFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -55,6 +56,12 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
 
         boolean isAppForeground = SysInfoUtil.isAppOnForeground(context, BuildConfig.APPLICATION_ID);
         switch (extra.getMessageCode()) {
+            case PushMessage.MsgCode.GROUP_ACTIVITY_DELIVER:
+            case PushMessage.MsgCode.GROUP_ACTIVITY_PUBLISH:
+            case PushMessage.MsgCode.GROUP_ACTIVITY_REPLY:
+                // 活动相关的通知
+                ActivitiesFragment.open(context, extra.getGroupId(), "");
+                break;
             case PushMessage.MsgCode.GROUP_ATTENTION:
             case PushMessage.MsgCode.GROUP_ATTENTION_CANCEL:
                 //GroupConcernedFragment.open(context, extra.getGroupId(), "", ConcernRequest.CONCERN_FROM);
