@@ -59,21 +59,22 @@ public class SquadsFragment extends GroupBaseFragment {
         return sf;
     }
 
-    public static Bundle getBundle(String groupId, boolean selectable, ArrayList<SubMember> selected) {
+    public static Bundle getBundle(String groupId, String groupName, boolean selectable, ArrayList<SubMember> selected) {
         Bundle bundle = new Bundle();
         // 传过来的组织id
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putSerializable(PARAM_JSON, selected);
         bundle.putBoolean(PARAM_SELECTABLE, selectable);
+        bundle.putString(PARAM_NAME, groupName);
         return bundle;
     }
 
-    public static void open(BaseFragment fragment, String groupId) {
-        open(fragment, groupId, false, null);
+    public static void open(BaseFragment fragment, String groupId, String groupName) {
+        open(fragment, groupId, groupName, false, null);
     }
 
-    public static void open(BaseFragment fragment, String groupId, boolean selectable, ArrayList<SubMember> selected) {
-        Bundle bundle = getBundle(groupId, selectable, selected);
+    public static void open(BaseFragment fragment, String groupId, String groupName, boolean selectable, ArrayList<SubMember> selected) {
+        Bundle bundle = getBundle(groupId, groupName, selectable, selected);
         fragment.openActivity(SquadsFragment.class.getName(), bundle, REQUEST_CREATE, true, false);
     }
 
@@ -92,6 +93,7 @@ public class SquadsFragment extends GroupBaseFragment {
     private ArrayList<Squad> squads = new ArrayList<>();
     private ArrayList<SubMember> selected;
     private boolean selectable, allSelected = false;
+    private String mGroupName;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -101,6 +103,7 @@ public class SquadsFragment extends GroupBaseFragment {
             selected = new ArrayList<>();
         }
         selectable = bundle.getBoolean(PARAM_SELECTABLE, false);
+        mGroupName = bundle.getString(PARAM_NAME, "");
     }
 
     @Override
@@ -108,6 +111,7 @@ public class SquadsFragment extends GroupBaseFragment {
         super.saveParamsToBundle(bundle);
         bundle.putSerializable(PARAM_JSON, selected);
         bundle.putBoolean(PARAM_SELECTABLE, selectable);
+        bundle.putString(PARAM_NAME, mGroupName);
     }
 
     @Override
@@ -119,7 +123,7 @@ public class SquadsFragment extends GroupBaseFragment {
         enableSwipe(false);
         isLoadingComplete(true);
         if (!selectable) {
-            setCustomTitle(R.string.ui_group_squad_fragment_title);
+            setCustomTitle(format("%s(%s)", StringHelper.getString(R.string.ui_group_squad_fragment_title), mGroupName));
             if (hasOperation(mQueryId, GRPOperation.SQUAD_ADD)) {
                 setRightText(R.string.ui_base_text_add);
                 setRightTitleClickListener(new OnTitleButtonClickListener() {

@@ -50,7 +50,7 @@ public class GroupConstructFragment extends GroupBaseFragment {
         super.onActivityCreated(savedInstanceState);
         enableSwipe(false);
         isLoadingComplete(true);
-        setCustomTitle(R.string.ui_group_constructor_fragment_title);
+        setCustomTitle(format("%s(%s)", StringHelper.getString(R.string.ui_group_constructor_fragment_title), mGroupName));
     }
 
     @Override
@@ -99,7 +99,7 @@ public class GroupConstructFragment extends GroupBaseFragment {
                     break;
                 case 2:
                     // 下属小组
-                    SquadsFragment.open(GroupConstructFragment.this, mQueryId);
+                    SquadsFragment.open(GroupConstructFragment.this, mQueryId, mGroupName);
                     break;
             }
         }

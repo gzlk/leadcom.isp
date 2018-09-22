@@ -29,33 +29,39 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
  */
 public class MemberDutyFragment extends GroupBaseFragment {
 
+    private static final String PARAM_PERMISSION = "mdf_need_permission";
+
     public static MemberDutyFragment newInstance(Bundle bundle) {
         MemberDutyFragment gmdmf = new MemberDutyFragment();
         gmdmf.setArguments(bundle);
         return gmdmf;
     }
 
-    public static void open(BaseFragment fragment, String groupId, String groupName) {
+    public static void open(BaseFragment fragment, String groupId, String groupName, boolean needPermission) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putString(PARAM_NAME, groupName);
+        bundle.putBoolean(PARAM_PERMISSION, needPermission);
         fragment.openActivity(MemberDutyFragment.class.getName(), bundle, true, false);
     }
 
     private ItemAdapter mAdapter;
     private String[] items;
     private String mGroupName;
+    private boolean isNeedPermission = true;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         mGroupName = bundle.getString(PARAM_NAME, "");
+        isNeedPermission = bundle.getBoolean(PARAM_PERMISSION, true);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_NAME, mGroupName);
+        bundle.putBoolean(PARAM_PERMISSION, isNeedPermission);
     }
 
     @Override
@@ -63,7 +69,7 @@ public class MemberDutyFragment extends GroupBaseFragment {
         super.onActivityCreated(savedInstanceState);
         enableSwipe(false);
         isLoadingComplete(true);
-        setCustomTitle(R.string.ui_group_member_duty_main_fragment_title);
+        setCustomTitle(format("%s(%s)", StringHelper.getString(R.string.ui_group_member_duty_main_fragment_title), mGroupName));
     }
 
     @Override
@@ -107,7 +113,7 @@ public class MemberDutyFragment extends GroupBaseFragment {
             switch (index) {
                 case 0:
                     // 本组成员履职统计
-                    if (hasOperation(mQueryId, GRPOperation.MEMBER_DUTY)) {
+                    if (!isNeedPermission || hasOperation(mQueryId, GRPOperation.MEMBER_DUTY)) {
                         ArchiveSearchFragment.open(MemberDutyFragment.this, ArchiveSearchFragment.SEARCH_DUTY, mQueryId, "", mGroupName);
                     } else {
                         ToastHelper.make().showMsg(R.string.ui_group_details_no_permission_to_member_duty);
@@ -115,7 +121,7 @@ public class MemberDutyFragment extends GroupBaseFragment {
                     break;
                 case 1:
                     // 本组支部履职统计
-                    if (hasOperation(mQueryId, GRPOperation.SQUAD_DUTY)) {
+                    if (!isNeedPermission || hasOperation(mQueryId, GRPOperation.SQUAD_DUTY)) {
                         ArchiveSearchFragment.open(MemberDutyFragment.this, ArchiveSearchFragment.SEARCH_DUTY_SQUAD, mQueryId, "", mGroupName);
                     } else {
                         ToastHelper.make().showMsg(R.string.ui_group_details_no_permission_to_squad_duty);

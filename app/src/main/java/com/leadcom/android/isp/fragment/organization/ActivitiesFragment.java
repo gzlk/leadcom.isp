@@ -14,6 +14,7 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.organization.ActivityItemViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
@@ -58,12 +59,29 @@ public class ActivitiesFragment extends GroupBaseFragment {
     }
 
     private ActivityAdapter mAdapter;
+    private String mGroupName;
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        mGroupName = bundle.getString(PARAM_NAME, "");
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putString(PARAM_NAME, mGroupName);
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isLoadingComplete(true);
-        setCustomTitle(R.string.ui_group_activity_fragment_title);
+        String title = StringHelper.getString(R.string.ui_group_activity_fragment_title);
+        if (!isEmpty(mGroupName)) {
+            title = format("%s(%s)", title, mGroupName);
+        }
+        setCustomTitle(title);
         if (hasOperation(mQueryId, GRPOperation.ACTIVITY_PUBLISH)) {
             setRightText(R.string.ui_base_text_launch);
             setRightTitleClickListener(new OnTitleButtonClickListener() {

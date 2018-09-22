@@ -57,6 +57,7 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     private View leftView;
     private ArrayList<String> selectedGroups;
     private ArrayList<SubMember> selectedMembers;
+    private String mGroupName;
 
     @Override
     public int getLayout() {
@@ -74,12 +75,15 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
         if (null == selectedMembers) {
             selectedMembers = new ArrayList<>();
         }
+        mGroupName = bundle.getString(GroupBaseFragment.PARAM_NAME, "");
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putStringArrayList(PARAM_JSON, selectedGroups);
+        bundle.putSerializable(PARAM_MEMBERS, selectedMembers);
+        bundle.putString(GroupBaseFragment.PARAM_NAME, mGroupName);
     }
 
     @Override
@@ -112,7 +116,7 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
             GroupsFragment groups = GroupsFragment.newInstance(bundle);
             mFragments.add(groups);
             // 本组织支部以及成员
-            bundle = SquadsFragment.getBundle(mQueryId, true, selectedMembers);
+            bundle = SquadsFragment.getBundle(mQueryId, mGroupName, true, selectedMembers);
             SquadsFragment squads = SquadsFragment.newInstance(bundle);
             mFragments.add(squads);
         }

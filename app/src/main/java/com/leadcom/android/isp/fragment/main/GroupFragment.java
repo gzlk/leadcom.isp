@@ -1,7 +1,6 @@
 package com.leadcom.android.isp.fragment.main;
 
 import android.animation.Animator;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,7 +17,6 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ClassifyRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
@@ -78,6 +76,7 @@ public class GroupFragment extends GroupBaseFragment {
 
     private static final String PARAM_SINGLE = "gf_single";
     private static final String PARAM_SELECTED = "gf_selected";
+    private static final String PARAM_PERMISSION = "gf_need_permission";
     private static boolean isFirst = true;
 
     public static GroupFragment newInstance(Bundle bundle) {
@@ -86,26 +85,29 @@ public class GroupFragment extends GroupBaseFragment {
         return gf;
     }
 
-    private static Bundle getBundle(String groupId) {
+    private static Bundle getBundle(String groupId, boolean needPermission) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putBoolean(PARAM_SINGLE, true);
+        bundle.putBoolean(PARAM_PERMISSION, needPermission);
         return bundle;
     }
 
-    public static void open(BaseFragment fragment, String groupId) {
-        fragment.openActivity(GroupFragment.class.getName(), getBundle(groupId), false, false);
+    public static void open(BaseFragment fragment, String groupId, boolean needPermission) {
+        fragment.openActivity(GroupFragment.class.getName(), getBundle(groupId, needPermission), false, false);
     }
 
-    public static void open(Context context, String groupId) {
-        BaseActivity.openActivity(context, GroupFragment.class.getName(), getBundle(groupId), false, false);
-    }
+//    public static void open(Context context, String groupId) {
+//        BaseActivity.openActivity(context, GroupFragment.class.getName(), getBundle(groupId, true), false, false);
+//    }
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         isSingle = bundle.getBoolean(PARAM_SINGLE, false);
         selectedIndex = bundle.getInt(PARAM_SELECTED, -1);
+        // 默认是需要权限才可以查看组织相应的内容的
+        isNeedPermission = bundle.getBoolean(PARAM_PERMISSION, true);
     }
 
     @Override
@@ -113,6 +115,7 @@ public class GroupFragment extends GroupBaseFragment {
         super.saveParamsToBundle(bundle);
         bundle.putBoolean(PARAM_SINGLE, isSingle);
         bundle.putInt(PARAM_SELECTED, selectedIndex);
+        bundle.putBoolean(PARAM_PERMISSION, isNeedPermission);
     }
 
     @ViewId(R.id.ui_main_tool_bar_container)
@@ -140,6 +143,7 @@ public class GroupFragment extends GroupBaseFragment {
     private boolean isSingle = false;
     private int selectedIndex = -1;
     private String currentGroup = "";
+    private boolean isNeedPermission = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -544,23 +548,23 @@ public class GroupFragment extends GroupBaseFragment {
         //resetQuantity(group.getCalculate());
         // 是否可以查看履职统计数据
         SimpleClickableItem item = new SimpleClickableItem(items[2]);
-        if (isMember(group.getId())) {
+        if (!isNeedPermission || isMember(group.getId())) {
             // 履职统计在组织架构后面
             int in = dAdapter.indexOf(new SimpleClickableItem(items[1]));
             if (dAdapter.indexOf(item) < 0) {
                 dAdapter.add(item, in + 1);
             }
             //dAdapter.update(item);
-            if (isSingle) {
-                dAdapter.remove(item);
-            }
+            //if (isSingle) {
+            //    dAdapter.remove(item);
+            //}
         } else {
             dAdapter.remove(item);
         }
         // 是否有查看成员信息统计权限
         item = new SimpleClickableItem(items[5]);
         //boolean hasNatureCount = false;
-        if (hasOperation(group.getId(), GRPOperation.MEMBER_NATURE_COUNT)) {
+        if (!isNeedPermission || hasOperation(group.getId(), GRPOperation.MEMBER_NATURE_COUNT)) {
             //hasNatureCount = true;
             // 成员信息统计在组织档案后面
             int in = dAdapter.indexOf(new SimpleClickableItem(items[4]));
@@ -569,15 +573,15 @@ public class GroupFragment extends GroupBaseFragment {
             } else {
                 dAdapter.update(item);
             }
-            if (isSingle) {
-                dAdapter.remove(item);
-            }
+            //if (isSingle) {
+            //    dAdapter.remove(item);
+            //}
         } else {
             dAdapter.remove(item);
         }
         // 是否有授权管理权限
 //        item = new SimpleClickableItem(items[6]);
-//        if (hasOperation(group.getId(), GRPOperation.GROUP_PERMISSION)) {
+//        if (!isNeedPermission || hasOperation(group.getId(), GRPOperation.GROUP_PERMISSION)) {
 //            // 授权管理在组织档案后面的后面
 //            int in = dAdapter.indexOf(new SimpleClickableItem(items[4]));
 //            if (dAdapter.indexOf(item) < 0) {
@@ -792,14 +796,14 @@ public class GroupFragment extends GroupBaseFragment {
         SimpleClickableItem item = (SimpleClickableItem) dAdapter.get(index);
         Organization group = (Organization) dAdapter.get(0);
         boolean hasRole = null != Cache.cache().getGroupRole(group.getId());
-        if (item.getIndex() != 3 && (!hasRole || isSingle)) {
+        if (item.getIndex() != 5 && isNeedPermission && (!hasRole || isSingle)) {
             // 如果点击的不是组织档案选项，且当前用户不在组织里或者是单独打开的组织属性页，则不需要打开相应的详情页
             return;
         }
         switch (item.getIndex()) {
             case 1:
                 // 组织成员
-                ContactFragment.open(this, group.getId());
+                ContactFragment.open(this, group.getId(), group.getName());
                 break;
             case 2:
                 // 组织架构
@@ -807,8 +811,8 @@ public class GroupFragment extends GroupBaseFragment {
                 break;
             case 3:
                 // 成员履职统计
-                if (hasOperation(group.getId(), GRPOperation.MEMBER_DUTY) || hasOperation(group.getId(), GRPOperation.SQUAD_DUTY)) {
-                    MemberDutyFragment.open(this, group.getId(), group.getName());
+                if (!isNeedPermission || hasOperation(group.getId(), GRPOperation.MEMBER_DUTY) || hasOperation(group.getId(), GRPOperation.SQUAD_DUTY)) {
+                    MemberDutyFragment.open(this, group.getId(), group.getName(), isNeedPermission);
                 } else {
                     ToastHelper.make().showMsg(R.string.ui_group_details_no_permission_to_duty);
                 }

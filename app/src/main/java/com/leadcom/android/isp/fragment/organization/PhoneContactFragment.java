@@ -92,12 +92,13 @@ public class PhoneContactFragment extends GroupBaseFragment {
         return pcf;
     }
 
-    public static void open(BaseFragment fragment, String groupId, String squadId, ArrayList<Member> members) {
+    public static void open(BaseFragment fragment, String groupId, String squadId, String name, ArrayList<Member> members) {
         Bundle bundle = new Bundle();
         // 组织的id
         bundle.putString(PARAM_QUERY_ID, groupId);
         // 小组的id
         bundle.putString(PARAM_SQUAD_ID, squadId);
+        bundle.putString(PARAM_NAME, name);
         // 已有的成员列表
         bundle.putSerializable(PARAM_MEMBERS, members);
         fragment.openActivity(PhoneContactFragment.class.getName(), bundle, true, false);
@@ -119,11 +120,13 @@ public class PhoneContactFragment extends GroupBaseFragment {
     private ContactAdapter mAdapter, sAdapter;
     private static String searchingText = "";
     private ContactRefreshedReceiver refreshedReceiver;
+    private String mName;
 
     @SuppressWarnings("unchecked")
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
+        mName = bundle.getString(PARAM_NAME, "");
         members = (ArrayList<Member>) bundle.getSerializable(PARAM_MEMBERS);
         if (null == members) {
             members = new ArrayList<>();
@@ -133,6 +136,7 @@ public class PhoneContactFragment extends GroupBaseFragment {
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
+        bundle.putString(PARAM_NAME, mName);
         bundle.putSerializable(PARAM_MEMBERS, members);
     }
 
@@ -172,7 +176,7 @@ public class PhoneContactFragment extends GroupBaseFragment {
         requestReadContactsPermission();
         super.onActivityCreated(savedInstanceState);
         setLoadingText(R.string.ui_phone_contact_waiting_read_contacts);
-        setCustomTitle(R.string.ui_squad_contact_menu_2);
+        setCustomTitle(format("%(%s)", StringHelper.getString(R.string.ui_squad_contact_menu_2), mName));
         if (null == refreshedReceiver) {
             refreshedReceiver = new ContactRefreshedReceiver();
             IntentFilter intent = new IntentFilter();

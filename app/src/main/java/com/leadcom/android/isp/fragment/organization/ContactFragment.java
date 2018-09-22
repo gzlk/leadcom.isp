@@ -87,7 +87,7 @@ public class ContactFragment extends GroupBaseFragment {
         return cf;
     }
 
-    public static Bundle getBundle(int type, String groupId, String squadId) {
+    public static Bundle getBundle(int type, String groupId, String squadId, String name) {
         Bundle bundle = new Bundle();
         // 类型
         bundle.putInt(PARAM_TYPE, type);
@@ -95,14 +95,16 @@ public class ContactFragment extends GroupBaseFragment {
         bundle.putString(PARAM_QUERY_ID, groupId);
         // 小组的id
         bundle.putString(PARAM_SQUAD_ID, squadId);
+        // 组织或小组的名称
+        bundle.putString(PARAM_NAME, name);
         return bundle;
     }
 
     /**
      * 打开具有标题栏的组织成员列表页面
      */
-    public static void open(BaseFragment fragment, String groupId) {
-        Bundle bundle = getBundle(TYPE_ORG, groupId, "");
+    public static void open(BaseFragment fragment, String groupId, String groupName) {
+        Bundle bundle = getBundle(TYPE_ORG, groupId, "", groupName);
         bundle.putBoolean(PARAM_OPENABLE, true);
         fragment.openActivity(ContactFragment.class.getName(), bundle, true, false);
     }
@@ -111,7 +113,7 @@ public class ContactFragment extends GroupBaseFragment {
      * 打开具有标题栏的小组成员列表页面
      */
     public static void open(BaseFragment fragment, Squad squad) {
-        Bundle bundle = getBundle(TYPE_SQUAD, squad.getGroupId(), squad.getId());
+        Bundle bundle = getBundle(TYPE_SQUAD, squad.getGroupId(), squad.getId(), squad.getName());
         bundle.putBoolean(PARAM_OPENABLE, true);
         bundle.putSerializable(PARAM_SQUAD_OBJECT, squad);
         fragment.openActivity(ContactFragment.class.getName(), bundle, true, false);
@@ -121,7 +123,7 @@ public class ContactFragment extends GroupBaseFragment {
      * 打开我的联系人列表
      */
     public static void open(BaseFragment fragment) {
-        Bundle bundle = getBundle(TYPE_MINE, "", "");
+        Bundle bundle = getBundle(TYPE_MINE, "", "", "");
         fragment.openActivity(ContactFragment.class.getName(), bundle, true, false);
     }
 
@@ -133,6 +135,7 @@ public class ContactFragment extends GroupBaseFragment {
         dialIndex = bundle.getInt(PARAM_DIAL_INDEX, -1);
         isOpenable = bundle.getBoolean(PARAM_OPENABLE, false);
         mSquad = (Squad) bundle.getSerializable(PARAM_SQUAD_OBJECT);
+        mName = bundle.getString(PARAM_NAME, "");
     }
 
     @Override
@@ -143,6 +146,7 @@ public class ContactFragment extends GroupBaseFragment {
         bundle.putInt(PARAM_DIAL_INDEX, dialIndex);
         bundle.putBoolean(PARAM_OPENABLE, isOpenable);
         bundle.putSerializable(PARAM_SQUAD_OBJECT, mSquad);
+        bundle.putString(PARAM_NAME, mName);
     }
 
     // view
@@ -161,6 +165,7 @@ public class ContactFragment extends GroupBaseFragment {
      * 当前登录者是否是组织的创建者
      */
     private boolean isCreator = false;
+    private String mName;
     private int dialIndex = -1;
 
     @Override
@@ -168,28 +173,32 @@ public class ContactFragment extends GroupBaseFragment {
         super.onActivityCreated(savedInstanceState);
         if (isOpenable) {
             // 有权限添加成员时，显示手机通讯录入口
-            if (showType == TYPE_ORG && hasOperation(mQueryId, GRPOperation.MEMBER_ADD)) {
-                setRightIcon(R.string.ui_icon_add);
-                setRightTitleClickListener(new OnTitleButtonClickListener() {
-                    @Override
-                    public void onClick() {
-                        PhoneContactFragment.open(ContactFragment.this, mQueryId, "", members);
-                    }
-                });
-                //phoneContactView.setVisibility(View.VISIBLE);
-                setCustomTitle(R.string.ui_group_member_fragment_title);
-            } else if (showType == TYPE_SQUAD && hasOperation(mQueryId, GRPOperation.SQUAD_MEMBER_INVITE)) {
-                setRightIcon(R.string.ui_icon_add);
-                setRightTitleClickListener(new OnTitleButtonClickListener() {
-                    @Override
-                    public void onClick() {
-                        // + 号点击之后直接打开组织通讯录(2017/08/02 10:00)
-                        // 打开组织通讯录并尝试将里面的用户邀请到小组
-                        String json = SubMember.toJson(getSubMembers());
-                        GroupContactPickFragment.open(ContactFragment.this, mOrganizationId, true, false, json);
-                    }
-                });
-                setCustomTitle(R.string.ui_group_squad_member_fragment_title);
+            if (showType == TYPE_ORG) {
+                if (hasOperation(mQueryId, GRPOperation.MEMBER_ADD)) {
+                    setRightIcon(R.string.ui_icon_add);
+                    setRightTitleClickListener(new OnTitleButtonClickListener() {
+                        @Override
+                        public void onClick() {
+                            PhoneContactFragment.open(ContactFragment.this, mQueryId, "", mName, members);
+                        }
+                    });
+                    //phoneContactView.setVisibility(View.VISIBLE);
+                }
+                setCustomTitle(format("%s(%s)", StringHelper.getString(R.string.ui_group_member_fragment_title), mName));
+            } else if (showType == TYPE_SQUAD) {
+                if (hasOperation(mQueryId, GRPOperation.SQUAD_MEMBER_INVITE)) {
+                    setRightIcon(R.string.ui_icon_add);
+                    setRightTitleClickListener(new OnTitleButtonClickListener() {
+                        @Override
+                        public void onClick() {
+                            // + 号点击之后直接打开组织通讯录(2017/08/02 10:00)
+                            // 打开组织通讯录并尝试将里面的用户邀请到小组
+                            String json = SubMember.toJson(getSubMembers());
+                            GroupContactPickFragment.open(ContactFragment.this, mOrganizationId, true, false, json);
+                        }
+                    });
+                }
+                setCustomTitle(format("%s(%s)", StringHelper.getString(R.string.ui_group_squad_member_fragment_title), mName));
             }
         }
         // 小组成员、个人通讯录可以搜索成员名字

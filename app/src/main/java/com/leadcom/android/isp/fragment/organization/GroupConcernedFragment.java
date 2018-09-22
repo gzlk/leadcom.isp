@@ -365,7 +365,7 @@ public class GroupConcernedFragment extends GroupBaseFragment {
                 case R.id.ui_holder_view_group_interest_root:
                 case R.id.ui_holder_view_group_interest_cover:
                     //UserIntroductionFragment.open(GroupConcernedFragment.this, mAdapter.get(index));
-                    GroupFragment.open(GroupConcernedFragment.this, mAdapter.get(index).getId());
+                    GroupFragment.open(GroupConcernedFragment.this, mAdapter.get(index).getId(), true);
                     break;
                 case R.id.ui_holder_view_group_interest_button:
                     checkConcern(index);

@@ -17,6 +17,7 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.RelationRequest;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.fragment.main.GroupFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
@@ -27,6 +28,7 @@ import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.RelateGroup;
+import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.organization.SubMember;
 
 import java.util.ArrayList;
@@ -87,7 +89,12 @@ public class GroupsFragment extends GroupBaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (!mSelectable) {
-            setCustomTitle(mRelateType == RelateGroup.RelationType.SUPERIOR ? R.string.ui_group_constructor_groups_fragment_title_supper : (mRelateType == RelateGroup.RelationType.ADD ? R.string.ui_group_constructor_groups_fragment_title_supper_add : R.string.ui_group_constructor_groups_fragment_title_sub));
+            int title = mRelateType == RelateGroup.RelationType.SUPERIOR ? R.string.ui_group_constructor_groups_fragment_title_supper : (mRelateType == RelateGroup.RelationType.ADD ? R.string.ui_group_constructor_groups_fragment_title_supper_add : R.string.ui_group_constructor_groups_fragment_title_sub);
+            if (mRelateType == RelateGroup.RelationType.ADD) {
+                setCustomTitle(title);
+            } else {
+                setCustomTitle(format("%s(%s)", StringHelper.getString(title), mGroupName));
+            }
         }
         selectAll.setVisibility(mSelectable ? View.VISIBLE : View.GONE);
         if (mSelectable) {
@@ -344,6 +351,9 @@ public class GroupsFragment extends GroupBaseFragment {
                         mAdapter.update(group);
                         mAllSelected = isAllSelected();
                         selectAllIcon.setTextColor(getColor(mAllSelected ? R.color.colorPrimary : R.color.textColorHintLight));
+                    } else if (mRelateType == RelateGroup.RelationType.SUBORDINATE) {
+                        // 查看下级组织，且不需要任何权限即可全部查看
+                        GroupFragment.open(GroupsFragment.this, group.getGroupId(), !Role.hasOperation(mQueryId, GRPOperation.GROUP_PROPERTY_SUBORDINATE));
                     }
                     break;
             }
