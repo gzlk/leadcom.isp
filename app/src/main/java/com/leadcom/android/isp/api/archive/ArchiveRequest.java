@@ -429,6 +429,7 @@ public class ArchiveRequest extends Request<Archive> {
                 // 模板档案需要增加以下字段
                 object.put("topic", archive.getTopic())
                         .put("resolution", archive.getResolution())
+                        .put("squadId", archive.getSquadId())
                         .put("branch", archive.getBranch());
             }
             if (!isIndividual) {
@@ -552,5 +553,21 @@ public class ArchiveRequest extends Request<Archive> {
             e.printStackTrace();
         }
         executeHttpRequest(getRequest(BoolArchive.class, "/group/groActivityNotice/add", object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 列取组织成员报名情况
+     */
+    public void listActivityGroupMember(String groupId, String activityId) {
+        String param = format("/group/groActivityMember/list?groupId=%s&groActivityId=%s", groupId, activityId);
+        executeHttpRequest(getRequest(SingleArchive.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 拉取组织活动成员列表
+     */
+    public void listActivitySubordinateMember(String groupId, String activityId) {
+        String param = format("/group/groActivityReply/list?groupId=%s&groActivityId=%s", groupId, activityId);
+        executeHttpRequest(getRequest(SingleArchive.class, param, "", HttpMethods.Get));
     }
 }

@@ -11,6 +11,8 @@ import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
+import com.leadcom.android.isp.model.organization.ActSquad;
+import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.model.user.User;
@@ -149,11 +151,14 @@ public class Archive extends Additional {
         String Topic = "topic";
         String Resolution = "resolution";
         String Branch = "branch";
+        String SquadId = "squadId";
         String ShowImage = "showImage";
         String Watermark = "watermark";
         String Site = "site";
         String Recorder = "recorder";
         String GroupActivityId = "groupActivityId";
+        String ToGroupId = "toGroupId";
+        String CountResult = "countResult";
         String FromGroupId = "fromGroupId";
         String FromGroupName = "fromGroupName";
         String Awardable = "awardable";
@@ -459,10 +464,18 @@ public class Archive extends Additional {
     private String recorder;
     @Column(Field.GroupActivityId)
     private String groActivityId;
+    @Column(Field.ToGroupId)
+    private String toGroupId;
+    @Column(Field.CountResult)
+    private String countResult;
     @Ignore
     private ArrayList<String> groupIdList;
     @Ignore
     private ArrayList<SubMember> groSquMemberList;
+    @Ignore
+    private ArrayList<Member> groActivityReplyList;
+    @Ignore
+    private ArrayList<ActSquad> groSquadList;
 
     // 创建者相关信息 ********************************************************************************
 
@@ -498,6 +511,8 @@ public class Archive extends Additional {
     // 所属分支
     @Column(Field.Branch)
     private String branch;
+    @Column(Field.SquadId)
+    private String squadId;
     // 档案属性
     @Column(Field.Property)
     private String property;
@@ -660,6 +675,14 @@ public class Archive extends Additional {
 
     public void setBranch(String branch) {
         this.branch = branch;
+    }
+
+    public String getSquadId() {
+        return squadId;
+    }
+
+    public void setSquadId(String squadId) {
+        this.squadId = squadId;
     }
 
     public String getTitle() {
@@ -924,6 +947,14 @@ public class Archive extends Additional {
         this.groActivityId = groActivityId;
     }
 
+    public String getToGroupId() {
+        return toGroupId;
+    }
+
+    public void setToGroupId(String toGroupId) {
+        this.toGroupId = toGroupId;
+    }
+
     public ArrayList<String> getGroupIdList() {
         if (null == groupIdList) {
             groupIdList = new ArrayList<>();
@@ -944,6 +975,36 @@ public class Archive extends Additional {
 
     public void setGroSquMemberList(ArrayList<SubMember> groSquMemberList) {
         this.groSquMemberList = groSquMemberList;
+    }
+
+    public String getCountResult() {
+        return countResult;
+    }
+
+    public void setCountResult(String countResult) {
+        this.countResult = countResult;
+    }
+
+    public ArrayList<Member> getGroActivityReplyList() {
+        if (null == groActivityReplyList) {
+            groActivityReplyList = new ArrayList<>();
+        }
+        return groActivityReplyList;
+    }
+
+    public void setGroActivityReplyList(ArrayList<Member> groActivityReplyList) {
+        this.groActivityReplyList = groActivityReplyList;
+    }
+
+    public ArrayList<ActSquad> getGroSquadList() {
+        if (null == groSquadList) {
+            groSquadList = new ArrayList<>();
+        }
+        return groSquadList;
+    }
+
+    public void setGroSquadList(ArrayList<ActSquad> groSquadList) {
+        this.groSquadList = groSquadList;
     }
 
     public String getHappenDate() {

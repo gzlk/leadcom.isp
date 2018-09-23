@@ -193,7 +193,7 @@
     <string name="ui_text_archive_details_editor_setting_group_desc">档案所属的组织</string>
     <string name="ui_text_archive_details_editor_setting_group_empty">请选择档案所属的组织</string>
     <string name="ui_text_archive_details_editor_setting_branch_title">所属支部</string>
-    <string name="ui_text_archive_details_editor_setting_branch_desc">活动档案所属支部</string>
+    <string name="ui_text_archive_details_editor_setting_branch_desc">档案所属支部</string>
     <string name="ui_text_archive_details_editor_setting_property_title">档案性质</string>
     <string name="ui_text_archive_details_editor_setting_category_title">档案类型</string>
     <string name="ui_text_archive_details_editor_setting_participant_title">参与人员(点击选择或直接输入)</string>

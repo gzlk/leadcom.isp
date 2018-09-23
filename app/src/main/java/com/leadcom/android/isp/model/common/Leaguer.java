@@ -127,6 +127,10 @@ public class Leaguer extends Model {
         return createDate;
     }
 
+    public boolean isCreateDateDefault() {
+        return isEmpty(createDate) || createDate.equals(DFT_DATE);
+    }
+
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }

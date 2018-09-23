@@ -48,6 +48,7 @@ import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
+import com.leadcom.android.isp.fragment.organization.ActivityCollectionFragment;
 import com.leadcom.android.isp.helper.DownloadingHelper;
 import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -290,6 +291,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 warningSingInOrLeave(false);
                 break;
             case R.id.ui_archive_details_activity_report:
+                ActivityCollectionFragment.open(ArchiveDetailsFragment.this, mArchive);
                 break;
         }
     }

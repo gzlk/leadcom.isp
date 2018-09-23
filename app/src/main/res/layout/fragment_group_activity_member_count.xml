@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/ui_main_tool_bar_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary">
+
+        <LinearLayout
+            android:id="@+id/ui_main_tool_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ui_base_dimen_simple_item_height"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/ui_group_concern_main_top_channel_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/ui_static_dp_3"
+                    android:layout_marginEnd="@dimen/ui_static_dp_15"
+                    android:layout_marginStart="@dimen/ui_static_dp_15"
+                    android:gravity="center"
+                    android:text="@string/ui_group_activity_collection_top_text_1"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+
+                <View
+                    android:id="@+id/ui_group_concern_main_top_channel_1_line"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/ui_static_dp_2"
+                    android:layout_alignEnd="@+id/ui_group_concern_main_top_channel_1"
+                    android:layout_alignStart="@+id/ui_group_concern_main_top_channel_1"
+                    android:layout_below="@+id/ui_group_concern_main_top_channel_1"
+                    android:background="@color/colorPrimary" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/ui_group_concern_main_top_channel_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/ui_static_dp_3"
+                    android:layout_marginEnd="@dimen/ui_static_dp_15"
+                    android:layout_marginStart="@dimen/ui_static_dp_15"
+                    android:gravity="center"
+                    android:text="@string/ui_group_activity_collection_top_text_2"
+                    android:textColor="@color/textColorHint"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+
+                <View
+                    android:id="@+id/ui_group_concern_main_top_channel_2_line"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/ui_static_dp_2"
+                    android:layout_alignEnd="@+id/ui_group_concern_main_top_channel_2"
+                    android:layout_alignStart="@+id/ui_group_concern_main_top_channel_2"
+                    android:layout_below="@+id/ui_group_concern_main_top_channel_2"
+                    android:background="@color/colorPrimary"
+                    android:visibility="visible" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ui_base_border_size_normal"
+            android:layout_below="@+id/ui_main_tool_bar"
+            android:background="@color/windowBackground" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <include layout="@layout/tool_view_view_pager_embedded" />
+    </LinearLayout>
+
+</LinearLayout>

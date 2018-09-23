@@ -647,7 +647,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 if (!isEmpty(string)) {
                     Squad squad = Squad.fromJson(string);
                     if (null != squad && !isEmpty(squad.getId())) {
-                        mArchive.setBranch(squad.getId());
+                        mArchive.setBranch(squad.getName());
+                        mArchive.setSquadId(squad.getId());
                         branchText.setText(squad.getName());
                     }
                 }
@@ -1339,13 +1340,13 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         // 个人档案需要选择标签
         settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label).setVisibility(isUserArchive ? View.VISIBLE : View.GONE);
         // 模板档案不需要组织、个人选择
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type).setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
+        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type).setVisibility(mArchive.isTemplateArchive() || mArchive.isAttachmentArchive() ? View.GONE : View.VISIBLE);
         // 模板档案不需要有封面
         //settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_cover).setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
         // 模板档案不需要来源
         settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_source).setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
         // 模板档案需要显示支部选择器
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker).setVisibility(mArchive.isTemplateArchive() ? View.VISIBLE : View.GONE);
+        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker).setVisibility(isGroupArchive ? View.VISIBLE : View.GONE);
         // 个人档案不需要分享草稿
         if (!mArchive.isAttachmentArchive()) {
             settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft).setVisibility(isGroupArchive ? View.VISIBLE : View.GONE);

@@ -158,6 +158,14 @@
     <string name="ui_group_activity_details_transform_dialog_no_squad">组织还没有支部</string>
     <string name="ui_group_activity_details_transform_dialog_member_select_empty">请选择要下发的支部或成员</string>
     <string name="ui_group_activity_details_transform_success">活动已下发</string>
+    <string name="ui_group_activity_collection_fragment_title">活动报名统计</string>
+    <string name="ui_group_activity_collection_not_activity">参数错误：非活动内容没有报名统计</string>
+    <string name="ui_group_activity_collection_top_text_1">组织成员报名情况</string>
+    <string name="ui_group_activity_collection_top_text_2">下属组织报名情况</string>
+    <string name="ui_group_activity_collection_group_members_loading">正在加载组织成员报名信息&#8230;</string>
+    <string name="ui_group_activity_collection_subordinate_members_loading">正在加载下级组织回复&#8230;</string>
+    <string name="ui_group_activity_collection_group_members_nothing">暂时没有成员报名，请稍后再试</string>
+    <string name="ui_group_activity_collection_subordinate_members_nothing">暂时没有下级组织回复，请稍后再试</string>
 
     <string name="ui_organization_squad_add_title">名称：</string>
     <string name="ui_organization_squad_add_hint">分支名称(10个字以内)</string>

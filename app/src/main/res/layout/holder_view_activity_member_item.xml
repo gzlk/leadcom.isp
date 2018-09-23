@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/ui_holder_view_activity_member_item_top_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_static_dp_1"
+        android:background="@color/windowBackground" />
+
+    <LinearLayout
+        android:id="@+id/ui_holder_view_activity_member_item_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ui_background_clickable"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/ui_base_dimen_margin_padding"
+        android:paddingTop="@dimen/ui_base_dimen_margin_padding">
+
+        <TextView
+            android:id="@+id/ui_holder_view_activity_member_item_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+            android:layout_weight="1.8"
+            android:text="@string/app_name_default" />
+
+        <TextView
+            android:id="@+id/ui_holder_view_activity_member_item_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:gravity="center_horizontal"
+            android:text="@string/app_name_default"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/ui_holder_view_activity_member_item_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:gravity="center_horizontal"
+            android:text="@string/app_name_default" />
+
+        <TextView
+            android:id="@+id/ui_holder_view_activity_member_item_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/app_name_default"
+            android:textColor="@color/textColorHint"
+            android:textSize="@dimen/ui_base_text_size_small" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_holder_view_activity_member_item_right_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+            android:text="@string/ui_icon_right"
+            android:textColor="@color/textColorHintDark" />
+    </LinearLayout>
+
+    <include layout="@layout/tool_view_half_line_horizontal" />
+</LinearLayout>

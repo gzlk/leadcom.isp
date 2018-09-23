@@ -341,12 +341,4 @@ public class MemberRequest extends Request<Member> {
         String param = format("%s/status?groupId=%s&groActivityId=%s", url(Member.Type.ACTIVITY, FIND), groupId, activityId);
         executeHttpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
-
-    /**
-     * 拉取组织活动成员列表
-     */
-    public void listActivityMember(String groupId, String activityId) {
-        String param = format("%s?groupId=%s&groActivityId=%s", url(Member.Type.ACTIVITY, LIST), groupId, activityId);
-        executeHttpRequest(getRequest(PageMember.class, param, "", HttpMethods.Get));
-    }
 }

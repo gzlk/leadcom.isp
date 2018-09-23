@@ -203,17 +203,14 @@ public class Member extends Leaguer {
 
     @Ignore
     private Role groRole;
-    @Ignore
-    private Role actRole;
     @Column(Organization.Field.GroupRoleId)
     private String groRoleId;
-
-    @Ignore
-    private Role commRole;// 角色
 
     // 组织活动相关
     private String groActivityId;
     private String status;
+    private String groupName;
+    private int leaveNum,reportNum;
 
     public String getGroupId() {
         return groupId;
@@ -221,6 +218,14 @@ public class Member extends Leaguer {
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     public String getSquadId() {
@@ -285,7 +290,22 @@ public class Member extends Leaguer {
         this.status = status;
     }
 
-    /**
+    public int getLeaveNum() {
+        return leaveNum;
+    }
+
+    public void setLeaveNum(int leaveNum) {
+        this.leaveNum = leaveNum;
+    }
+
+    public int getReportNum() {
+        return reportNum;
+    }
+
+    public void setReportNum(int reportNum) {
+        this.reportNum = reportNum;
+    }
+/**
      * 是否参加了活动
      */
 //    public boolean isActJoined() {

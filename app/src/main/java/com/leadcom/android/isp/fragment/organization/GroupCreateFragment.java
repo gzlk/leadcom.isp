@@ -105,7 +105,7 @@ public class GroupCreateFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_organization_creator;
+        return R.layout.fragment_group_creator;
     }
 
     @Override

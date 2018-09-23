@@ -96,7 +96,7 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_activity_cover_picker;
+        return R.layout.fragment_cover_picker;
     }
 
     @Override

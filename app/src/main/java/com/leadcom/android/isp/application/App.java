@@ -6,6 +6,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
+import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
@@ -215,7 +216,7 @@ public class App extends BaseActivityManagedApplication {
             Cache.cache().restoreCached();
         }
         if (!isEmpty(Cache.cache().userId)) {
-            Bugly.setUserId(this, Cache.cache().userPhone);
+            Bugly.setUserId(this, Cache.cache().userPhone + "(" + BuildConfig.BUILD_TYPE + ")");
             Cache.cache().restoreGroups();
             // 初始化个性化数据库
             initializeLiteOrm(Cache.cache().userId);
