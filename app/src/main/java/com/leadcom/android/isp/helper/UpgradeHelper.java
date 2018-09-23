@@ -1,8 +1,11 @@
 package com.leadcom.android.isp.helper;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import com.leadcom.android.isp.BuildConfig;
@@ -11,6 +14,7 @@ import com.leadcom.android.isp.api.common.UpdateRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.Utils;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.listener.OnTaskCompleteListener;
@@ -96,10 +100,25 @@ public class UpgradeHelper {
             public boolean onConfirm() {
                 // 打开下载对话框，并开始下载（下载对话框可以隐藏）
                 //showUpgradeDownloadingDialog();
-                String app = getString(R.string.app_name_default);
-                String title = getString(R.string.ui_system_updating_title, app);
-                String description = getString(R.string.ui_system_updating_description);
-                startDownload(url, title, description);
+                if (BaseFragment.hasPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    String app = getString(R.string.app_name_default);
+                    String title = getString(R.string.ui_system_updating_title, app);
+                    String description = getString(R.string.ui_system_updating_description);
+                    startDownload(url, title, description);
+                } else {
+                    warningPermissionRequested();
+                }
+                return true;
+            }
+        }, null);
+    }
+
+    // 下载时需要申请存储访问权限
+    private void warningPermissionRequested() {
+        SimpleDialogHelper.init((AppCompatActivity) context).show(R.string.ui_system_updatable_permission_requested, R.string.ui_base_text_confirm, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                ActivityCompat.requestPermissions((AppCompatActivity) context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, BaseFragment.GRANT_STORAGE);
                 return true;
             }
         }, null);
