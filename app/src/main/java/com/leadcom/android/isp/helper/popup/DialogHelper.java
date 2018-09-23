@@ -96,6 +96,9 @@ public class DialogHelper {
 
     @SuppressWarnings("ConstantConditions")
     private void initializeDialog() {
+        if (null == activity.get() || activity.get().isFinishing()) {
+            return;
+        }
         dialog = new AlertDialog.Builder(activity.get()).create();
         // 弹出效果和滑入效果
         dialog.getWindow().setWindowAnimations(getWindowAnimations());
@@ -173,7 +176,9 @@ public class DialogHelper {
         if (null != mOnDialogInitializeListener) {
             mOnDialogInitializeListener.onBindData(root, this);
         }
-        dialog.setContentView(root);
+        if (null != dialog) {
+            dialog.setContentView(root);
+        }
     }
 
     /**
