@@ -587,18 +587,6 @@ public class MainActivity extends TitleActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        App.app().setAppStayInBackground(false);
-    }
-
-    @Override
-    protected void onStop() {
-        App.app().setAppStayInBackground(true);
-        super.onStop();
-    }
-
-    @Override
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
     }
