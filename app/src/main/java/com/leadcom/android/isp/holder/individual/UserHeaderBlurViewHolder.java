@@ -62,6 +62,8 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
     @ViewId(R.id.tool_view_individual_top_padding)
     private LinearLayout topPadding;
 
+    private int blurTimes = 0;
+
     public UserHeaderBlurViewHolder(View itemView, BaseFragment fragment, boolean isSelf) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
@@ -131,8 +133,13 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
                 //changeColor(header);
                 headerBackground.displayImage("file://" + blur, bWidth, bHeight, false, false);
             } else {
-                log("no blur image, 3s to try again.");
-                blurHeader();
+                if (blurTimes >= 3) {
+                    log("header image loading failed " + blurTimes + ", now never try again until next app opened.");
+                    clearHandler();
+                } else {
+                    log("no blur image, 3s to try again.");
+                    blurHeader();
+                }
             }
         }
     };
@@ -148,6 +155,7 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
     }
 
     private String getBlurImage(String httpUrl) {
+        blurTimes++;
         String source = Shareable.getLocalPath(httpUrl);
         if (isEmpty(source)) {
             return "";
@@ -164,11 +172,15 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 1;
             Bitmap image = BitmapFactory.decodeFile(source, options);
-            Bitmap newImg = Blur.fastblur(fragment().Activity(), image, 10);
-            storeImage(newImg, file);
-            image.recycle();
-            assert newImg != null;
-            newImg.recycle();
+            if (null != image) {
+                Bitmap newImg = Blur.fastblur(fragment().Activity(), image, 10);
+                storeImage(newImg, file);
+                image.recycle();
+                assert newImg != null;
+                newImg.recycle();
+            } else {
+                local = "";
+            }
         }
         return local;
     }
