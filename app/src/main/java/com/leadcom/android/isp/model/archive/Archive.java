@@ -162,6 +162,7 @@ public class Archive extends Additional {
         String FromGroupId = "fromGroupId";
         String FromGroupName = "fromGroupName";
         String Awardable = "awardable";
+        String Reply = "reply";
     }
 
     /**
@@ -468,6 +469,8 @@ public class Archive extends Additional {
     private String toGroupId;
     @Column(Field.CountResult)
     private String countResult;
+    @Column(Field.Reply)
+    private String reply;
     @Ignore
     private ArrayList<String> groupIdList;
     @Ignore
@@ -983,6 +986,14 @@ public class Archive extends Additional {
 
     public void setCountResult(String countResult) {
         this.countResult = countResult;
+    }
+
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
     }
 
     public ArrayList<Member> getGroActivityReplyList() {

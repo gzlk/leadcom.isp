@@ -270,6 +270,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private WebView webView;
     @ViewId(R.id.ui_archive_details_activity_control)
     private View activityControl;
+    @ViewId(R.id.ui_archive_details_activity_deliver)
+    private CorneredButton deliverButton;
     @ViewId(R.id.ui_archive_details_activity_sign_in)
     private CorneredButton signButton;
     @ViewId(R.id.ui_archive_details_activity_leave)
@@ -277,7 +279,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     @ViewId(R.id.ui_archive_details_activity_report)
     private CorneredButton reportButton;
 
-    @Click({R.id.ui_archive_details_activity_sign_in,
+    @Click({R.id.ui_archive_details_activity_deliver,
+            R.id.ui_archive_details_activity_sign_in,
             R.id.ui_archive_details_activity_leave,
             R.id.ui_archive_details_activity_report})
     private void viewClick(View view) {
@@ -292,6 +295,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 break;
             case R.id.ui_archive_details_activity_report:
                 ActivityCollectionFragment.open(ArchiveDetailsFragment.this, mArchive);
+                break;
+            case R.id.ui_archive_details_activity_deliver:
+                openActivityDeliverDialog();
                 break;
         }
     }
@@ -424,16 +430,20 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             finish();
         } else {
             if (mArchive.isActivity()) {
-                enableShareWX = false;
-                enableShareTimeLine = false;
-                enableShareQQ = false;
-                enableShareQZone = false;
-                enableTransform = Role.isManager(mArchive.getGroupId());
-                openShareDialog();
+                openActivityDeliverDialog();
             } else {
                 loadingArchivePermission();
             }
         }
+    }
+
+    private void openActivityDeliverDialog() {
+        enableShareWX = false;
+        enableShareTimeLine = false;
+        enableShareQQ = false;
+        enableShareQZone = false;
+        enableTransform = Role.isManager(mArchive.getGroupId());
+        openShareDialog();
     }
 
     private void loadingArchivePermission() {
@@ -681,17 +691,21 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 super.onResponse(member, success, message);
                 if (success) {
                     if (null == member) {
-                        // 返回的member为空则说明还没有报过名，此时生成一个就可以
-                        member = new Member();
-                        member.setStatus(String.valueOf(Member.ActivityStatus.ABSENT));
+                        // 返回的member为空则说明不能报名，此时如果当前用户是组织管理员的话，提醒其下发活动
+                        signButton.setVisibility(View.GONE);
+                        leaveButton.setVisibility(View.GONE);
+                        // 当前用户是组织管理员时，且有下发活动的权限时显示下发按钮
+                        deliverButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_DELIVER) ? View.VISIBLE : View.GONE);
+                    } else {
+                        refreshReportButtons(member);
                     }
-                    refreshReportButtons(member);
                 }
             }
         }).findActivityStatus(mArchive.getGroupId(), mArchive.getGroActivityId());
     }
 
     private void refreshReportButtons(Member member) {
+        deliverButton.setVisibility(View.GONE);
         activityStatus = Integer.valueOf(member.getStatus());
         // 未报名或请假状态下可以继续报名（请假后也可以报名）
         signButton.setEnabled(activityStatus >= Member.ActivityStatus.LEAVE);
@@ -1061,7 +1075,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     ToastHelper.make().showMsg(R.string.ui_group_activity_details_transform_success);
                 }
             }
-        }).transferActivity("", mArchive.getGroupId(), mArchive.getGroActivityId(), members);
+        }).transferActivity(mArchive.getGroupId(), mArchive.getFromGroupId(), mArchive.getGroActivityId(), members);
     }
 
     private void tryPushArchive(ArrayList<String> groupIds) {

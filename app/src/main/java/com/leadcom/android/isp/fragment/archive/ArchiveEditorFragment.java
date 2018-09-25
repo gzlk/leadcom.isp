@@ -2153,9 +2153,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             participantHolder = new SimpleInputableViewHolder(participantView, this);
             participantHolder.showContent(format(templateItems[2], ""));
             participantHolder.setOnViewHolderElementClickListener(elementClickListener);
-            if (mArchive.isActivity()) {
-                participantHolder.setEditable(false);
-            }
+            //if (mArchive.isActivity()) {
+            participantHolder.setEditable(false);
+            //}
         }
         if (null == authorHolder) {
             authorHolder = new SimpleInputableViewHolder(authorView, this);

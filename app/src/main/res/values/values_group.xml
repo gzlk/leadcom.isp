@@ -91,7 +91,7 @@
     <string name="ui_group_archive_fragment_title">组织档案</string>
     <string name="ui_group_archive_fragment_search_hint">输入标题进行搜索</string>
     <string name="ui_group_member_fragment_title">组织成员</string>
-    <string name="ui_group_squad_fragment_title">下属分支</string>
+    <string name="ui_group_squad_fragment_title">支部</string>
     <string name="ui_group_squad_member_fragment_title">分支成员</string>
     <string name="ui_group_squad_member_fragment_title_string" formatted="false">【%s】全体成员</string>
     <string name="ui_group_squad_nothing">组织还没有分支，您来添加第一个吧</string>
@@ -100,27 +100,27 @@
     <string name="ui_group_constructor_fragment_title">组织架构</string>
     <string-array name="ui_group_constructor_items">
         <item>0|上级组织||1|0xe6ae</item>
-        <item>1|下级组织||1|0xe6af</item>
-        <item>2|下属分支||1|0xe6ab</item>
+        <item>1|基层组织||1|0xe6af</item>
+        <item>2|支部||1|0xe6ab</item>
     </string-array>
     <string name="ui_group_constructor_groups_fragment_title_supper">上级组织</string>
     <string name="ui_group_constructor_groups_fragment_title_supper_add">添加上级组织</string>
-    <string name="ui_group_constructor_groups_fragment_title_sub">下级组织</string>
+    <string name="ui_group_constructor_groups_fragment_title_sub">基层组织</string>
     <string name="ui_group_constructor_groups_add_self_warning">不能添加组织本身为上级</string>
     <string name="ui_group_constructor_groups_add_warning" formatted="false">
         <![CDATA[您确定要将<font color="#3cbaff">%s</font>加为上级组织吗？]]>
     </string>
     <string name="ui_group_constructor_groups_remove_warning" formatted="false">
-        <![CDATA[正在取消<font color="#3cbaff">%s</font>(上级)与您的组织<font color="#3cbaff">%s</font>(下级)的上下级关系，确定继续吗？]]>
+        <![CDATA[正在取消<font color="#3cbaff">%s</font>(上级)与您的组织<font color="#3cbaff">%s</font>的上下级关系，确定继续吗？]]>
     </string>
     <string name="ui_group_constructor_groups_none_superior">没有上级组织</string>
-    <string name="ui_group_constructor_groups_none_sub">没有下级组织</string>
+    <string name="ui_group_constructor_groups_none_sub">没有基层组织</string>
     <string name="ui_group_constructor_groups_none_search">找不到您想要的组织</string>
 
     <string name="ui_group_member_duty_main_fragment_title">履职统计</string>
     <string-array name="ui_group_member_duty_main_items">
-        <item>0|本组织成员履职统计||1|0xe6ad</item>
-        <item>1|下属支部履职统计||1|0xe6ab</item>
+        <item>0|组织成员履职统计||1|0xe6ad</item>
+        <item>1|支部履职统计||1|0xe6ab</item>
     </string-array>
 
     <string name="ui_group_activity_fragment_title">@string/ui_activity_manage_tooltip_menu_1</string>
@@ -138,11 +138,12 @@
     <string name="ui_group_activity_editor_participator_select_1">@string/ui_group_constructor_groups_fragment_title_sub</string>
     <string name="ui_group_activity_editor_participator_select_2">本组织支部</string>
     <string name="ui_group_activity_editor_participator_select_all_1">
-        <![CDATA[全选<font color="#3cbaff">(下级组织)</font>]]>
+        <![CDATA[全选<font color="#3cbaff">(基层组织)</font>]]>
     </string>
     <string name="ui_group_activity_editor_participator_select_all_2">
         <![CDATA[全选<font color="#3cbaff">(支部成员)</font>]]>
     </string>
+    <string name="ui_group_activity_details_deliver">下发</string>
     <string name="ui_group_activity_details_sign_up">报名</string>
     <string name="ui_group_activity_details_signed_up">已报名</string>
     <string name="ui_group_activity_details_leave">请假</string>
@@ -166,6 +167,15 @@
     <string name="ui_group_activity_collection_subordinate_members_loading">正在加载下级组织回复&#8230;</string>
     <string name="ui_group_activity_collection_group_members_nothing">暂时没有成员报名，请稍后再试</string>
     <string name="ui_group_activity_collection_subordinate_members_nothing">暂时没有下级组织回复，请稍后再试</string>
+    <string name="ui_group_activity_reply_fragment_title">活动回复</string>
+    <string name="ui_group_activity_reply_fragment_title_replied">活动参与情况</string>
+    <string-array name="ui_group_activity_reply_items">
+        <item>回复：|%s|回复主题|||0</item>
+        <item>1|主题：|%s|0|</item>
+    </string-array>
+    <string name="ui_group_activity_reply_subject_is_null">回复的主题不能为空</string>
+    <string name="ui_group_activity_reply_content_is_null">回复的内容不能为空</string>
+    <string name="ui_group_activity_reply_success">报名情况已回复，请勿重复提交</string>
 
     <string name="ui_organization_squad_add_title">名称：</string>
     <string name="ui_organization_squad_add_hint">分支名称(10个字以内)</string>

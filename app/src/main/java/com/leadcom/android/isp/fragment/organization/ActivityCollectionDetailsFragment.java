@@ -67,6 +67,9 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
 
     @Override
     protected void onSwipeRefreshing() {
+        if (null != mAdapter) {
+            mAdapter.clear();
+        }
         loadingData();
     }
 
@@ -153,7 +156,14 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
-
+            Model model = mAdapter.get(index);
+            if (model instanceof Member) {
+                Member member = (Member) model;
+                if (!isEmpty(member.getGroupId())) {
+                    // 查看下属组织的回复详情
+                    ActivityReplyFragment.open(ActivityCollectionDetailsFragment.this, member.getId());
+                }
+            }
         }
     };
 

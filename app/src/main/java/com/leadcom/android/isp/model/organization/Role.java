@@ -29,6 +29,9 @@ public class Role extends Model {
         String PermissionIds = "permissionIds";
     }
 
+    /**
+     * 查询当前用户在某个指定组织中是否具有某个权限
+     */
     public static boolean hasOperation(String groupId, String operation) {
         Role role = Cache.cache().getGroupRole(groupId);
         return null != role && role.hasOperation(operation);

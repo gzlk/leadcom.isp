@@ -131,7 +131,6 @@ public class ActivitiesFragment extends GroupBaseFragment {
                 if (success && null != list) {
                     for (Archive archive : list) {
                         archive.setDocType(Archive.ArchiveType.ACTIVITY);
-                        archive.setAccessToken(mQueryId);
                         if (isEmpty(archive.getGroupId())) {
                             archive.setGroupId(mQueryId);
                         }

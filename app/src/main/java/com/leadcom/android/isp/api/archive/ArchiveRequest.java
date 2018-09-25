@@ -428,9 +428,7 @@ public class ArchiveRequest extends Request<Archive> {
             if (archive.getDocType() == Archive.ArchiveType.TEMPLATE) {
                 // 模板档案需要增加以下字段
                 object.put("topic", archive.getTopic())
-                        .put("resolution", archive.getResolution())
-                        .put("squadId", archive.getSquadId())
-                        .put("branch", archive.getBranch());
+                        .put("resolution", archive.getResolution());
             }
             if (!isIndividual) {
                 object.put("groupId", archive.getGroupId())// 必要字段
@@ -442,6 +440,8 @@ public class ArchiveRequest extends Request<Archive> {
                         .put("category", checkNull(archive.getCategory()))
                         .put("docClassifyId", checkNull(archive.getDocClassifyId()))
                         .put("participant", checkNull(archive.getParticipant()))
+                        .put("squadId", archive.getSquadId())
+                        .put("branch", archive.getBranch())
                         .put("participantIdList", new JSONArray(archive.getParticipantIdList()));
                 //if (archive.isTemplateArchive()) {
                 //    object.put("happenDate", archive.getHappenDate());
@@ -556,10 +556,35 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     /**
-     * 列取组织成员报名情况
+     * 回复上级组织本组织的活动报名情况
      */
-    public void listActivityGroupMember(String groupId, String activityId) {
-        String param = format("/group/groActivityMember/list?groupId=%s&groActivityId=%s", groupId, activityId);
+    public void replyActivity(Archive archive) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("groupId", archive.getGroupId())
+                    .put("toGroupId", archive.getFromGroupId())
+                    .put("groActivityId", archive.getGroActivityId())
+                    .put("reply", archive.getReply())
+                    .put("content", archive.getContent());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        executeHttpRequest(getRequest(SingleArchive.class, "/group/groActivityReply/add", object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 拉取活动回复详情
+     */
+    public void fetchingActivityReplyContent(String replyId) {
+        String param = format("/group/groActivityReply/find?id=%s", replyId);
+        executeHttpRequest(getRequest(SingleArchive.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 拉取活动的默认回复内容
+     */
+    public void fetchingActivityDefaultReplyContent(String groupId, String activityId) {
+        String param = format("/group/groActivityReply/find/add?groupId=%s&groActivityId=%s", groupId, activityId);
         executeHttpRequest(getRequest(SingleArchive.class, param, "", HttpMethods.Get));
     }
 
@@ -570,4 +595,13 @@ public class ArchiveRequest extends Request<Archive> {
         String param = format("/group/groActivityReply/list?groupId=%s&groActivityId=%s", groupId, activityId);
         executeHttpRequest(getRequest(SingleArchive.class, param, "", HttpMethods.Get));
     }
+
+    /**
+     * 列取组织成员报名情况
+     */
+    public void listActivityGroupMember(String groupId, String activityId) {
+        String param = format("/group/groActivityMember/list?groupId=%s&groActivityId=%s", groupId, activityId);
+        executeHttpRequest(getRequest(SingleArchive.class, param, "", HttpMethods.Get));
+    }
+
 }

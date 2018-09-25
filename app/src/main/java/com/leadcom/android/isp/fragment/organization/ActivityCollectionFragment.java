@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.organization;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -10,8 +11,11 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.model.archive.Archive;
+import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Member;
+import com.leadcom.android.isp.model.organization.Role;
 
 /**
  * <b>功能描述：</b>组织活动成员报名统计页面<br />
@@ -41,8 +45,6 @@ public class ActivityCollectionFragment extends BaseViewPagerSupportFragment {
         fragment.openActivity(ActivityCollectionFragment.class.getName(), bundle, true, false);
     }
 
-    @ViewId(R.id.ui_ui_custom_title_left_container)
-    private View leftContainer;
     @ViewId(R.id.ui_group_concern_main_top_channel_1)
     private TextView topText1;
     @ViewId(R.id.ui_group_concern_main_top_channel_2)
@@ -73,6 +75,16 @@ public class ActivityCollectionFragment extends BaseViewPagerSupportFragment {
             finish();
         } else {
             setCustomTitle(R.string.ui_group_activity_collection_fragment_title);
+            if (Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_REPLY)) {
+                setRightText(R.string.ui_base_text_reply);
+                setRightTitleClickListener(new OnTitleButtonClickListener() {
+                    @Override
+                    public void onClick() {
+                        // 回复上级组织本组织成员的活动报名参与情况
+                        ActivityReplyFragment.open(ActivityCollectionFragment.this, mArchive);
+                    }
+                });
+            }
         }
     }
 
