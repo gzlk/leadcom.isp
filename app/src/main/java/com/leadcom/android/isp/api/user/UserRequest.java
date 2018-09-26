@@ -179,10 +179,10 @@ public class UserRequest extends Request<User> {
         executeHttpRequest(getRequest(SingleUser.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
-    private void findInCache(String userId) {
+    private void findInCache(String userId, String groupId) {
         User user = new Dao<>(User.class).query(userId);
         if (null == user) {
-            findFromRemote(userId);
+            findFromRemote(userId, groupId);
         } else {
             if (null != onSingleRequestListener) {
                 onSingleRequestListener.onResponse(user, true, "");
@@ -190,18 +190,18 @@ public class UserRequest extends Request<User> {
         }
     }
 
-    private void findFromRemote(String userId) {
-        executeHttpRequest(getRequest(SingleUser.class, format("%s?userId=%s", url(FIND), userId), "", HttpMethods.Get));
+    private void findFromRemote(String userId, String groupId) {
+        executeHttpRequest(getRequest(SingleUser.class, format("%s?userId=%s%s", url(FIND), userId, (isEmpty(groupId) ? "" : format("&groupId=%s", groupId))), "", HttpMethods.Get));
     }
 
     /**
      * 拉取某个用户的基本信息
      */
-    public void find(String userId, boolean fromRemote) {
+    public void find(String userId, String groupId, boolean fromRemote) {
         if (fromRemote) {
-            findFromRemote(userId);
+            findFromRemote(userId, groupId);
         } else {
-            findInCache(userId);
+            findInCache(userId, groupId);
         }
     }
 

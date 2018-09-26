@@ -47,7 +47,7 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
         topLine1.setBackgroundColor(color);
         topLine2.setBackgroundColor(color);
         topLine3.setBackgroundColor(color);
-        //tryPaddingContent(toolBar, false);
+        tryPaddingContent(toolBar, false);
     }
 
     @Override

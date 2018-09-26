@@ -16,6 +16,7 @@ import com.leadcom.android.isp.fragment.organization.ActivitiesFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.PushMessage;
 import com.leadcom.android.isp.model.common.PushMessage.Extra;
 
@@ -60,7 +61,12 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
             case PushMessage.MsgCode.GROUP_ACTIVITY_PUBLISH:
             case PushMessage.MsgCode.GROUP_ACTIVITY_REPLY:
                 // 活动相关的通知
-                ActivitiesFragment.open(context, extra.getGroupId(), "");
+                if (extra.getMessageCode().equals(PushMessage.MsgCode.GROUP_ACTIVITY_PUBLISH)) {
+                    String h5 = extra.getH5();
+                    ArchiveDetailsFragment.open(context, extra.getGroupId(), extra.getGroActivityId(), Archive.ArchiveType.ACTIVITY, h5, false, isAppForeground, "");
+                } else {
+                    ActivitiesFragment.open(context, extra.getGroupId(), "");
+                }
                 break;
             case PushMessage.MsgCode.GROUP_ATTENTION:
             case PushMessage.MsgCode.GROUP_ATTENTION_CANCEL:

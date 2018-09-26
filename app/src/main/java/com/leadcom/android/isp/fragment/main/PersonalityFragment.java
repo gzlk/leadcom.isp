@@ -123,7 +123,7 @@ public class PersonalityFragment extends GroupBaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isSelf = isEmpty(mQueryId) || mQueryId.equals(Cache.cache().userId);
+        isSelf = isEmpty(mQueryId) || (mQueryId.equals(Cache.cache().userId) && isEmpty(mGroupId));
         if (isSelf) {
             App.addNotificationChangeCallback(callback);
         }
@@ -165,7 +165,7 @@ public class PersonalityFragment extends GroupBaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (isSelf) {
-            //tryPaddingContent(paddingLayout, false);
+            tryPaddingContent(paddingLayout, false);
             // 首页中的个人页面才允许下拉刷新，其他不允许刷新
             enableSwipe(!isOpened);
 
@@ -268,7 +268,7 @@ public class PersonalityFragment extends GroupBaseFragment {
                 stopRefreshing();
                 isLoadingComplete(true);
             }
-        }).find(isSelf ? Cache.cache().userId : mQueryId, true);
+        }).find(isSelf ? Cache.cache().userId : mQueryId, mGroupId, true);
     }
 
     private void resetUserInformation(int type, String value) {
@@ -462,9 +462,18 @@ public class PersonalityFragment extends GroupBaseFragment {
                     //extra.setContent(user.getPosition());
                     extra.setAccessToken(StringHelper.getString(R.string.ui_icon_business_card));
                 }
-                if (extra.getTitle().equals("电话")) {
+                if (extra.getTitle().contains("联系电话")) {
                     //extra.setContent(user.getPhone());
                     extra.setAccessToken(StringHelper.getString(R.string.ui_icon_telephone));
+                }
+                if (extra.getTitle().equals("性别")) {
+                    extra.setAccessToken(StringHelper.getString(R.string.ui_icon_sex));
+                }
+                if (extra.getTitle().contains("手机")) {
+                    extra.setAccessToken(StringHelper.getString(R.string.ui_icon_phone_bold));
+                }
+                if (extra.getTitle().contains("邮箱")) {
+                    extra.setAccessToken(StringHelper.getString(R.string.ui_icon_email));
                 }
                 // 如果额外的属性是可显示状态或者不可显示但当前用户是登录用户时，也可以显示
                 if (extra.isShowing() || isSelf) {
@@ -484,6 +493,12 @@ public class PersonalityFragment extends GroupBaseFragment {
                 model.setId(string);
                 mAdapter.add(model);
             } else {
+                if ((string.startsWith("1|") || string.startsWith("2|") || string.startsWith("3|") || string.startsWith("4|")) && !isSelf) {
+                    continue;
+                }
+                if ((string.startsWith("5|") || string.startsWith("6|")) && isSelf) {
+                    continue;
+                }
                 SimpleClickableItem item = new SimpleClickableItem(format(string, 0));
 //                if (item.getIndex() == 5) {
 //                    item.setSource(format(string, Cache.cache().me.getCompany()));

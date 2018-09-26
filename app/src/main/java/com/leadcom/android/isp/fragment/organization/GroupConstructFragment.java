@@ -88,7 +88,8 @@ public class GroupConstructFragment extends GroupBaseFragment {
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
-            switch (index) {
+            SimpleClickableItem item = mAdapter.get(index);
+            switch (item.getIndex()) {
                 case 0:
                     // 上级组织
                     GroupsFragment.open(GroupConstructFragment.this, mQueryId, mGroupName, RelateGroup.RelationType.SUPERIOR, false, null);

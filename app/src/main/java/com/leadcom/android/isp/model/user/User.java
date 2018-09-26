@@ -140,6 +140,12 @@ public class User extends Model {
     private ArrayList<UserExtra> extra;
     @Ignore
     private Quantity calculate;
+    @Ignore
+    private int integral;
+    @Ignore
+    private String squadName;
+    @Ignore
+    private int status;
 
     public String getName() {
         if (isEmpty(name)) {
@@ -329,5 +335,29 @@ public class User extends Model {
 
     public void setCalculate(Quantity calculate) {
         this.calculate = calculate;
+    }
+
+    public int getIntegral() {
+        return integral;
+    }
+
+    public void setIntegral(int integral) {
+        this.integral = integral;
+    }
+
+    public String getSquadName() {
+        return squadName;
+    }
+
+    public void setSquadName(String squadName) {
+        this.squadName = squadName;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

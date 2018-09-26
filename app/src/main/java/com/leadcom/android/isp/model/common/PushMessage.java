@@ -36,6 +36,7 @@ public class PushMessage extends Model {
         private String userMmtId;
         private String messageCode;
         private String groActivityId;
+        private String h5;
 
         public String getMsgId() {
             return msgId;
@@ -99,6 +100,14 @@ public class PushMessage extends Model {
 
         public void setGroActivityId(String groActivityId) {
             this.groActivityId = groActivityId;
+        }
+
+        public String getH5() {
+            return h5;
+        }
+
+        public void setH5(String h5) {
+            this.h5 = h5;
         }
     }
 

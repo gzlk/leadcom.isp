@@ -176,7 +176,7 @@ public class PhoneContactFragment extends GroupBaseFragment {
         requestReadContactsPermission();
         super.onActivityCreated(savedInstanceState);
         setLoadingText(R.string.ui_phone_contact_waiting_read_contacts);
-        setCustomTitle(format("%(%s)", StringHelper.getString(R.string.ui_squad_contact_menu_2), mName));
+        setCustomTitle(format("%s(%s)", StringHelper.getString(R.string.ui_squad_contact_menu_2), mName));
         if (null == refreshedReceiver) {
             refreshedReceiver = new ContactRefreshedReceiver();
             IntentFilter intent = new IntentFilter();

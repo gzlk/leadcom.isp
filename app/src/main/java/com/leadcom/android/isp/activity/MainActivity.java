@@ -40,6 +40,7 @@ import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionNeverAskAg
 import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
 import com.leadcom.android.isp.model.common.PushMessage;
 import com.leadcom.android.isp.service.ContactService;
+import com.leadcom.android.isp.statusbar.StatusBarUtils;
 
 /**
  * <b>功能描述：</b>主页窗体<br />
@@ -227,7 +228,7 @@ public class MainActivity extends TitleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         supportPressAgainToExit = true;
-        //supportTransparentStatusBar = true;
+        supportTransparentStatusBar = true;
         //isToolbarSupported = false;
         super.onCreate(savedInstanceState);
         App.addNotificationChangeCallback(callback);

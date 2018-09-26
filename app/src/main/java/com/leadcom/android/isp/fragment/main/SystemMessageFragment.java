@@ -71,6 +71,8 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         fragment.openActivity(SystemMessageFragment.class.getName(), getBundle(false), true, false);
     }
 
+    @ViewId(R.id.ui_main_tool_bar_container)
+    private View toolBar;
     @ViewId(R.id.ui_ui_custom_title_text)
     private TextView titleText;
     @ViewId(R.id.ui_ui_custom_title_right_icon)
@@ -110,6 +112,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         titleText.setTextColor(color);
         rightIconView.setVisibility(isInMainPage ? View.GONE : View.VISIBLE);
         rightTextView.setVisibility(isInMainPage ? View.VISIBLE : View.GONE);
+        tryPaddingContent(toolBar, false);
     }
 
     @Override

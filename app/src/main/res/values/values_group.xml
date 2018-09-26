@@ -240,7 +240,7 @@
 
     <string name="ui_phone_contact_no_permission">无法读取联系人</string>
     <string name="ui_phone_contact_no_more">没有找到联系人</string>
-    <string name="ui_phone_contact_title_number" formatted="false">手机通讯录(%d)</string>
+    <string name="ui_phone_contact_title_number" formatted="false">手机通讯录(%d人)</string>
     <string name="ui_phone_contact_waiting_read_contacts">正在读取联系人，请稍候&#8230;</string>
     <string name="ui_phone_contact_waiting_searching_contacts">正在搜索联系人，请稍候&#8230;</string>
     <string name="ui_phone_contact_waiting_read_contacts_pagination">正在处理分页%d/%d，请稍候&#8230;</string>

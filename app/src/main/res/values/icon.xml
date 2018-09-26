@@ -7,6 +7,8 @@
     <string name="ui_icon_query">&#xe63e;</string>
     <string name="ui_icon_chat">&#xe6ba;</string>
     <string name="ui_icon_phone">&#xe622;</string>
+    <string name="ui_icon_phone_bold">&#xe6b8;</string>
+
     <string name="ui_icon_password">&#xe6df;</string>
     <string name="ui_icon_qq">&#xe606;</string>
     <string name="ui_icon_qzone">&#xe691;</string>
@@ -93,6 +95,8 @@
     <string name="ui_icon_telephone">&#xe67a;</string>
     <string name="ui_icon_mutex">&#xe698;</string>
     <string name="ui_icon_award">&#xe6a8;</string>
+    <string name="ui_icon_email">&#xe6b4;</string>
+    <string name="ui_icon_sex">&#xe6b0;</string>
 
     <!--系统消息界面的icon-->
     <string name="ui_icon_system_msg">&#xe614;</string>

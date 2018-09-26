@@ -159,7 +159,7 @@ public class GroupFragment extends GroupBaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //tryPaddingContent(toolBar, false);
+        tryPaddingContent(toolBar, false);
         int color = getColor(Cache.sdk >= 23 ? R.color.textColor : R.color.textColorLight);
         titleTextView.setTextColor(color);
         titleAllow.setTextColor(color);
@@ -595,13 +595,13 @@ public class GroupFragment extends GroupBaseFragment {
 //        } else {
 //            dAdapter.remove(item);
 //        }
-        //removeClassify();
+        removeClassify();
         //dAdapter.sort();
-        //if (isSingle) {
-        //    return;
-        //}
-        //loadGroupSelfDefined();
-        //selfDefine.setVisibility(hasOperation(group.getId(), GRPOperation.GROUP_DEFINE) ? View.VISIBLE : View.GONE);
+        if (isSingle) {
+            return;
+        }
+        loadGroupSelfDefined();
+        selfDefine.setVisibility(hasOperation(group.getId(), GRPOperation.GROUP_DEFINE) ? View.VISIBLE : View.GONE);
     }
 
     private void removeClassify() {

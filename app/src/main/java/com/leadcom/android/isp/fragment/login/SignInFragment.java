@@ -222,7 +222,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                     needToReLogin();
                 }
             }
-        }).find(Cache.cache().userId, true);
+        }).find(Cache.cache().userId, "", true);
     }
 
     private void cacheUser(User user) {

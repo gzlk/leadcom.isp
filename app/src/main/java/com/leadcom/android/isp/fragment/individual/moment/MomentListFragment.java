@@ -142,7 +142,7 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
                     }
                 }
             }
-        }).find(mQueryId, true);
+        }).find(mQueryId, "", true);
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {

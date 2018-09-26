@@ -241,7 +241,7 @@ public class App extends BaseActivityManagedApplication {
                     Cache.cache().setCurrentUser(user);
                 }
             }
-        }).find(Cache.cache().userId, true);
+        }).find(Cache.cache().userId, "", true);
     }
 
     /**
