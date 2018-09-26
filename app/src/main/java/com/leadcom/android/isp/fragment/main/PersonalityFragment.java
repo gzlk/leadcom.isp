@@ -165,7 +165,7 @@ public class PersonalityFragment extends GroupBaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (isSelf) {
-            tryPaddingContent(paddingLayout, false);
+            //tryPaddingContent(paddingLayout, false);
             // 首页中的个人页面才允许下拉刷新，其他不允许刷新
             enableSwipe(!isOpened);
 
@@ -252,8 +252,19 @@ public class PersonalityFragment extends GroupBaseFragment {
             Cache.cache().saveCurrentUser();
         }
         resetExtras(user);
-        if (null != user.getCalculate()) {
+        if (isSelf && null != user.getCalculate()) {
             resetQuantity(user.getCalculate());
+        } else if (!isSelf) {
+            // 所属支部
+            SimpleClickableItem item = new SimpleClickableItem(format(items[3], (isEmpty(user.getSquadName()) ? "" : user.getSquadName())));
+            if (mAdapter.exist(item)) {
+                mAdapter.update(item);
+            }
+            // 角色
+            item = new SimpleClickableItem(format(items[4], (isEmpty(user.getDuty()) ? "" : user.getDuty())));
+            if (mAdapter.exist(item)) {
+                mAdapter.update(item);
+            }
         }
     }
 
@@ -457,23 +468,41 @@ public class PersonalityFragment extends GroupBaseFragment {
                 if (extra.getTitle().equals("单位")) {
                     //extra.setContent(user.getCompany());
                     extra.setAccessToken(StringHelper.getString(R.string.ui_icon_building));
+                    if (extra.isContentEmpty() && !isEmpty(user.getCompany())) {
+                        extra.setContent(user.getCompany());
+                    }
                 }
                 if (extra.getTitle().equals("职务")) {
                     //extra.setContent(user.getPosition());
                     extra.setAccessToken(StringHelper.getString(R.string.ui_icon_business_card));
+                    if (extra.isContentEmpty() && !isEmpty(user.getPosition())) {
+                        extra.setContent(user.getPosition());
+                    }
                 }
                 if (extra.getTitle().contains("联系电话")) {
                     //extra.setContent(user.getPhone());
                     extra.setAccessToken(StringHelper.getString(R.string.ui_icon_telephone));
+//                    if (extra.isContentEmpty()) {
+//                        extra.setContent(user.getPhone());
+//                    }
                 }
                 if (extra.getTitle().equals("性别")) {
                     extra.setAccessToken(StringHelper.getString(R.string.ui_icon_sex));
+                    if (extra.isContentEmpty() && !isEmpty(user.getSex())) {
+                        extra.setContent(user.getSex());
+                    }
                 }
                 if (extra.getTitle().contains("手机")) {
                     extra.setAccessToken(StringHelper.getString(R.string.ui_icon_phone_bold));
+                    if (extra.isContentEmpty()) {
+                        extra.setContent(user.getPhone());
+                    }
                 }
                 if (extra.getTitle().contains("邮箱")) {
                     extra.setAccessToken(StringHelper.getString(R.string.ui_icon_email));
+                    if (extra.isContentEmpty() && !isEmpty(user.getEmail())) {
+                        extra.setContent(user.getEmail());
+                    }
                 }
                 // 如果额外的属性是可显示状态或者不可显示但当前用户是登录用户时，也可以显示
                 if (extra.isShowing() || isSelf) {
@@ -533,7 +562,9 @@ public class PersonalityFragment extends GroupBaseFragment {
             }
             if (!isEmpty(text)) {
                 SimpleClickableItem item = new SimpleClickableItem(text);
-                mAdapter.update(item);
+                if (mAdapter.exist(item)) {
+                    mAdapter.update(item);
+                }
             }
         }
     }
@@ -567,7 +598,8 @@ public class PersonalityFragment extends GroupBaseFragment {
     };
 
     private void performItemClick(int index) {
-        switch (index) {
+        SimpleClickableItem item = (SimpleClickableItem) mAdapter.get(index);
+        switch (item.getIndex()) {
             case 1:
                 // 打开通讯录
                 if (isSelf) {

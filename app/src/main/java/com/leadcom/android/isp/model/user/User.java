@@ -145,6 +145,8 @@ public class User extends Model {
     @Ignore
     private String squadName;
     @Ignore
+    private String duty;
+    @Ignore
     private int status;
 
     public String getName() {
@@ -351,6 +353,14 @@ public class User extends Model {
 
     public void setSquadName(String squadName) {
         this.squadName = squadName;
+    }
+
+    public String getDuty() {
+        return duty;
+    }
+
+    public void setDuty(String duty) {
+        this.duty = duty;
     }
 
     public int getStatus() {

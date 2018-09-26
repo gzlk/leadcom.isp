@@ -248,10 +248,9 @@
     <string-array name="ui_text_personality_items">
         <item>1|通讯录|%d|1|0xe67b</item>
         <item>2|档案|%d|1|0xe670</item>
-        <item>3|动态|%d|1|0xe63d</item>
         <item>4|收藏|%d|1|0xe626</item>
-        <item>5|所属支部|%d|1|0xe626</item>
-        <item>6|组织角色|%d|1|0xe626</item>
+        <item>5|所属支部|%s|0|0xe6b3</item>
+        <item>6|组织角色|%s|0|0xe6b1</item>
         <item>-</item>
     </string-array>
     <string name="ui_text_personality_contact_fragment_title">通讯录</string>

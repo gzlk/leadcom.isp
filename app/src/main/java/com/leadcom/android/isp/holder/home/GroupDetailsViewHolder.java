@@ -53,8 +53,8 @@ public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
             valueIcon.setText(extra.getAccessToken());
         }
         titleTextView.setText(extra.getTitle());
-        String value;
-        value = extra.isShowing() || isSelf ? extra.getContent() : "";
+        String value = isEmpty(extra.getContent()) ? "" : extra.getContent();
+        value = extra.isShowing() || isSelf ? value : "";
         if (isSelf) {
             value += format("(%s)", definedValues[extra.getShow()]);
         } else {

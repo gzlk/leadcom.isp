@@ -112,7 +112,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         titleText.setTextColor(color);
         rightIconView.setVisibility(isInMainPage ? View.GONE : View.VISIBLE);
         rightTextView.setVisibility(isInMainPage ? View.VISIBLE : View.GONE);
-        tryPaddingContent(toolBar, false);
+        //tryPaddingContent(toolBar, false);
     }
 
     @Override

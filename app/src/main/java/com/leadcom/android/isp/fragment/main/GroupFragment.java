@@ -159,7 +159,7 @@ public class GroupFragment extends GroupBaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        tryPaddingContent(toolBar, false);
+        //tryPaddingContent(toolBar, false);
         int color = getColor(Cache.sdk >= 23 ? R.color.textColor : R.color.textColorLight);
         titleTextView.setTextColor(color);
         titleAllow.setTextColor(color);

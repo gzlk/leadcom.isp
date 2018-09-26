@@ -146,6 +146,10 @@ public class UserExtra extends Model {
         this.content = content;
     }
 
+    public boolean isContentEmpty() {
+        return isEmpty(content) || content.equals("未设置");
+    }
+
     public int getShow() {
         if (show != ShownType.HIDE && show != ShownType.SHOWN) {
             show = ShownType.HIDE;
