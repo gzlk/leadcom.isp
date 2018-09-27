@@ -3,6 +3,7 @@ package com.leadcom.android.isp.fragment.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -588,7 +589,7 @@ public class PersonalityFragment extends GroupBaseFragment {
     private static final int MAX_ALPHA = 255;
     private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
             mDistance += dy;
             float percentage = mDistance * 1.0f / MAX_ALPHA;
@@ -598,55 +599,56 @@ public class PersonalityFragment extends GroupBaseFragment {
     };
 
     private void performItemClick(int index) {
-        SimpleClickableItem item = (SimpleClickableItem) mAdapter.get(index);
-        switch (item.getIndex()) {
-            case 1:
-                // 打开通讯录
-                if (isSelf) {
-                    ContactFragment.open(this);
-                }
-                break;
-            case 2:
-                // 打开个人档案
-                IndividualFragment.UserId = isSelf ? "" : mQueryId;
-                IndividualFragment.open(this, isSelf ? IndividualFragment.TYPE_ARCHIVE_MINE : IndividualFragment.TYPE_ARCHIVE_OTHER);
-                break;
-            case 3:
-                // 打开个人动态
-                MomentListFragment.open(PersonalityFragment.this, isSelf ? Cache.cache().userId : mQueryId);
-                break;
-            case 4:
-                // 打开个人搜藏
-                if (isSelf) {
-                    IndividualFragment.open(this, IndividualFragment.TYPE_COLLECT);
-                }
-                break;
-            //case 6:
-            // 编辑单位信息
-            //selectedIndex = 6;
-            //prepareEditInfo(R.string.ui_text_personality_item_edit_company, Cache.cache().me.getCompany(), R.string.ui_text_personality_item_edit_company_hint);
-            //break;
-            //case 7:
-            // 编辑职务信息
-            //selectedIndex = 7;
-            //prepareEditInfo(R.string.ui_text_personality_item_edit_duty, Cache.cache().me.getPosition(), R.string.ui_text_personality_item_edit_duty_hint);
-            //break;
-            //case 8:
-            // 修改电话
-            //openActivity(ModifyPhoneFragment.class.getName(), Cache.cache().userPhone, REQUEST_PHONE, true, false);
-            //break;
-            default:
-                if (isSelf) {
-                    selectedIndex = index;
-                    Model model = mAdapter.get(selectedIndex);
-                    if (model instanceof UserExtra) {
-                        //UserExtra extra = (UserExtra) model;
-                        //if (extra.isEditable()) {
-                        openSelfDefineDialog();
-                        //}
+        Model model = mAdapter.get(index);
+        if (model instanceof SimpleClickableItem) {
+            SimpleClickableItem item = (SimpleClickableItem) model;
+            switch (item.getIndex()) {
+                case 1:
+                    // 打开通讯录
+                    if (isSelf) {
+                        ContactFragment.open(this);
                     }
-                }
-                break;
+                    break;
+                case 2:
+                    // 打开个人档案
+                    IndividualFragment.UserId = isSelf ? "" : mQueryId;
+                    IndividualFragment.open(this, isSelf ? IndividualFragment.TYPE_ARCHIVE_MINE : IndividualFragment.TYPE_ARCHIVE_OTHER);
+                    break;
+                case 3:
+                    // 打开个人动态
+                    MomentListFragment.open(PersonalityFragment.this, isSelf ? Cache.cache().userId : mQueryId);
+                    break;
+                case 4:
+                    // 打开个人搜藏
+                    if (isSelf) {
+                        IndividualFragment.open(this, IndividualFragment.TYPE_COLLECT);
+                    }
+                    break;
+                //case 6:
+                // 编辑单位信息
+                //selectedIndex = 6;
+                //prepareEditInfo(R.string.ui_text_personality_item_edit_company, Cache.cache().me.getCompany(), R.string.ui_text_personality_item_edit_company_hint);
+                //break;
+                //case 7:
+                // 编辑职务信息
+                //selectedIndex = 7;
+                //prepareEditInfo(R.string.ui_text_personality_item_edit_duty, Cache.cache().me.getPosition(), R.string.ui_text_personality_item_edit_duty_hint);
+                //break;
+                //case 8:
+                // 修改电话
+                //openActivity(ModifyPhoneFragment.class.getName(), Cache.cache().userPhone, REQUEST_PHONE, true, false);
+                //break;
+                default:
+                    break;
+            }
+        } else if (model instanceof UserExtra) {
+            if (isSelf) {
+                selectedIndex = index;
+                //UserExtra extra = (UserExtra) model;
+                //if (extra.isEditable()) {
+                openSelfDefineDialog();
+                //}
+            }
         }
     }
 
