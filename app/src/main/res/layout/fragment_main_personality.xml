@@ -46,6 +46,7 @@
             android:focusable="true"
             android:gravity="center"
             android:orientation="horizontal"
+            android:translationZ="@dimen/ui_base_translationZ_small"
             android:visibility="gone">
 
             <com.hlk.hlklib.lib.view.CustomTextView

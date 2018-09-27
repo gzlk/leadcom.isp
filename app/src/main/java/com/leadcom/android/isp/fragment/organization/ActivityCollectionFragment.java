@@ -75,7 +75,7 @@ public class ActivityCollectionFragment extends BaseViewPagerSupportFragment {
             finish();
         } else {
             setCustomTitle(R.string.ui_group_activity_collection_fragment_title);
-            if (Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_REPLY)) {
+            if (Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_REPLY) && !mArchive.getGroupId().equals(mArchive.getFromGroupId())) {
                 setRightText(R.string.ui_base_text_reply);
                 setRightTitleClickListener(new OnTitleButtonClickListener() {
                     @Override

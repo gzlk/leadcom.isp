@@ -197,7 +197,7 @@ public class ContactViewHolder extends BaseViewHolder {
                 buttonInvite.setText(member.isSelected() ? R.string.ui_phone_contact_invited : R.string.ui_phone_contact_add);
             }
         }
-        leftBlank.setVisibility(pickerVisible ? View.VISIBLE : View.GONE);
+        leftBlank.setVisibility(pickerVisible && !member.isSelectable() ? View.VISIBLE : View.GONE);
         iconPicker.setVisibility(pickerVisible ? View.VISIBLE : View.GONE);
         iconPicker.setTextColor(getColor(member.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
     }

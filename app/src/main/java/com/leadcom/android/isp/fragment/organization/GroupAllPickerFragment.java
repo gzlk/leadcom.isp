@@ -1,7 +1,6 @@
 package com.leadcom.android.isp.fragment.organization;
 
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
@@ -49,19 +48,25 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     private TextView topText1;
     @ViewId(R.id.ui_group_concern_main_top_channel_2)
     private TextView topText2;
+    @ViewId(R.id.ui_group_all_picker_group_squad)
+    private TextView squadMember;
+    @ViewId(R.id.ui_group_all_picker_group_member)
+    private TextView groupMember;
     @ViewId(R.id.ui_group_concern_main_top_channel_1_line)
     private View topLine1;
     @ViewId(R.id.ui_group_concern_main_top_channel_2_line)
     private View topLine2;
-    @ViewId(R.id.ui_ui_custom_title_left_container)
-    private View leftView;
+    @ViewId(R.id.ui_group_all_picker_group_squad_line)
+    private View squadLine;
+    @ViewId(R.id.ui_group_all_picker_group_member_line)
+    private View memberLine;
     private ArrayList<String> selectedGroups;
     private ArrayList<SubMember> selectedMembers;
     private String mGroupName;
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_group_concern_main;
+        return R.layout.fragment_group_all_picker;
     }
 
     @Override
@@ -89,20 +94,25 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        leftView.setVisibility(View.GONE);
         setCustomTitle(R.string.ui_group_activity_editor_participator_select_fragment_title);
         topText1.setText(R.string.ui_group_activity_editor_participator_select_1);
         topText2.setText(R.string.ui_group_activity_editor_participator_select_2);
-        topText1.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size_small));
-        topText2.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size_small));
+//        topText1.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size_small));
+//        topText2.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size_small));
         setRightText(R.string.ui_base_text_complete);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                GroupsFragment groups = (GroupsFragment) mFragments.get(0);
-                ArrayList<SubMember> members = groups.getSelectedItems();
-                SquadsFragment squads = (SquadsFragment) mFragments.get(1);
-                members.addAll(squads.getSelectedItems());
+
+                SquadsFragment squads = (SquadsFragment) mFragments.get(0);
+                ArrayList<SubMember> members = squads.getSelectedItems();
+
+                GroupContactPickFragment contact = (GroupContactPickFragment) mFragments.get(1);
+                members.addAll(contact.getSelectedItems());
+
+                GroupsFragment groups = (GroupsFragment) mFragments.get(2);
+                members.addAll(groups.getSelectedItems());
+
                 resultData(SubMember.toJson(members));
             }
         });
@@ -111,14 +121,17 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     @Override
     protected void initializeFragments() {
         if (mFragments.size() <= 0) {
-            // 下级组织
-            Bundle bundle = GroupsFragment.getBundle(mQueryId, "", RelateGroup.RelationType.SUBORDINATE, true, selectedGroups);
-            GroupsFragment groups = GroupsFragment.newInstance(bundle);
-            mFragments.add(groups);
             // 本组织支部以及成员
-            bundle = SquadsFragment.getBundle(mQueryId, mGroupName, true, selectedMembers);
+            Bundle bundle = SquadsFragment.getBundle(mQueryId, mGroupName, true, selectedMembers);
             SquadsFragment squads = SquadsFragment.newInstance(bundle);
             mFragments.add(squads);
+            // 本组织成员
+            bundle = GroupContactPickFragment.getBundle(mQueryId, false, false, false, "[]");
+            mFragments.add(GroupContactPickFragment.newInstance(bundle));
+            // 下级组织
+            bundle = GroupsFragment.getBundle(mQueryId, "", RelateGroup.RelationType.SUBORDINATE, true, selectedGroups);
+            GroupsFragment groups = GroupsFragment.newInstance(bundle);
+            mFragments.add(groups);
         }
     }
 
@@ -126,11 +139,22 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     protected void viewPagerSelectionChanged(int position) {
         int color1 = getColor(R.color.textColor);
         int color2 = getColor(R.color.textColorHint);
-        topLine1.setVisibility(position == 0 ? View.VISIBLE : View.INVISIBLE);
-        topText1.setTextColor(position == 0 ? color1 : color2);
+        int color3 = getColor(R.color.colorPrimary);
+        int color4 = getColor(R.color.textColorHintLightLight);
 
-        topLine2.setVisibility(position == 1 ? View.VISIBLE : View.INVISIBLE);
-        topText2.setTextColor(position == 1 ? color1 : color2);
+        squadMember.setTextColor(position == 0 ? color1 : color2);
+        squadLine.setVisibility(position == 0 ? View.VISIBLE : View.INVISIBLE);
+
+        groupMember.setTextColor(position == 1 ? color1 : color2);
+        memberLine.setVisibility(position == 1 ? View.VISIBLE : View.INVISIBLE);
+
+        //topLine1.setVisibility(position == 2 ? View.VISIBLE : View.INVISIBLE);
+        topLine1.setBackgroundColor(position == 2 ? color3 : color4);
+        topText1.setTextColor(position == 2 ? color1 : color2);
+
+        //topLine2.setVisibility(position <= 1 ? View.VISIBLE : View.INVISIBLE);
+        topLine2.setBackgroundColor(position <= 1 ? color3 : color4);
+        topText2.setTextColor(position <= 1 ? color1 : color2);
     }
 
     @Override
@@ -139,13 +163,21 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     }
 
     @Click({R.id.ui_group_concern_main_top_channel_1,
-            R.id.ui_group_concern_main_top_channel_2})
+            R.id.ui_group_concern_main_top_channel_2,
+            R.id.ui_group_all_picker_group_squad_layout,
+            R.id.ui_group_all_picker_group_member_layout})
     private void click(View view) {
         switch (view.getId()) {
             case R.id.ui_group_concern_main_top_channel_1:
-                setDisplayPage(0);
+                setDisplayPage(2);
                 break;
             case R.id.ui_group_concern_main_top_channel_2:
+                //setDisplayPage(2);
+                break;
+            case R.id.ui_group_all_picker_group_squad_layout:
+                setDisplayPage(0);
+                break;
+            case R.id.ui_group_all_picker_group_member_layout:
                 setDisplayPage(1);
                 break;
         }

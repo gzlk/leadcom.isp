@@ -4,6 +4,4 @@
     android:layout_width="@dimen/ui_static_dp_20"
     android:layout_height="@dimen/ui_static_dp_15"
     android:orientation="vertical"
-    android:visibility="gone">
-
-</LinearLayout>
+    android:visibility="gone"/>

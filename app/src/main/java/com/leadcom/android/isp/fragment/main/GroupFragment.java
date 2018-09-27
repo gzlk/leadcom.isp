@@ -526,7 +526,9 @@ public class GroupFragment extends GroupBaseFragment {
     private void onGroupChange(Organization group) {
         titleTextView.setText(Html.fromHtml(group.getName()));
         PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), group.getId());
-        currentGroup = group.getId();
+        if (!isNeedPermission) {
+            currentGroup = group.getId();
+        }
         if (null != gAdapter) {
             for (int i = 0, len = gAdapter.getItemCount(); i < len; i++) {
                 Organization org = gAdapter.get(i);

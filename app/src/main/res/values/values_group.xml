@@ -92,7 +92,7 @@
     <string name="ui_group_archive_fragment_search_hint">输入标题进行搜索</string>
     <string name="ui_group_member_fragment_title">组织成员</string>
     <string name="ui_group_squad_fragment_title">支部</string>
-    <string name="ui_group_squad_member_fragment_title">分支成员</string>
+    <string name="ui_group_squad_member_fragment_title">支部成员</string>
     <string name="ui_group_squad_member_fragment_title_string" formatted="false">【%s】全体成员</string>
     <string name="ui_group_squad_nothing">组织还没有分支，您来添加第一个吧</string>
     <string name="ui_organization_details_not_exists">抱歉，该组织不存在</string>
@@ -136,12 +136,15 @@
     <string name="ui_group_activity_editor_participator_is_blank">活动参与人不能为空</string>
     <string name="ui_group_activity_editor_participator_select_fragment_title">参与人</string>
     <string name="ui_group_activity_editor_participator_select_1">@string/ui_group_constructor_groups_fragment_title_sub</string>
-    <string name="ui_group_activity_editor_participator_select_2">本组织支部</string>
+    <string name="ui_group_activity_editor_participator_select_2">本组织</string>
     <string name="ui_group_activity_editor_participator_select_all_1">
         <![CDATA[全选<font color="#3cbaff">(基层组织)</font>]]>
     </string>
     <string name="ui_group_activity_editor_participator_select_all_2">
         <![CDATA[全选<font color="#3cbaff">(支部成员)</font>]]>
+    </string>
+    <string name="ui_group_activity_editor_participator_select_all_3">
+        <![CDATA[全选<font color="#3cbaff">(组织成员)</font>]]>
     </string>
     <string name="ui_group_activity_details_deliver">下发</string>
     <string name="ui_group_activity_details_sign_up">报名</string>

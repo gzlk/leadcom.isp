@@ -2,7 +2,9 @@ package com.leadcom.android.isp.fragment.organization;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Html;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.R;
@@ -42,6 +44,7 @@ public class GroupContactPickFragment extends GroupBaseFragment {
     private static final String PARAM_SELECT_ALL = "ocpf_select_all";
     private static final String PARAM_FORCE_LOCK = "ocpf_force_to_lock";
     private static final String PARAM_SINGLE_PICK = "ocpf_single_pick";
+    private static final String PARAM_IS_SINGLE_UI = "ocpf_is_single_UI";
 
     public static GroupContactPickFragment newInstance(Bundle bundle) {
         GroupContactPickFragment ocp = new GroupContactPickFragment();
@@ -49,7 +52,7 @@ public class GroupContactPickFragment extends GroupBaseFragment {
         return ocp;
     }
 
-    private static Bundle getBundle(String groupId, boolean lockExist, boolean singlePick, String jsonExitMembers) {
+    public static Bundle getBundle(String groupId, boolean lockExist, boolean singlePick, boolean isSingle, String jsonExitMembers) {
         Bundle bundle = new Bundle();
         // 组织的id
         bundle.putString(PARAM_QUERY_ID, groupId);
@@ -59,6 +62,8 @@ public class GroupContactPickFragment extends GroupBaseFragment {
         bundle.putBoolean(PARAM_SINGLE_PICK, singlePick);
         // 已选中的成员列表
         bundle.putString(PARAM_JSON, jsonExitMembers);
+        // 是否独立打开的页面
+        bundle.putBoolean(PARAM_IS_SINGLE_UI, isSingle);
         return bundle;
     }
 
@@ -67,7 +72,7 @@ public class GroupContactPickFragment extends GroupBaseFragment {
     }
 
     public static void open(BaseFragment fragment, int request, String groupId, boolean lockExist, boolean singlePick, String jsonExitMembers) {
-        Bundle bundle = getBundle(groupId, lockExist, singlePick, jsonExitMembers);
+        Bundle bundle = getBundle(groupId, lockExist, singlePick, true, jsonExitMembers);
         fragment.openActivity(GroupContactPickFragment.class.getName(), bundle, request, true, false);
     }
 
@@ -77,6 +82,7 @@ public class GroupContactPickFragment extends GroupBaseFragment {
         isSelectAll = bundle.getBoolean(PARAM_SELECT_ALL, false);
         isLockable = bundle.getBoolean(PARAM_FORCE_LOCK, false);
         isSinglePick = bundle.getBoolean(PARAM_SINGLE_PICK, false);
+        isSingleUI = bundle.getBoolean(PARAM_IS_SINGLE_UI, true);
         String json = bundle.getString(PARAM_JSON, "[]");
         existsUsers = Json.gson().fromJson(StringHelper.replaceJson(json, true), new TypeToken<ArrayList<SubMember>>() {
         }.getType());
@@ -91,16 +97,19 @@ public class GroupContactPickFragment extends GroupBaseFragment {
         bundle.putBoolean(PARAM_SELECT_ALL, isSelectAll);
         bundle.putBoolean(PARAM_FORCE_LOCK, isLockable);
         bundle.putBoolean(PARAM_SINGLE_PICK, isSinglePick);
+        bundle.putBoolean(PARAM_IS_SINGLE_UI, isSingleUI);
         bundle.putString(PARAM_JSON, Json.gson().toJson(existsUsers));
     }
 
     // UI
     @ViewId(R.id.ui_tool_view_select_all_root)
     private View selectAllRoot;
+    @ViewId(R.id.ui_tool_view_select_all_title)
+    private TextView selectAllTitle;
     @ViewId(R.id.ui_tool_view_select_all_icon)
     private CustomTextView selectAllIcon;
 
-    private boolean isSelectAll = false, isLockable = false, isSinglePick = false;
+    private boolean isSelectAll = false, isLockable = false, isSinglePick = false, isSingleUI = true;
     private ContactAdapter mAdapter;
     /**
      * 已选中的用户列表
@@ -122,27 +131,35 @@ public class GroupContactPickFragment extends GroupBaseFragment {
         enableSwipe(false);
         setSupportLoadingMore(false);
         selectAllRoot.setVisibility(isSinglePick ? View.GONE : View.VISIBLE);
-        setCustomTitle(R.string.ui_organization_contact_picker_fragment_title);
-        setRightText(R.string.ui_base_text_finish);
-        setRightTitleClickListener(new OnTitleButtonClickListener() {
-            @Override
-            public void onClick() {
-                resultMembers();
-            }
-        });
+        if (isSingleUI) {
+            setCustomTitle(R.string.ui_organization_contact_picker_fragment_title);
+            setRightText(R.string.ui_base_text_finish);
+            setRightTitleClickListener(new OnTitleButtonClickListener() {
+                @Override
+                public void onClick() {
+                    resultMembers();
+                }
+            });
+        } else {
+            selectAllTitle.setText(Html.fromHtml(StringHelper.getString(R.string.ui_group_activity_editor_participator_select_all_3)));
+        }
         initializeAdapter();
     }
 
     private void resultMembers() {
-        // 返回选中的用户id和姓名
+        resultData(SubMember.toJson(getSelectedItems()));
+    }
+
+    public ArrayList<SubMember> getSelectedItems() {
         ArrayList<SubMember> members = new ArrayList<>();
-        for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
-            Member member = mAdapter.get(i);
+        Iterator<Member> iterator = mAdapter.iterator();
+        while (iterator.hasNext()) {
+            Member member = iterator.next();
             if (member.isSelected()) {
                 members.add(new SubMember(member));
             }
         }
-        resultData(SubMember.toJson(members));
+        return members;
     }
 
     @Override
@@ -246,6 +263,7 @@ public class GroupContactPickFragment extends GroupBaseFragment {
                     // 如果成员已经在之前的选定列表里，则做好防删除标记
                     member.setLocalDeleted(true);
                 }
+                member.setSelectable(true);
                 if (!member.isSelected()) {
                     // 如果不在初始选中的列表里，则根据全选状态来设置选中与否
                     member.setSelected(isSelectAll);
@@ -269,8 +287,21 @@ public class GroupContactPickFragment extends GroupBaseFragment {
                 member.setSelected(!member.isSelected());
             }
             mAdapter.notifyItemChanged(index);
+            isSelectAll = isAllSelected();
+            selectAllIcon.setTextColor(getColor(isSelectAll ? R.color.colorPrimary : R.color.textColorHintLight));
         }
     };
+
+    private boolean isAllSelected() {
+        Iterator<Member> iterator = mAdapter.iterator();
+        while (iterator.hasNext()) {
+            Member member = iterator.next();
+            if (!member.isSelected()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     private class ContactAdapter extends RecyclerViewAdapter<ContactViewHolder, Member> {
 

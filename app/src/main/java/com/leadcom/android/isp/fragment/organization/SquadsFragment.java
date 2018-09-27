@@ -350,6 +350,7 @@ public class SquadsFragment extends GroupBaseFragment {
                     openSquadAddDialog();
                     break;
                 case R.id.ui_holder_view_contact_layout:
+                case R.id.ui_holder_view_contact_picker:
                     Member member = (Member) model;
                     if (selectable) {
                         member.setSelected(!member.isSelected());
