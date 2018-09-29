@@ -8,6 +8,7 @@ import android.view.animation.AnimationUtils;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.PermissionRequest;
@@ -16,7 +17,9 @@ import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.main.PersonalityFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.listener.OnTaskCompleteListener;
 import com.leadcom.android.isp.model.Dao;
+import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.Contact;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.user.User;
@@ -301,5 +304,46 @@ public class App extends BaseActivityManagedApplication {
 
     public synchronized ArrayList<Contact> getContacts() {
         return contacts;
+    }
+
+    private ArrayList<Archive> activities = new ArrayList<>();
+
+    public synchronized ArrayList<Archive> getActivities() {
+        return activities;
+    }
+
+    public synchronized void fetchingActivities(final String groupId, final OnTaskCompleteListener completeListener) {
+        ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
+            @Override
+            public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success && null != list) {
+                    for (Archive archive : list) {
+                        archive.setDocType(Archive.ArchiveType.ACTIVITY);
+                        if (isEmpty(archive.getGroupId())) {
+                            archive.setGroupId(groupId);
+                        }
+                        if (isEmpty(archive.getId())) {
+                            archive.setId(archive.getGroActivityId());
+                        }
+                        if (!activities.contains(archive)) {
+                            activities.add(archive);
+                        }
+                    }
+                }
+                if (null != completeListener) {
+                    completeListener.onComplete();
+                }
+            }
+        }).listActivities(groupId, 0);
+    }
+
+    public synchronized Archive getActivity(String activityId) {
+        for (Archive archive : activities) {
+            if (archive.getId().equals(activityId)) {
+                return archive;
+            }
+        }
+        return null;
     }
 }

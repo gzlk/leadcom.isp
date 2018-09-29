@@ -137,16 +137,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         fragment.openActivity(ArchiveDetailsFragment.class.getName(), bundle, true, false);
     }
 
-    public static void open(Context context, String groupId, String archiveId, int archiveType, String h5, boolean isDraft, boolean innerOpen, String authorId) {
-        Archive archive = new Archive();
-        archive.setId(archiveId);
-        archive.setDocType(archiveType);
-        archive.setGroupId(groupId);
-        archive.setGroActivityId(archiveId);
-        archive.setUserId(authorId);
-        archive.setH5(h5);
+    public static void open(Context context, Archive archive, boolean innerOpen) {
         isLoaded = false;
-        Bundle bundle = getBundle(archive, archiveId, isDraft, innerOpen);
+        Bundle bundle = getBundle(archive, archive.getId(), false, innerOpen);
         BaseActivity.openActivity(context, ArchiveDetailsFragment.class.getName(), bundle, true, false);
     }
 

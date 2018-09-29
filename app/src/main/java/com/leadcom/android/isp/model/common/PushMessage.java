@@ -36,6 +36,7 @@ public class PushMessage extends Model {
         private String userMmtId;
         private String messageCode;
         private String groActivityId;
+        private String fromGroupId;
         private String h5;
 
         public String getMsgId() {
@@ -76,6 +77,14 @@ public class PushMessage extends Model {
 
         public void setGroupId(String groupId) {
             this.groupId = groupId;
+        }
+
+        public String getFromGroupId() {
+            return fromGroupId;
+        }
+
+        public void setFromGroupId(String fromGroupId) {
+            this.fromGroupId = fromGroupId;
         }
 
         public String getUserMmtId() {

@@ -16,6 +16,7 @@ import com.leadcom.android.isp.fragment.organization.ActivitiesFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.listener.OnTaskCompleteListener;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.PushMessage;
 import com.leadcom.android.isp.model.common.PushMessage.Extra;
@@ -52,20 +53,41 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
         log(string.toString());
     }
 
-    public static void switchUI(Context context, Extra extra) {
+    public static void switchUI(final Context context, Extra extra) {
         if (null == extra) return;
 
-        boolean isAppForeground = SysInfoUtil.isAppOnForeground(context, BuildConfig.APPLICATION_ID);
+        final boolean isAppForeground = SysInfoUtil.isAppOnForeground(context, BuildConfig.APPLICATION_ID);
         switch (extra.getMessageCode()) {
             case PushMessage.MsgCode.GROUP_ACTIVITY_DELIVER:
             case PushMessage.MsgCode.GROUP_ACTIVITY_PUBLISH:
             case PushMessage.MsgCode.GROUP_ACTIVITY_REPLY:
+                final String activityId = extra.getGroActivityId();
+                final String groupId = extra.getGroupId();
                 // 活动相关的通知
                 if (extra.getMessageCode().equals(PushMessage.MsgCode.GROUP_ACTIVITY_PUBLISH)) {
-                    String h5 = extra.getH5();
-                    ArchiveDetailsFragment.open(context, extra.getGroupId(), extra.getGroActivityId(), Archive.ArchiveType.ACTIVITY, h5, false, isAppForeground, "");
+                    Archive archive = new Archive();
+                    archive.setId(activityId);
+                    archive.setFromGroupId(extra.getFromGroupId());
+                    archive.setGroupId(groupId);
+                    archive.setH5(extra.getH5());
+                    ArchiveDetailsFragment.open(context, archive, isAppForeground);
                 } else {
-                    ActivitiesFragment.open(context, extra.getGroupId(), "");
+                    final Archive archive = App.app().getActivity(activityId);
+                    if (0 == App.app().getActivities().size() || null == archive) {
+                        App.app().fetchingActivities(groupId, new OnTaskCompleteListener() {
+                            @Override
+                            public void onComplete() {
+                                Archive doc = App.app().getActivity(activityId);
+                                if (null != doc) {
+                                    ArchiveDetailsFragment.open(context, doc, isAppForeground);
+                                } else {
+                                    ActivitiesFragment.open(context, groupId, "");
+                                }
+                            }
+                        });
+                    } else {
+                        ArchiveDetailsFragment.open(context, archive, isAppForeground);
+                    }
                 }
                 break;
             case PushMessage.MsgCode.GROUP_ATTENTION:
