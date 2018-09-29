@@ -67,7 +67,9 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
                 if (extra.getMessageCode().equals(PushMessage.MsgCode.GROUP_ACTIVITY_PUBLISH)) {
                     Archive archive = new Archive();
                     archive.setId(activityId);
+                    archive.setDocType(Archive.ArchiveType.ACTIVITY);
                     archive.setFromGroupId(extra.getFromGroupId());
+                    archive.setGroActivityId(activityId);
                     archive.setGroupId(groupId);
                     archive.setH5(extra.getH5());
                     ArchiveDetailsFragment.open(context, archive, isAppForeground);
