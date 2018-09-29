@@ -87,9 +87,9 @@
 
     <string-array name="ui_text_archive_creator_editor_template_values">
         <item>0|时间：|%s|0</item>
-        <item>地点：|%s|活动发生地点(必填)|||0</item>
+        <item>地点：|%s|活动发生地点(必填)|||50</item>
         <item>参与者：|%s|选择参与人|||0|2</item>
-        <item>记录人：|%s|活动记录人|||0</item>
+        <item>记录人：|%s|活动记录人|||20</item>
     </string-array>
     <string-array name="ui_text_archive_types">
         <item>提案报道</item>

@@ -2162,6 +2162,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             authorHolder.showContent(format(templateItems[3], Cache.cache().userName));
         }
         if (mArchive.isActivity()) {
+            titleView.setMaxLength(20);
             minuteTitle.setText(StringHelper.getString(R.string.ui_group_activity_editor_minute_title));
             imageTitle.setText(StringHelper.getString(R.string.ui_group_activity_editor_files_title));
         }
