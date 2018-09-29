@@ -187,11 +187,13 @@ public class GroupsFragment extends GroupBaseFragment {
 
     public ArrayList<SubMember> getSelectedItems() {
         ArrayList<SubMember> list = new ArrayList<>();
-        Iterator<RelateGroup> iterator = mAdapter.iterator();
-        while (iterator.hasNext()) {
-            RelateGroup group = iterator.next();
-            if (group.isSelected()) {
-                list.add(new SubMember(group));
+        if (null != mAdapter) {
+            Iterator<RelateGroup> iterator = mAdapter.iterator();
+            while (iterator.hasNext()) {
+                RelateGroup group = iterator.next();
+                if (group.isSelected()) {
+                    list.add(new SubMember(group));
+                }
             }
         }
         return list;

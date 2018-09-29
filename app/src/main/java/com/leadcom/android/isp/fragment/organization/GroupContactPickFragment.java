@@ -152,11 +152,13 @@ public class GroupContactPickFragment extends GroupBaseFragment {
 
     public ArrayList<SubMember> getSelectedItems() {
         ArrayList<SubMember> members = new ArrayList<>();
-        Iterator<Member> iterator = mAdapter.iterator();
-        while (iterator.hasNext()) {
-            Member member = iterator.next();
-            if (member.isSelected()) {
-                members.add(new SubMember(member));
+        if (null != mAdapter) {
+            Iterator<Member> iterator = mAdapter.iterator();
+            while (iterator.hasNext()) {
+                Member member = iterator.next();
+                if (member.isSelected()) {
+                    members.add(new SubMember(member));
+                }
             }
         }
         return members;

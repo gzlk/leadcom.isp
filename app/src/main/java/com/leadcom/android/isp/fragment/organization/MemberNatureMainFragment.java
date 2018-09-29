@@ -2,7 +2,6 @@ package com.leadcom.android.isp.fragment.organization;
 
 import android.os.Bundle;
 import android.util.TypedValue;
-import android.view.View;
 import android.widget.LinearLayout;
 
 import com.hlk.hlklib.lib.inject.ViewId;
