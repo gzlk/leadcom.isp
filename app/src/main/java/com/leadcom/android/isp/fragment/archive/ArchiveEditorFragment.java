@@ -284,7 +284,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     /**
      * 是否是粘贴了内容
      */
-    private boolean isPasteContent = false, isShareDraft = false;
+    private boolean isPasteContent = false, isShareDraft = false, isCreating = false;
 
     private DraftSavingReceiver draftSavingReceiver;
 
@@ -413,12 +413,20 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void createActivity() {
+        if (isCreating) {
+            ToastHelper.make().showMsg(R.string.ui_group_activity_editor_still_creating);
+            return;
+        }
+        isCreating = true;
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success) {
                     resultData(archive.getId());
+                } else {
+                    // 创建失败后可以再次尝试创建一下活动
+                    isCreating = false;
                 }
             }
         }).createActivity(mArchive);
@@ -966,6 +974,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void createArchive() {
+        if (isCreating) {
+            ToastHelper.make().showMsg(R.string.ui_group_archive_editor_still_creating);
+            return;
+        }
+        isCreating = true;
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
@@ -974,6 +987,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     // 提交成功，判断是否需要再提交个人档案
                     mArchive = archive;
                     createSuccess();
+                } else {
+                    isCreating = false;
                 }
             }
         }).save(mArchive, false, false);

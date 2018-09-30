@@ -129,6 +129,8 @@
     <string name="ui_group_activity_open_reply">您在查看活动的回复</string>
     <string name="ui_group_activity_item_time" formatted="false">时间：%s</string>
     <string name="ui_group_activity_launch_title">发起活动</string>
+    <string name="ui_group_archive_editor_still_creating">档案正在准备中，请稍候&#8230;</string>
+    <string name="ui_group_activity_editor_still_creating">活动还在准备中，请稍候&#8230;</string>
     <string name="ui_group_activity_editor_minute_title">活动\n描述</string>
     <string name="ui_group_activity_editor_files_title">文件/图片(总数≤8，选填项)</string>
     <string name="ui_group_activity_editor_title_is_blank">活动标题不能为空</string>
