@@ -122,7 +122,13 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
                 ArrayList<SubMember> members = squads.getSelectedItems();
 
                 GroupContactPickFragment contact = (GroupContactPickFragment) mFragments.get(1);
-                members.addAll(contact.getSelectedItems());
+                ArrayList<SubMember> contacts = contact.getSelectedItems();
+                for (SubMember member : contacts) {
+                    if (!member.isUserExistedIn(members)) {
+                        members.add(member);
+                    }
+                }
+                //members.addAll(contact.getSelectedItems());
 
                 if (!IS_FOR_DELIVER) {
                     GroupsFragment groups = (GroupsFragment) mFragments.get(2);

@@ -164,6 +164,19 @@ public class SubMember implements Serializable {
         type = MemberType.GROUP;
     }
 
+    /**
+     * 本节点用户是否在列表中存在
+     */
+    public boolean isUserExistedIn(ArrayList<SubMember> members) {
+        if (null == members || members.size() < 1) return false;
+        for (SubMember member : members) {
+            if (!isEmpty(member.getUserId()) && !isEmpty(userId) && member.getUserId().equals(userId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String getUserId() {
         if (StringHelper.isEmpty(userId, true)) {
             userId = Cryptography.md5(userName);
