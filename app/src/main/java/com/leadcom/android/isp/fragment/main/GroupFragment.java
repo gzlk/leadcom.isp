@@ -167,7 +167,7 @@ public class GroupFragment extends GroupBaseFragment {
         isLoadingComplete(true);
         // 单个组织查询时，需要显示左侧的返回
         leftContainer.setVisibility(isSingle ? View.VISIBLE : View.GONE);
-        createView.setVisibility(isSingle ? View.GONE : View.VISIBLE);
+        //createView.setVisibility(isSingle || Cache.isReleasable() ? View.GONE : View.VISIBLE);
         titleAllow.setVisibility(isSingle ? View.GONE : View.VISIBLE);
         groupsBkg.setVisibility(isSingle ? View.GONE : View.VISIBLE);
         //selfDefine.setVisibility(isSingle ? View.GONE : View.VISIBLE);

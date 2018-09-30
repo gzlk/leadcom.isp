@@ -47,7 +47,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="@dimen/ui_static_dp_10"
-            android:text="@string/ui_base_text_add" />
+            android:text="@string/ui_base_text_add"
+            android:visibility="gone" />
     </FrameLayout>
 
     <RelativeLayout
