@@ -2,6 +2,7 @@ package com.leadcom.android.isp.fragment.organization;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.Click;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
 
     private static final String PARAM_MEMBERS = "gpf_param_selected_members";
+    public static boolean IS_FOR_DELIVER = false;
 
     public static GroupAllPickerFragment newInstance(Bundle bundle) {
         GroupAllPickerFragment gapf = new GroupAllPickerFragment();
@@ -56,8 +58,12 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     private View topLine1;
     @ViewId(R.id.ui_group_concern_main_top_channel_2_line)
     private View topLine2;
+    @ViewId(R.id.ui_group_all_picker_group_squad_layout)
+    private View squadClickView;
     @ViewId(R.id.ui_group_all_picker_group_squad_line)
     private View squadLine;
+    @ViewId(R.id.ui_group_all_picker_group_member_layout)
+    private View memberClickView;
     @ViewId(R.id.ui_group_all_picker_group_member_line)
     private View memberLine;
     private ArrayList<String> selectedGroups;
@@ -94,9 +100,17 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setCustomTitle(R.string.ui_group_activity_editor_participator_select_fragment_title);
-        topText1.setText(R.string.ui_group_activity_editor_participator_select_1);
-        topText2.setText(R.string.ui_group_activity_editor_participator_select_2);
+        setCustomTitle(IS_FOR_DELIVER ? R.string.ui_group_activity_editor_participator_select_fragment_title1 : R.string.ui_group_activity_editor_participator_select_fragment_title);
+        topText1.setText(IS_FOR_DELIVER ? R.string.ui_group_squad_member_fragment_title : R.string.ui_group_activity_editor_participator_select_1);
+        topText2.setText(IS_FOR_DELIVER ? R.string.ui_group_member_fragment_title : R.string.ui_group_activity_editor_participator_select_2);
+        squadClickView.setVisibility(IS_FOR_DELIVER ? View.GONE : View.VISIBLE);
+        memberClickView.setVisibility(IS_FOR_DELIVER ? View.GONE : View.VISIBLE);
+
+        if (IS_FOR_DELIVER) {
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) topLine2.getLayoutParams();
+            params.addRule(RelativeLayout.ALIGN_END, R.id.ui_group_concern_main_top_channel_2);
+            topLine2.setLayoutParams(params);
+        }
 //        topText1.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size_small));
 //        topText2.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size_small));
         setRightText(R.string.ui_base_text_complete);
@@ -110,12 +124,20 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
                 GroupContactPickFragment contact = (GroupContactPickFragment) mFragments.get(1);
                 members.addAll(contact.getSelectedItems());
 
-                GroupsFragment groups = (GroupsFragment) mFragments.get(2);
-                members.addAll(groups.getSelectedItems());
+                if (!IS_FOR_DELIVER) {
+                    GroupsFragment groups = (GroupsFragment) mFragments.get(2);
+                    members.addAll(groups.getSelectedItems());
+                }
 
                 resultData(SubMember.toJson(members));
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        IS_FOR_DELIVER = false;
+        super.onDestroy();
     }
 
     @Override
@@ -128,10 +150,12 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
             // 本组织成员
             bundle = GroupContactPickFragment.getBundle(mQueryId, false, false, false, "[]");
             mFragments.add(GroupContactPickFragment.newInstance(bundle));
-            // 下级组织
-            bundle = GroupsFragment.getBundle(mQueryId, "", RelateGroup.RelationType.SUBORDINATE, true, selectedGroups);
-            GroupsFragment groups = GroupsFragment.newInstance(bundle);
-            mFragments.add(groups);
+            if (!IS_FOR_DELIVER) {
+                // 下级组织
+                bundle = GroupsFragment.getBundle(mQueryId, "", RelateGroup.RelationType.SUBORDINATE, true, selectedGroups);
+                GroupsFragment groups = GroupsFragment.newInstance(bundle);
+                mFragments.add(groups);
+            }
         }
     }
 
@@ -143,18 +167,29 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
         int color4 = getColor(R.color.textColorHintLightLight);
 
         squadMember.setTextColor(position == 0 ? color1 : color2);
-        squadLine.setVisibility(position == 0 ? View.VISIBLE : View.INVISIBLE);
-
         groupMember.setTextColor(position == 1 ? color1 : color2);
-        memberLine.setVisibility(position == 1 ? View.VISIBLE : View.INVISIBLE);
+
+        if (!IS_FOR_DELIVER) {
+            squadLine.setVisibility(position == 0 ? View.VISIBLE : View.INVISIBLE);
+            memberLine.setVisibility(position == 1 ? View.VISIBLE : View.INVISIBLE);
+        }
 
         //topLine1.setVisibility(position == 2 ? View.VISIBLE : View.INVISIBLE);
-        topLine1.setBackgroundColor(position == 2 ? color3 : color4);
-        topText1.setTextColor(position == 2 ? color1 : color2);
+        if (IS_FOR_DELIVER) {
+            topLine1.setBackgroundColor(position == 1 ? color3 : color4);
+            topText1.setTextColor(position == 1 ? color1 : color2);
+
+            topLine2.setBackgroundColor(position == 0 ? color3 : color4);
+            topText2.setTextColor(position == 0 ? color1 : color2);
+        } else {
+            topLine1.setBackgroundColor(position == 2 ? color3 : color4);
+            topText1.setTextColor(position == 2 ? color1 : color2);
+
+            topLine2.setBackgroundColor(position <= 1 ? color3 : color4);
+            topText2.setTextColor(position <= 1 ? color1 : color2);
+        }
 
         //topLine2.setVisibility(position <= 1 ? View.VISIBLE : View.INVISIBLE);
-        topLine2.setBackgroundColor(position <= 1 ? color3 : color4);
-        topText2.setTextColor(position <= 1 ? color1 : color2);
     }
 
     @Override
@@ -169,10 +204,16 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     private void click(View view) {
         switch (view.getId()) {
             case R.id.ui_group_concern_main_top_channel_1:
-                setDisplayPage(2);
+                if (IS_FOR_DELIVER) {
+                    setDisplayPage(1);
+                } else {
+                    setDisplayPage(2);
+                }
                 break;
             case R.id.ui_group_concern_main_top_channel_2:
-                //setDisplayPage(2);
+                if (IS_FOR_DELIVER) {
+                    setDisplayPage(0);
+                }
                 break;
             case R.id.ui_group_all_picker_group_squad_layout:
                 setDisplayPage(0);

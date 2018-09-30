@@ -136,6 +136,7 @@
     <string name="ui_group_activity_editor_site_is_blank">活动地点不能为空</string>
     <string name="ui_group_activity_editor_participator_is_blank">活动参与人不能为空</string>
     <string name="ui_group_activity_editor_participator_select_fragment_title">参与人</string>
+    <string name="ui_group_activity_editor_participator_select_fragment_title1">活动下发</string>
     <string name="ui_group_activity_editor_participator_select_1">@string/ui_group_constructor_groups_fragment_title_sub</string>
     <string name="ui_group_activity_editor_participator_select_2">本组织</string>
     <string name="ui_group_activity_editor_participator_select_all_1">
@@ -162,6 +163,9 @@
     <string name="ui_group_activity_details_transform_dialog_title">下发到支部成员：</string>
     <string name="ui_group_activity_details_transform_dialog_no_squad">组织还没有支部</string>
     <string name="ui_group_activity_details_transform_dialog_member_select_empty">请选择要下发的支部或成员</string>
+    <string name="ui_group_activity_details_transform_member_selected" formatted="false">
+        <![CDATA[下发活动到<font color="#3cbaff">%s</font>成员共<font color="#3cbaff">%d</font>人(<font color="#a1a1a1">某些成员可能会同时被支部成员和组织成员选中的情况</font>)，确定请继续。]]>
+    </string>
     <string name="ui_group_activity_details_transform_success">活动已下发</string>
     <string name="ui_group_activity_collection_fragment_title">活动报名统计</string>
     <string name="ui_group_activity_collection_not_activity">参数错误：非活动内容没有报名统计</string>

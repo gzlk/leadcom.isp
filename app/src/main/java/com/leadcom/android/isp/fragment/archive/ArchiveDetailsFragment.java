@@ -49,6 +49,7 @@ import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.organization.ActivityCollectionFragment;
+import com.leadcom.android.isp.fragment.organization.GroupAllPickerFragment;
 import com.leadcom.android.isp.helper.DownloadingHelper;
 import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -299,7 +300,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 ActivityCollectionFragment.open(ArchiveDetailsFragment.this, mArchive);
                 break;
             case R.id.ui_archive_details_activity_deliver:
-                openActivityDeliverDialog(true);
+                GroupAllPickerFragment.IS_FOR_DELIVER = true;
+                GroupAllPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), mArchive.getGroupName(), null, null);
+                //openActivityDeliverDialog(true);
                 break;
         }
     }
@@ -820,7 +823,26 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     @Override
     public void onActivityResult(int requestCode, Intent data) {
         if (requestCode == REQUEST_SELECT) {
-            finish();
+            // 选择了下发的成员
+            String result = getResultedData(data);
+            if (isEmpty(result)) {
+                ToastHelper.make().showMsg(R.string.ui_group_activity_details_transform_dialog_member_select_empty);
+            } else {
+                final ArrayList<SubMember> members = SubMember.fromJson(result);
+                if (null == members || members.size() < 1) {
+                    ToastHelper.make().showMsg(R.string.ui_group_activity_details_transform_dialog_member_select_empty);
+                } else {
+                    String title = StringHelper.getString(R.string.ui_group_activity_details_transform_member_selected, SubMember.getMemberNames(members), members.size());
+                    DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+                        @Override
+                        public boolean onConfirm() {
+                            tryTransferActivity(members);
+                            return true;
+                        }
+                    }).setTitleText(title).setConfirmText(R.string.ui_base_text_confirm).setCancelText(R.string.ui_base_text_cancel).show();
+                }
+            }
+            //finish();
             // 需要跳转到会话页面并且关闭档案详情页
             //String teamId = getResultedData(data);
             //NimUIKit.startTeamSession(Activity(), teamId);
@@ -1082,6 +1104,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 super.onResponse(archive, success, message);
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_group_activity_details_transform_success);
+                    checkActivityReported();
                 }
             }
         }).transferActivity(mArchive.getGroupId(), mArchive.getFromGroupId(), mArchive.getGroActivityId(), members);
@@ -1347,7 +1370,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     @Override
     protected void transform() {
         pushingType = PUSH_TRANSFORM;
-        openPushDialog();
+        GroupAllPickerFragment.IS_FOR_DELIVER = true;
+        GroupAllPickerFragment.open(this, mArchive.getGroupId(), mArchive.getGroupName(), null, null);
+        //openPushDialog();
     }
 
     @Override

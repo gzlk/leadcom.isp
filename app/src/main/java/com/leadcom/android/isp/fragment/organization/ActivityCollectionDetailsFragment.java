@@ -110,6 +110,9 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
                 if (success && null != archive) {
                     mAdapter.add(archive);
                     for (ActSquad squad : archive.getGroSquadList()) {
+                        if(squad.getSquadId().equals("0")){
+                            squad.setSquadName("本组织成员");
+                        }
                         mAdapter.add(squad);
                         for (Member member : squad.getGroActivityMemberList()) {
                             mAdapter.add(member);

@@ -69,7 +69,7 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
 
     private void showContent(ActSquad squad) {
         topLine.setVisibility(View.VISIBLE);
-        textView.setText(Html.fromHtml(format("<b>%s</b>(<font color=\"#a1a1a1\">支部</font>)", squad.getSquadName())));
+        textView.setText(Html.fromHtml(format("<b>%s</b>" + (squad.getSquadId().equals("0") ? "" : "(<font color=\"#a1a1a1\">支部</font>)"), squad.getSquadName())));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size));
         textView.setTextColor(getColor(R.color.textColor));
         countView.setVisibility(View.GONE);
