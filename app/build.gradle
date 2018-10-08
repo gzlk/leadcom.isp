@@ -26,7 +26,7 @@ android {
         manifestPlaceholders = [
                 APP_PKG_NAME : applicationId,
                 JPUSH_PKGNAME: applicationId,
-                JPUSH_APPKEY : "eb9a33432be87668b36a94d6", //JPush上注册的包名对应的appkey.
+                JPUSH_APPKEY : "98538a8fedb936027cb5615c",//"eb9a33432be87668b36a94d6", //JPush上注册的包名对应的appkey.
                 JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
         ]
         resValue "string", "app_internal_version", getInternalVersion()
