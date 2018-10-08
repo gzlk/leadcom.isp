@@ -106,6 +106,9 @@
     <string name="ui_group_constructor_groups_fragment_title_supper">上级组织</string>
     <string name="ui_group_constructor_groups_fragment_title_supper_add">添加上级组织</string>
     <string name="ui_group_constructor_groups_fragment_title_sub">基层组织</string>
+    <string name="ui_group_constructor_groups_no_super">没有上级组织</string>
+    <string name="ui_group_constructor_groups_no_subordinate">没有基层组织</string>
+    <string name="ui_group_constructor_groups_no_squad">没有支部</string>
     <string name="ui_group_constructor_groups_add_self_warning">不能添加组织本身为上级</string>
     <string name="ui_group_constructor_groups_add_warning" formatted="false">
         <![CDATA[您确定要将<font color="#3cbaff">%s</font>加为上级组织吗？]]>

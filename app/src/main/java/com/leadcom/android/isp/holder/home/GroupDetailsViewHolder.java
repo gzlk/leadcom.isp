@@ -34,6 +34,9 @@ public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
     @Override
     public void showContent(SimpleClickableItem item) {
         super.showContent(item);
+        if (item.isDisabled()) {
+            titleTextView.setTextColor(getColor(R.color.textColorHint));
+        }
         Integer i = Integer.decode(item.getIcon());
         valueIcon.setText(String.valueOf((char) i.intValue()));
         valueIcon.setVisibility(View.VISIBLE);

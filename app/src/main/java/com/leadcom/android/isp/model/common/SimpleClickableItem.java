@@ -21,6 +21,7 @@ public class SimpleClickableItem extends Model {
     private String icon;
     private boolean iconVisible = false;
     private boolean addVisible = false;
+    private boolean disabled=false;
     private int additionalNum;
 
     public SimpleClickableItem(String text) {
@@ -106,6 +107,14 @@ public class SimpleClickableItem extends Model {
 
     public void setAddVisible(boolean addVisible) {
         this.addVisible = addVisible;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     public int getAdditionalNum() {

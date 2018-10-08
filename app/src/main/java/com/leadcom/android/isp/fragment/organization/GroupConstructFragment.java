@@ -6,13 +6,19 @@ import android.view.View;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
+import com.leadcom.android.isp.api.org.RelationRequest;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.RelateGroup;
+import com.leadcom.android.isp.model.organization.Squad;
+
+import java.util.List;
 
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
@@ -89,6 +95,10 @@ public class GroupConstructFragment extends GroupBaseFragment {
         @Override
         public void onClick(View view, int index) {
             SimpleClickableItem item = mAdapter.get(index);
+            if (item.isDisabled()) {
+                showToast(item.getIndex());
+                return;
+            }
             switch (item.getIndex()) {
                 case 0:
                     // 上级组织
@@ -103,6 +113,10 @@ public class GroupConstructFragment extends GroupBaseFragment {
                     SquadsFragment.open(GroupConstructFragment.this, mQueryId, mGroupName);
                     break;
             }
+        }
+
+        private void showToast(int index) {
+            ToastHelper.make().showMsg(index == 0 ? R.string.ui_group_constructor_groups_no_super : (index == 1 ? R.string.ui_group_constructor_groups_no_subordinate : R.string.ui_group_constructor_groups_no_squad));
         }
     };
 
@@ -123,6 +137,33 @@ public class GroupConstructFragment extends GroupBaseFragment {
                 SimpleClickableItem item = new SimpleClickableItem(string);
                 mAdapter.add(item);
             }
+            loadingGroups(RelateGroup.RelationType.SUPERIOR);
+            loadingGroups(RelateGroup.RelationType.SUBORDINATE);
+            fetchingRemoteSquads(mQueryId);
+        }
+    }
+
+    private void loadingGroups(final int type) {
+        RelationRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RelateGroup>() {
+            @Override
+            public void onResponse(List<RelateGroup> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+
+                SimpleClickableItem item = new SimpleClickableItem(items[type == RelateGroup.RelationType.SUPERIOR ? 0 : 1]);
+                item.setDisabled(!success || null == list || list.size() <= 0);
+                if (mAdapter.exist(item)) {
+                    mAdapter.update(item);
+                }
+            }
+        }).list(mQueryId, type);
+    }
+
+    @Override
+    protected void onFetchingRemoteSquadsComplete(List<Squad> list) {
+        SimpleClickableItem item = new SimpleClickableItem(items[2]);
+        item.setDisabled(null == list || list.size() <= 0);
+        if (mAdapter.exist(item)) {
+            mAdapter.update(item);
         }
     }
 
