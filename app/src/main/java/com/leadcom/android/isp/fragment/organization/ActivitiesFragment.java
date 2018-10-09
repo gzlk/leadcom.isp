@@ -15,11 +15,15 @@ import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.organization.ActivityItemViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.operation.GRPOperation;
+import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.List;
 
@@ -60,6 +64,7 @@ public class ActivitiesFragment extends GroupBaseFragment {
 
     private ActivityAdapter mAdapter;
     private String mGroupName;
+    private boolean isPublishable = false;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -82,7 +87,8 @@ public class ActivitiesFragment extends GroupBaseFragment {
             title = format("%s(%s)", title, mGroupName);
         }
         setCustomTitle(title);
-        if (hasOperation(mQueryId, GRPOperation.ACTIVITY_PUBLISH)) {
+        isPublishable = hasOperation(mQueryId, GRPOperation.ACTIVITY_PUBLISH);
+        if (isPublishable) {
             setRightText(R.string.ui_base_text_launch);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
@@ -152,9 +158,20 @@ public class ActivitiesFragment extends GroupBaseFragment {
             setLoadingText(R.string.ui_group_activity_loading);
             mAdapter = new ActivityAdapter();
             mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(mRecyclerView.getContext()));
             mAdapter.setOnDataHandingListener(handingListener);
             loadingActivities();
         }
+    }
+
+    private void warningDeleteActivity(String activityId) {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                ToastHelper.make().showMsg("api暂时不支持删除操作");
+                return true;
+            }
+        }).setTitleText(R.string.ui_group_activity_item_delete).setConfirmText(R.string.ui_base_text_delete).setCancelText(R.string.ui_base_text_cancel).show();
     }
 
     private RecyclerViewAdapter.OnDataHandingListener handingListener = new RecyclerViewAdapter.OnDataHandingListener() {
@@ -177,7 +194,15 @@ public class ActivitiesFragment extends GroupBaseFragment {
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
-            ArchiveDetailsFragment.open(ActivitiesFragment.this, mAdapter.get(index));
+            switch (view.getId()) {
+                case R.id.ui_tool_view_contact_button2:
+                    // 删除活动
+                    warningDeleteActivity(mAdapter.get(index).getId());
+                    break;
+                default:
+                    ArchiveDetailsFragment.open(ActivitiesFragment.this, mAdapter.get(index));
+                    break;
+            }
         }
     };
 
@@ -192,7 +217,7 @@ public class ActivitiesFragment extends GroupBaseFragment {
 
         @Override
         public int itemLayout(int viewType) {
-            return R.layout.holder_view_group_activity_item;
+            return isPublishable ? R.layout.holder_view_group_activity_item_deletable : R.layout.holder_view_group_activity_item;
         }
 
         @Override

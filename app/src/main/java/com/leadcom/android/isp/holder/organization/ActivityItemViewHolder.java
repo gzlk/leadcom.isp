@@ -29,6 +29,8 @@ public class ActivityItemViewHolder extends BaseViewHolder {
     private TextView titleView;
     @ViewId(R.id.ui_holder_view_group_activity_item_time)
     private TextView timeView;
+    @ViewId(R.id.ui_tool_view_contact_button2_text)
+    private TextView deleteText;
 
     public ActivityItemViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -36,12 +38,16 @@ public class ActivityItemViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Archive activity) {
+        if (null != deleteText) {
+            deleteText.setText(R.string.ui_base_text_delete);
+        }
         titleView.setText(activity.getTitle());
         titleView.setSelected(true);
         timeView.setText(StringHelper.getString(R.string.ui_group_activity_item_time, fragment().formatTimeAgo(activity.getCreateDate())));
     }
 
-    @Click({R.id.ui_holder_view_group_activity_item_layout})
+    @Click({R.id.ui_holder_view_group_activity_item_layout,
+            R.id.ui_tool_view_contact_button2})
     private void click(View view) {
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
