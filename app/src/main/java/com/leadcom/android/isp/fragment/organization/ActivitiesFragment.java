@@ -217,7 +217,7 @@ public class ActivitiesFragment extends GroupBaseFragment {
 
         @Override
         public int itemLayout(int viewType) {
-            return isPublishable ? R.layout.holder_view_group_activity_item_deletable : R.layout.holder_view_group_activity_item;
+            return R.layout.holder_view_group_activity_item;
         }
 
         @Override

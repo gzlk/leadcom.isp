@@ -2130,6 +2130,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private TextView minuteTitle;
     @ViewId(R.id.ui_holder_view_simple_inputable_minute)
     private CorneredEditText minuteContent;
+    @ViewId(R.id.ui_archive_creator_rich_editor_template_images_layout)
+    private View templateImages;
     @ViewId(R.id.ui_archive_creator_rich_editor_attachment_title)
     private TextView imageTitle;
     @ViewId(R.id.ui_archive_creator_rich_editor_template_images)
@@ -2177,6 +2179,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             authorHolder.showContent(format(templateItems[3], Cache.cache().userName));
         }
         if (mArchive.isActivity()) {
+            templateImages.setVisibility(View.GONE);
             titleView.setMaxLength(20);
             minuteTitle.setText(StringHelper.getString(R.string.ui_group_activity_editor_minute_title));
             imageTitle.setText(StringHelper.getString(R.string.ui_group_activity_editor_files_title));

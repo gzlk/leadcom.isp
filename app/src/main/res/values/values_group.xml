@@ -136,7 +136,7 @@
     <string name="ui_group_archive_editor_still_creating">档案正在准备中，请稍候&#8230;</string>
     <string name="ui_group_activity_editor_still_creating">活动还在准备中，请稍候&#8230;</string>
     <string name="ui_group_activity_editor_minute_title">活动\n描述</string>
-    <string name="ui_group_activity_editor_files_title">文件/图片(总数≤8，选填项)</string>
+    <string name="ui_group_activity_editor_files_title">图片(最多8张)</string>
     <string name="ui_group_activity_editor_title_is_blank">活动标题不能为空</string>
     <string name="ui_group_activity_editor_happen_date_is_blank">活动时间不能为空</string>
     <string name="ui_group_activity_editor_site_is_blank">活动地点不能为空</string>
