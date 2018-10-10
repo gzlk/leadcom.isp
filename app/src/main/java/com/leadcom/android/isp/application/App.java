@@ -252,7 +252,7 @@ public class App extends BaseActivityManagedApplication {
      */
     public void setJPushAlias() {
         if (!isEmpty(Cache.cache().userId)) {
-            JPushInterface.setAlias(App.app(), 0, Cache.cache().userId);
+            JPushInterface.setAlias(App.app(), 0, format("%s%s", (Cache.isReleasable() ? "product" : "test"), Cache.cache().userId));
         }
         initOrResumeJPush();
     }
