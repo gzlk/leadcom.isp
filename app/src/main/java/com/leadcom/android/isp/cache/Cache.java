@@ -33,10 +33,12 @@ import java.util.List;
 
 public class Cache {
 
+    @SuppressWarnings("ConstantConditions")
     public static boolean isReleasable() {
         return BuildConfig.BUILD_TYPE.equals("beta") || BuildConfig.BUILD_TYPE.equals("release");
     }
 
+    @SuppressWarnings("ConstantConditions")
     public static boolean isReleased() {
         return BuildConfig.BUILD_TYPE.equals("release");
     }
@@ -71,7 +73,6 @@ public class Cache {
 
     public User me;
 
-    @SuppressWarnings("ConstantConditions")
     public void saveCurrentUser() {
         App.app().saveCurrentUser(me);
     }
