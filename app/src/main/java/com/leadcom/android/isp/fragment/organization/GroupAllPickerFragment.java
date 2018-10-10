@@ -101,8 +101,8 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setCustomTitle(IS_FOR_DELIVER ? R.string.ui_group_activity_editor_participator_select_fragment_title1 : R.string.ui_group_activity_editor_participator_select_fragment_title);
-        topText1.setText(IS_FOR_DELIVER ? R.string.ui_group_squad_member_fragment_title : R.string.ui_group_activity_editor_participator_select_1);
-        topText2.setText(IS_FOR_DELIVER ? R.string.ui_group_member_fragment_title : R.string.ui_group_activity_editor_participator_select_2);
+        topText1.setText(IS_FOR_DELIVER ? R.string.ui_group_member_fragment_title : R.string.ui_group_activity_editor_participator_select_1);
+        topText2.setText(IS_FOR_DELIVER ? R.string.ui_group_squad_member_fragment_title : R.string.ui_group_activity_editor_participator_select_2);
         squadClickView.setVisibility(IS_FOR_DELIVER ? View.GONE : View.VISIBLE);
         memberClickView.setVisibility(IS_FOR_DELIVER ? View.GONE : View.VISIBLE);
 
