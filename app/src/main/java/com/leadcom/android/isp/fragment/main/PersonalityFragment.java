@@ -554,11 +554,11 @@ public class PersonalityFragment extends GroupBaseFragment {
                 case 1:
                     text = format(items[1], quantity.getDocNum());
                     break;
+                //case 2:
+                //    text = format(items[2], quantity.getMmtNum());
+                //    break;
                 case 2:
-                    text = format(items[2], quantity.getMmtNum());
-                    break;
-                case 3:
-                    text = format(items[3], quantity.getColNum());
+                    text = format(items[2], quantity.getColNum());
                     break;
             }
             if (!isEmpty(text)) {
