@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,6 +18,7 @@ import android.webkit.DownloadListener;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -620,6 +622,16 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     private class DetailsWebViewClient extends WebViewClient {
 
+        //private final String[] segments = new String[]{"bootstrap.min.css", "bootstrap.min.js", "jquery.cookie.js", "jquery.min.js", "template-web.js"};
+
+        private ArrayList<String> segments = new ArrayList<String>() {{
+            add("bootstrap.min.css");
+            add("bootstrap.min.js");
+            add("jquery.cookie.js");
+            add("jquery.min.js");
+            add("template-web.js");
+        }};
+
         private void checkSchema(WebView view, String url) {
             if (url.startsWith("leadcom://")) {
                 WelcomeActivity.open(Activity(), url);
@@ -640,6 +652,48 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 checkSchema(view, request.getUrl().toString());
             }
             return true;
+        }
+
+        private WebResourceResponse checkRequest(Uri uri) {
+            String fileName = uri.getLastPathSegment();
+            if (segments.contains(fileName)) {
+                WebResourceResponse response;
+                try {
+                    if (fileName.endsWith(".js")) {
+                        response = new WebResourceResponse("application/javascript", "UTF-8", App.app().getAssets().open("js/" + fileName));
+                    } else {
+                        response = new WebResourceResponse("text/css", "UTF-8", App.app().getAssets().open("css/" + fileName));
+                    }
+                    log(format("create local resource: %s", fileName));
+                } catch (Exception e) {
+                    response = null;
+                }
+                return response;
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+            if (Build.VERSION.SDK_INT < 21) {
+                log(format("request url: %s", url));
+                WebResourceResponse response = checkRequest(Uri.parse(url));
+                return null != response ? response : super.shouldInterceptRequest(view, url);
+            } else {
+                return super.shouldInterceptRequest(view, url);
+            }
+        }
+
+        @Override
+        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+            if (Build.VERSION.SDK_INT >= 21) {
+                log(format("request request: %s", request.getUrl().toString()));
+                WebResourceResponse response = checkRequest(request.getUrl());
+                return null != response ? response : super.shouldInterceptRequest(view, request);
+            } else {
+                return super.shouldInterceptRequest(view, request);
+            }
         }
 
         @Override
