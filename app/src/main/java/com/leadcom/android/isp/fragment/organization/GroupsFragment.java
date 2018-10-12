@@ -84,10 +84,12 @@ public class GroupsFragment extends GroupBaseFragment {
     private int mRelateType;
     private boolean isSearching = false, mSelectable, mAllSelected = false;
     private ArrayList<String> mSelected;
+    private boolean hasOperation = false;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        hasOperation = hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION);
         if (!mSelectable) {
             int title = mRelateType == RelateGroup.RelationType.SUPERIOR ? R.string.ui_group_constructor_groups_fragment_title_supper : (mRelateType == RelateGroup.RelationType.ADD ? R.string.ui_group_constructor_groups_fragment_title_supper_add : R.string.ui_group_constructor_groups_fragment_title_sub);
             if (mRelateType == RelateGroup.RelationType.ADD) {
@@ -100,7 +102,7 @@ public class GroupsFragment extends GroupBaseFragment {
         if (mSelectable) {
             selectAllTitle.setText(Html.fromHtml(StringHelper.getString(R.string.ui_group_activity_editor_participator_select_all_1)));
         }
-        if (mRelateType == RelateGroup.RelationType.SUPERIOR && hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION)) {
+        if (mRelateType == RelateGroup.RelationType.SUPERIOR && hasOperation) {
             setRightText(R.string.ui_base_text_add);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
@@ -439,7 +441,7 @@ public class GroupsFragment extends GroupBaseFragment {
             givh.setOnViewHolderElementClickListener(elementClickListener);
             givh.setSelectable(mSelectable);
             // 显示上下级时才显示按钮
-            givh.setButtonShown(!mSelectable && (mRelateType == RelateGroup.RelationType.SUPERIOR || mRelateType == RelateGroup.RelationType.ADD));
+            givh.setButtonShown(!mSelectable && hasOperation && (mRelateType == RelateGroup.RelationType.SUPERIOR || mRelateType == RelateGroup.RelationType.ADD));
             return givh;
         }
 
