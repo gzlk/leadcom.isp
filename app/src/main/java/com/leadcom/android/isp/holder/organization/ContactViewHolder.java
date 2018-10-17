@@ -164,6 +164,7 @@ public class ContactViewHolder extends BaseViewHolder {
         text = getSearchingText(text, searchingText);
         nameView.setText(Html.fromHtml(text));
         dutyView.setText(member.getDuty());
+        dutyView.setVisibility(isEmpty(member.getDuty()) ? View.GONE : View.VISIBLE);
         phoneView.setVisibility(phoneVisible ? View.VISIBLE : View.GONE);
         if (phoneVisible) {
             text = member.getPhone();

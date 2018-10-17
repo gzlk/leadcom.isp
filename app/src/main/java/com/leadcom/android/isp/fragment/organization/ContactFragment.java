@@ -39,6 +39,8 @@ import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -340,7 +342,7 @@ public class ContactFragment extends GroupBaseFragment {
 
         @Override
         public void onComplete() {
-
+            displayNothing(mAdapter.getItemCount() < 1);
         }
     };
 
@@ -436,7 +438,6 @@ public class ContactFragment extends GroupBaseFragment {
             refreshMemberList();
         }
         displayLoading(false);
-        displayNothing(mAdapter.getItemCount() < 1);
         stopRefreshing();
     }
 
@@ -454,10 +455,16 @@ public class ContactFragment extends GroupBaseFragment {
                 }
             }
         }
-        //mAdapter.setData(members);
-        mAdapter.clear();
-        mAdapter.add(members);
-        mAdapter.sort();
+        Collections.sort(members, new Comparator<Member>() {
+            @Override
+            public int compare(Member o1, Member o2) {
+                return o1.getSpell().compareTo(o2.getSpell());
+            }
+        });
+        mAdapter.setData(members);
+        //mAdapter.clear();
+        //mAdapter.add(members);
+        //mAdapter.sort();
     }
 
     private String searchingText = "";
