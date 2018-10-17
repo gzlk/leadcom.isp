@@ -45,8 +45,8 @@ public class ContactViewHolder extends BaseViewHolder {
     private TextView nameView;
     @ViewId(R.id.ui_holder_view_contact_duty)
     private TextView dutyView;
-    //@ViewId(R.id.ui_holder_view_contact_phone)
-    //private TextView phoneView;
+    @ViewId(R.id.ui_holder_view_contact_phone)
+    private TextView phoneView;
     @ViewId(R.id.ui_holder_view_contact_myself)
     private TextView myselfView;
     @ViewId(R.id.ui_holder_view_contact_manager)
@@ -62,7 +62,7 @@ public class ContactViewHolder extends BaseViewHolder {
 
     private boolean buttonInviteVisible = false;
     private boolean pickerVisible = false;
-    //private boolean phoneVisible = false;
+    private boolean phoneVisible = false;
     private int imageSize;
 
     public ContactViewHolder(View itemView, BaseFragment fragment) {
@@ -79,9 +79,9 @@ public class ContactViewHolder extends BaseViewHolder {
         });
     }
 
-//    public void setPhoneVisible(boolean visible) {
-//        phoneVisible = visible;
-//    }
+    public void setPhoneVisible(boolean visible) {
+        phoneVisible = visible;
+    }
 
     /**
      * 转让管理权
@@ -164,16 +164,17 @@ public class ContactViewHolder extends BaseViewHolder {
         text = getSearchingText(text, searchingText);
         nameView.setText(Html.fromHtml(text));
         dutyView.setText(member.getDuty());
-//        if (phoneVisible) {
-//            text = member.getPhone();
-//            if (StringHelper.isEmpty(text)) {
-//                text = StringHelper.getString(R.string.ui_organization_member_no_phone);
-//            }
-//            text = getSearchingText(text, searchingText);
-//            phoneView.setText(Html.fromHtml(text));
-//        } else {
-//            phoneView.setText(null);
-//        }
+        phoneView.setVisibility(phoneVisible ? View.VISIBLE : View.GONE);
+        if (phoneVisible) {
+            text = member.getPhone();
+            if (StringHelper.isEmpty(text)) {
+                text = StringHelper.getString(R.string.ui_organization_member_no_phone);
+            }
+            text = getSearchingText(text, searchingText);
+            phoneView.setText(Html.fromHtml(text));
+        } else {
+            phoneView.setText(null);
+        }
         String header = member.getHeadPhoto();
         if (isEmpty(header) || header.length() < 20) {
             header = "drawable://" + R.drawable.img_default_user_header;
@@ -227,6 +228,7 @@ public class ContactViewHolder extends BaseViewHolder {
             R.id.ui_tool_view_contact_button0d5,
             R.id.ui_tool_view_contact_button1,
             R.id.ui_tool_view_contact_button2,
+            R.id.ui_holder_view_contact_phone,
             R.id.ui_holder_view_contact_invite_button,
             R.id.ui_holder_view_contact_picker})
     private void click(View view) {
@@ -274,12 +276,12 @@ public class ContactViewHolder extends BaseViewHolder {
                     mOnViewHolderClickListener.onClick(getAdapterPosition());
                 }
                 break;
-//            case R.id.ui_holder_view_contact_phone:
-//                if (!phoneVisible) return;
-//                if (null != onPhoneDialListener) {
-//                    onPhoneDialListener.onDial(getAdapterPosition());
-//                }
-//                break;
+            case R.id.ui_holder_view_contact_phone:
+                if (!phoneVisible) return;
+                if (null != onPhoneDialListener) {
+                    onPhoneDialListener.onDial(getAdapterPosition());
+                }
+                break;
         }
     }
 

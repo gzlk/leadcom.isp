@@ -316,6 +316,7 @@ public class ContactFragment extends GroupBaseFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new ContactAdapter();
+            mAdapter.setOnDataHandingListener(handingListener);
             mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             if (showType != TYPE_ORG) {
                 mRecyclerView.addItemDecoration(new StickDecoration());
@@ -325,6 +326,23 @@ public class ContactFragment extends GroupBaseFragment {
             loadingQueryItem();
         }
     }
+
+    private RecyclerViewAdapter.OnDataHandingListener handingListener = new RecyclerViewAdapter.OnDataHandingListener() {
+        @Override
+        public void onStart() {
+
+        }
+
+        @Override
+        public void onProgress(int currentPage, int maxPage, int maxCount) {
+
+        }
+
+        @Override
+        public void onComplete() {
+
+        }
+    };
 
     /**
      * 加载查询的对象
@@ -436,6 +454,7 @@ public class ContactFragment extends GroupBaseFragment {
                 }
             }
         }
+        //mAdapter.setData(members);
         mAdapter.clear();
         mAdapter.add(members);
         mAdapter.sort();
@@ -661,13 +680,15 @@ public class ContactFragment extends GroupBaseFragment {
         }
     }
 
-//    private ContactViewHolder.OnPhoneDialListener onPhoneDialListener = new ContactViewHolder.OnPhoneDialListener() {
-//        @Override
-//        public void onDial(int index) {
-//            dialIndex = index;
-//            requestPhoneCallPermission();
-//        }
-//    };
+    private ContactViewHolder.OnPhoneDialListener onPhoneDialListener = new ContactViewHolder.OnPhoneDialListener() {
+        @Override
+        public void onDial(int index) {
+            if (showType == TYPE_ORG) {
+                dialIndex = index;
+                requestPhoneCallPermission();
+            }
+        }
+    };
 
     @Override
     public void permissionGranted(String[] permissions, int requestCode) {
@@ -724,8 +745,8 @@ public class ContactFragment extends GroupBaseFragment {
             // 设置档案管理员
             holder.setOnSetArchiveManagerListener(archiveManagerListener);
             // 点击拨号
-            //holder.setOnPhoneDialListener(onPhoneDialListener);
-            //holder.setPhoneVisible(showType != TYPE_MINE);
+            holder.setOnPhoneDialListener(onPhoneDialListener);
+            holder.setPhoneVisible(showType == TYPE_ORG);
             return holder;
         }
 
