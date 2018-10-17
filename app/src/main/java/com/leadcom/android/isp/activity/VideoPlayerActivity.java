@@ -21,6 +21,7 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.helper.DownloadingHelper;
 import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.HttpHelper;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.listener.OnTaskCompleteListener;
@@ -41,7 +42,7 @@ import java.io.File;
  * <b>修改备注：</b><br />
  */
 
-public class VideoPlayerActivity  extends BaseActivity implements EasyVideoCallback {
+public class VideoPlayerActivity extends BaseActivity implements EasyVideoCallback {
 
     private static final String PARAM_URL = "vpa_video_url";
 
@@ -106,7 +107,8 @@ public class VideoPlayerActivity  extends BaseActivity implements EasyVideoCallb
      */
     private void checkLocalStorage() {
         boolean isNim = FilePreviewHelper.isNimFile(videoUrl);
-        String local = HttpHelper.helper().getLocalFilePath(videoUrl, App.VIDEO_DIR);
+        boolean isLocal = !StringHelper.isEmpty(videoUrl) && videoUrl.charAt(0) == '/';
+        String local = isLocal ? videoUrl : HttpHelper.helper().getLocalFilePath(videoUrl, App.VIDEO_DIR);
         String extension = Attachment.getExtension(videoUrl);
         if (isNim) {
             // 易信文件需要后续加.mp4才行，否则有可能打不开视频
