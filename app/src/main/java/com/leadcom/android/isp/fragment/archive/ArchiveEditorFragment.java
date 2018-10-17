@@ -2146,6 +2146,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private void initializeTemplate() {
         if (null == templateItems) {
             templateItems = StringHelper.getStringArray(R.array.ui_text_archive_creator_editor_template_values);
+            if (mArchive.isActivity()) {
+                templateItems[0] = templateItems[0].replace("时间", "报名截止于");
+            }
             topicContent.setOnTouchListener(onTouchListener);
             minuteContent.setOnTouchListener(onTouchListener);
         }
