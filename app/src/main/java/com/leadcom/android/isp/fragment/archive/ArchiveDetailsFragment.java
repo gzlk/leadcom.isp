@@ -491,7 +491,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 resetRightIconEvent(0, R.string.ui_base_text_edit);
             }
         } else if (mArchive.isActivity()) {
-            if (Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_DELIVER)) {
+            if (!mArchive.isStopped() && Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_DELIVER)) {
                 // 有下发活动的权限时才显示更多按钮
                 resetRightIconEvent(R.string.ui_icon_more, 0);
             }
@@ -767,7 +767,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                         // 返回的member为空则说明不能报名，此时如果当前用户是组织管理员的话，提醒其下发活动
                         //reportButton.setVisibility(View.VISIBLE);
                         // 当前用户是组织管理员时，且有下发活动的权限时显示下发按钮
-                        deliverButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_DELIVER) ? View.VISIBLE : View.GONE);
+                        deliverButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_DELIVER) && !mArchive.isStopped() ? View.VISIBLE : View.GONE);
                     } else {
                         refreshReportButtons(member);
                     }

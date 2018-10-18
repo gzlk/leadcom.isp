@@ -80,6 +80,7 @@ import com.leadcom.android.isp.service.DraftService;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -1322,9 +1323,21 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         DateTimeHelper.helper().setOnDateTimePickListener(new DateTimeHelper.OnDateTimePickListener() {
             @Override
             public void onPicked(Date date) {
+                if (mArchive.isActivity()) {
+                    Calendar calendar = Calendar.getInstance();
+                    if (date.getTime() < calendar.getTime().getTime()) {
+                        ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_now);
+                        return;
+                    }
+                    calendar.add(Calendar.HOUR, 24);
+                    if (date.getTime() < calendar.getTime().getTime()) {
+                        ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_24h_after_now);
+                        return;
+                    }
+                }
                 String fullTime = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date);
                 mArchive.setHappenDate(fullTime);
-                String time = formatDate(fullTime);
+                String time = mArchive.isActivity() ? formatDateTime(fullTime) : formatDate(fullTime);
                 if (null != happenDate) {
                     happenDate.setText(time);
                 }
@@ -1332,7 +1345,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     timeHolder.showContent(format(templateItems[0], time));
                 }
             }
-        }).show(ArchiveEditorFragment.this, true, true, true, !mArchive.isTemplateArchive(), mArchive.getHappenDate());
+        }).show(ArchiveEditorFragment.this, true, true, true, mArchive.isActivity(), mArchive.isActivity(), false, !mArchive.isTemplateArchive(), mArchive.getHappenDate());
     }
 
     /**
@@ -2162,7 +2175,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         if (null == timeHolder) {
             timeHolder = new SimpleClickableViewHolder(timeView, this);
-            timeHolder.showContent(format(templateItems[0], "选择时间(必填)"));
+            timeHolder.showContent(format(templateItems[0], mArchive.isActivity() ? "至少间隔24小时(必填)" : "选择时间(必填)"));
             timeHolder.addOnViewHolderClickListener(holderClickListener);
         }
         if (null == addressHolder) {
