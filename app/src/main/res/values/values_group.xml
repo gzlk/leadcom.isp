@@ -160,6 +160,8 @@
     <string name="ui_group_activity_details_leave">请假</string>
     <string name="ui_group_activity_details_leaved">已请假</string>
     <string name="ui_group_activity_details_report">报名统计</string>
+    <string name="ui_group_activity_details_offline">已下线</string>
+    <string name="ui_group_activity_details_sign_limited">报名已截止</string>
     <string name="ui_group_activity_details_sign_up_warning_title">您确定要报名参加这个活动吗？</string>
     <string name="ui_group_activity_details_sign_up_warning_title_leaved">您已经请假了，确定现在要继续报名参加这个活动吗？</string>
     <string name="ui_group_activity_details_leave_warning_title">您确定请假不参与这个活动吗？</string>

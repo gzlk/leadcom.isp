@@ -27,6 +27,8 @@ public class ActivityItemViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_group_activity_item_title)
     private TextView titleView;
+    @ViewId(R.id.ui_holder_view_group_activity_item_unread)
+    private TextView unreadView;
     @ViewId(R.id.ui_holder_view_group_activity_item_time)
     private TextView timeView;
     @ViewId(R.id.ui_tool_view_contact_button2_text)
@@ -41,6 +43,9 @@ public class ActivityItemViewHolder extends BaseViewHolder {
         if (null != deleteText) {
             deleteText.setText(R.string.ui_base_text_delete);
         }
+        unreadView.setVisibility(activity.isStopped() ? View.VISIBLE : View.INVISIBLE);
+        unreadView.setText(R.string.ui_group_activity_details_offline);
+        unreadView.setTextColor(getColor(R.color.textColorHint));
         titleView.setText(activity.getTitle());
         titleView.setSelected(true);
         timeView.setText(StringHelper.getString(R.string.ui_group_activity_item_time, fragment().formatTimeAgo(activity.getCreateDate())));

@@ -283,6 +283,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private CorneredButton leaveButton;
     @ViewId(R.id.ui_archive_details_activity_report)
     private CorneredButton reportButton;
+    @ViewId(R.id.ui_archive_details_activity_limited)
+    private View limitedText;
 
     @Click({R.id.ui_archive_details_activity_deliver,
             R.id.ui_archive_details_activity_sign_in,
@@ -753,13 +755,17 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             public void onResponse(Member member, boolean success, String message) {
                 super.onResponse(member, success, message);
                 if (success) {
-                    signButton.setVisibility(null == member ? View.GONE : View.VISIBLE);
-                    leaveButton.setVisibility(null == member ? View.GONE : View.VISIBLE);
+                    if (mArchive.isStopped()) {
+                        limitedText.setVisibility(View.VISIBLE);
+                    } else {
+                        signButton.setVisibility(null == member ? View.GONE : View.VISIBLE);
+                        leaveButton.setVisibility(null == member ? View.GONE : View.VISIBLE);
+                    }
                     // 是否可以查看统计
                     reportButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_REPORT_COLLECT) ? View.VISIBLE : View.GONE);
                     if (null == member) {
                         // 返回的member为空则说明不能报名，此时如果当前用户是组织管理员的话，提醒其下发活动
-                        reportButton.setVisibility(View.VISIBLE);
+                        //reportButton.setVisibility(View.VISIBLE);
                         // 当前用户是组织管理员时，且有下发活动的权限时显示下发按钮
                         deliverButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_DELIVER) ? View.VISIBLE : View.GONE);
                     } else {

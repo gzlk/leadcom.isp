@@ -163,6 +163,7 @@ public class Archive extends Additional {
         String FromGroupName = "fromGroupName";
         String Awardable = "awardable";
         String Reply = "reply";
+        String State = "state";
     }
 
     /**
@@ -185,6 +186,20 @@ public class Archive extends Additional {
          * 组织和个人都有
          */
         int ALL = 3;
+    }
+
+    /**
+     * 活动报名状态
+     */
+    public interface ActivityState {
+        /**
+         * 可以正常报名
+         */
+        int ACTIVE = 0;
+        /**
+         * 报名已截止
+         */
+        int STOPPED = 1;
     }
 
     /**
@@ -471,6 +486,8 @@ public class Archive extends Additional {
     private String countResult;
     @Column(Field.Reply)
     private String reply;
+    @Column(Field.State)
+    private int state;
     @Ignore
     private ArrayList<String> groupIdList;
     @Ignore
@@ -994,6 +1011,21 @@ public class Archive extends Additional {
 
     public void setReply(String reply) {
         this.reply = reply;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
+    /**
+     * 活动报名是否已截止
+     */
+    public boolean isStopped() {
+        return state > ActivityState.ACTIVE;
     }
 
     public ArrayList<Member> getGroActivityReplyList() {

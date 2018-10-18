@@ -25,6 +25,16 @@
         android:padding="@dimen/ui_base_dimen_margin_padding"
         android:visibility="gone">
 
+        <TextView
+            android:id="@+id/ui_archive_details_activity_limited"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/ui_group_activity_details_sign_limited"
+            android:textColor="@color/textColorHint"
+            android:visibility="gone" />
+
         <com.hlk.hlklib.lib.view.CorneredButton
             android:id="@+id/ui_archive_details_activity_deliver"
             android:layout_width="0dp"
