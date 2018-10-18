@@ -731,7 +731,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     "       var href = $(this).attr(\"href\").toLowerCase();" +
                     "       if((href.indexOf(\".gif\") >=0) || (href.indexOf(\".jpg\") >=0) || " +
                     "           (href.indexOf(\".jpeg\") >=0) || (href.indexOf(\".png\") >= 0) || " +
-                    "           (href.indexOf(\".txt\") >= 0) || (href.indexOf(\".mp4\") >= 0)) {" +
+                    "           (href.indexOf(\".txt\") >= 0) || (href.indexOf(\".mp4\") >= 0) || " +
+                    "           (href.indexOf(\".mp3\") >= 0)) {" +
                     "           evt.preventDefault();" +
                     "           alert(\"href=\" + $(this).attr(\"href\"));" +
                     "       }" +
