@@ -110,7 +110,7 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
                 if (success && null != archive) {
                     mAdapter.add(archive);
                     for (ActSquad squad : archive.getGroSquadList()) {
-                        if(squad.getSquadId().equals("0")){
+                        if (squad.getSquadId().equals("0")) {
                             squad.setSquadName("本组织成员");
                         }
                         mAdapter.add(squad);
@@ -164,7 +164,7 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
                 Member member = (Member) model;
                 if (!isEmpty(member.getGroupId())) {
                     // 查看下属组织的回复详情
-                    ActivityReplyFragment.open(ActivityCollectionDetailsFragment.this, member.getId());
+                    ActivityReplyFragment.open(ActivityCollectionDetailsFragment.this, member.getId(), mActivityId);
                 }
             }
         }

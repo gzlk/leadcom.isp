@@ -4,38 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <include
-            android:id="@+id/ui_group_activity_reply_subject"
-            layout="@layout/holder_view_simple_inputable" />
-
-        <include
-            android:id="@+id/ui_group_activity_reply_title"
-            layout="@layout/holder_view_simple_clickable_gravity_left" />
-
-        <com.hlk.hlklib.lib.view.CorneredEditText
-            android:id="@+id/ui_group_activity_reply_content"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_margin="@dimen/ui_static_dp_2"
-            android:layout_weight="1"
-            android:gravity="top|start"
-            android:hint="@string/ui_text_archive_creator_editor_template_topic_hint"
-            android:maxLines="5"
-            android:padding="@dimen/ui_base_dimen_margin_padding"
-            app:cet_active_border="@color/colorBorderActive"
-            app:cet_corner_size="@dimen/ui_base_dimen_button_corner_size"
-            app:cet_normal_border="@color/windowBackground" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-    </LinearLayout>
+            <include
+                android:id="@+id/ui_group_activity_reply_subject"
+                layout="@layout/holder_view_simple_inputable" />
+
+            <include
+                android:id="@+id/ui_group_activity_reply_title"
+                layout="@layout/holder_view_simple_clickable_gravity_left" />
+
+            <com.hlk.hlklib.lib.view.CorneredEditText
+                android:id="@+id/ui_group_activity_reply_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/ui_static_dp_2"
+                android:gravity="top|start"
+                android:hint="@string/ui_text_archive_creator_editor_template_topic_hint"
+                android:maxLines="5"
+                android:padding="@dimen/ui_base_dimen_margin_padding"
+                app:cet_active_border="@color/colorBorderActive"
+                app:cet_corner_size="@dimen/ui_base_dimen_button_corner_size"
+                app:cet_normal_border="@color/windowBackground" />
+
+            <include layout="@layout/tool_view_recycler_view_warp_content" />
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
 
     <include layout="@layout/tool_view_loading" />
 

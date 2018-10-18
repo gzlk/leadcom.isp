@@ -1,12 +1,14 @@
 package com.leadcom.android.isp.fragment.organization;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -14,9 +16,12 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.holder.common.SimpleInputableViewHolder;
+import com.leadcom.android.isp.holder.organization.ActivityMemberItemViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
+import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
+import com.leadcom.android.isp.model.organization.ActSquad;
 import com.leadcom.android.isp.model.organization.Member;
 
 /**
@@ -30,6 +35,8 @@ import com.leadcom.android.isp.model.organization.Member;
  * <b>修改备注：</b><br />
  */
 public class ActivityReplyFragment extends GroupBaseFragment {
+
+    private static final String PARAM_ACT_ID = "arf_activity_id";
 
     public static ActivityReplyFragment newInstance(Bundle bundle) {
         ActivityReplyFragment arf = new ActivityReplyFragment();
@@ -49,8 +56,9 @@ public class ActivityReplyFragment extends GroupBaseFragment {
         fragment.openActivity(ActivityReplyFragment.class.getName(), bundle, REQUEST_CREATE, true, false);
     }
 
-    public static void open(BaseFragment fragment, String replyId) {
+    public static void open(BaseFragment fragment, String replyId, String activityId) {
         Bundle bundle = getBundle(replyId, null);
+        bundle.putString(PARAM_ACT_ID, activityId);
         fragment.openActivity(ActivityReplyFragment.class.getName(), bundle, true, false);
     }
 
@@ -63,17 +71,21 @@ public class ActivityReplyFragment extends GroupBaseFragment {
     private SimpleInputableViewHolder subjectHolder;
     private SimpleClickableViewHolder titleHolder;
     private Archive mArchive;
+    private MemberAdapter mAdapter;
+    private String mActivityId, mGroupId;
     private String[] items;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         mArchive = (Archive) bundle.getSerializable(PARAM_JSON);
+        mActivityId = bundle.getString(PARAM_ACT_ID, "");
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
+        bundle.putString(PARAM_ACT_ID, mActivityId);
         bundle.putSerializable(PARAM_JSON, mArchive);
     }
 
@@ -170,7 +182,8 @@ public class ActivityReplyFragment extends GroupBaseFragment {
                     if (!replied) {
                         loadingDefaultReplyContent();
                     } else {
-                        loadingReplyContent(replyId);
+                        mQueryId = replyId;
+                        loadingReplyContent(mQueryId);
                     }
                 }
             }
@@ -206,6 +219,7 @@ public class ActivityReplyFragment extends GroupBaseFragment {
                     String title = StringHelper.getString(R.string.ui_group_activity_reply_fragment_title_replied);
                     title = format("%s(%s)", title, archive.getGroupName());
                     setCustomTitle(title);
+                    mGroupId = archive.getGroupId();
                     displayReplyContent(archive.getReply(), archive.getTitle(), archive.getContent());
                     subjectHolder.setEditable(false);
                     contentView.setFocusable(false);
@@ -224,6 +238,10 @@ public class ActivityReplyFragment extends GroupBaseFragment {
         subjectHolder.focusEnd();
         titleHolder.showContent(new SimpleClickableItem(format(items[1], title)));
         contentView.setText(content);
+        if (!isEmpty(mActivityId)) {
+            // 查看回复详情时需要列表报名情况
+            initializeAdapter();
+        }
     }
 
     private void tryReplyActivity() {
@@ -251,5 +269,64 @@ public class ActivityReplyFragment extends GroupBaseFragment {
                 }
             }
         }).replyActivity(mArchive);
+    }
+
+    private void loadingGroupMembers() {
+        setLoadingText(R.string.ui_group_activity_collection_group_members_loading);
+        setNothingText(R.string.ui_group_activity_collection_group_members_nothing);
+        displayLoading(true);
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success && null != archive) {
+                    //mAdapter.add(archive);
+                    for (ActSquad squad : archive.getGroSquadList()) {
+                        if (squad.getSquadId().equals("0")) {
+                            squad.setSquadName("详细情况：<font color=\"#a1a1a1\">" + archive.getCountResult().replace("本组织：", "") + "</font>");
+                            mAdapter.add(squad);
+                            for (Member member : squad.getGroActivityMemberList()) {
+                                mAdapter.add(member);
+                            }
+                        }
+                    }
+                }
+                displayLoading(false);
+                displayNothing(mAdapter.getItemCount() <= 1);
+                stopRefreshing();
+            }
+        }).listActivityGroupMember(mGroupId, mActivityId);
+    }
+
+    private void initializeAdapter() {
+        if (null == mAdapter) {
+            mAdapter = new MemberAdapter();
+            mRecyclerView.setAdapter(mAdapter);
+            loadingGroupMembers();
+        }
+    }
+
+    private class MemberAdapter extends RecyclerViewAdapter<ActivityMemberItemViewHolder, Model> {
+        @Override
+        public ActivityMemberItemViewHolder onCreateViewHolder(View itemView, int viewType) {
+            ActivityMemberItemViewHolder holder = new ActivityMemberItemViewHolder(itemView, ActivityReplyFragment.this);
+            //holder.setOnViewHolderElementClickListener(elementClickListener);
+            return holder;
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            return R.layout.holder_view_activity_member_item;
+        }
+
+        @Override
+        public void onBindHolderOfView(ActivityMemberItemViewHolder holder, int position, @Nullable Model item) {
+            holder.showContent(item);
+        }
+
+        @Override
+        protected int comparator(Model item1, Model item2) {
+            return 0;
+        }
     }
 }
