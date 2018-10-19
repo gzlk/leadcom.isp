@@ -251,6 +251,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 MainActivity.start(Activity());
             }
         }
+        if (null != webView) {
+            webView.destroy();
+        }
         isCollected = false;
         super.onDestroy();
     }

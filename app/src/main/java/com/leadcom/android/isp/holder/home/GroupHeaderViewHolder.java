@@ -10,14 +10,16 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
-import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.Role;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 
@@ -37,10 +39,14 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
     private ImageDisplayer logoView;
     @ViewId(R.id.ui_holder_view_archive_watermark)
     private View minmentTag;
+    @ViewId(R.id.ui_holder_view_archive_watermark_text)
+    private CustomTextView waterMarkView;
     @ViewId(R.id.ui_holder_view_group_header_intro)
     private TextView introView;
     @ViewId(R.id.ui_holder_view_group_header_edit_icon)
     private CustomTextView editIcon;
+
+    private List<String> tzNames;
 
     private boolean showEditorIcon = true;
 
@@ -54,10 +60,25 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
                 viewClick(logoView);
             }
         });
+        tzNames = Arrays.asList(StringHelper.getStringArray(R.array.ui_group_tong_zhans));
     }
 
+    // 是否民盟系组织
     private boolean isMinMeng(String name) {
         return !isEmpty(name) && Pattern.compile(".*(民盟|民主同盟).*").matcher(name).find();
+    }
+
+    // 是否统战系组织
+    private boolean isTongZhan(String name) {
+        if (isEmpty(name)) {
+            return false;
+        }
+        for (String string : tzNames) {
+            if (name.contains(string + "黄浦区基层")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void showEditorIcon(boolean shown) {
@@ -69,7 +90,10 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
         if (isEmpty(logo)) {
             logo = "drawable://" + R.drawable.img_default_group_icon;
         }
-        minmentTag.setVisibility(isMinMeng(group.getName()) ? View.VISIBLE : View.GONE);
+        boolean isMM = isMinMeng(group.getName());
+        boolean isTZ = isTongZhan(group.getName());
+        minmentTag.setVisibility(isMM || isTZ ? View.VISIBLE : View.GONE);
+        waterMarkView.setText(isTZ ? R.string.ui_group_header_tongzhan_flag : R.string.ui_group_header_minmeng_flag);
         logoView.displayImage(logo, getDimension(R.dimen.ui_static_dp_60), false, false);
         logo = group.getIntro();
         introView.setText(isEmpty(logo) ? "" : Html.fromHtml(logo.replaceAll("\n", "<br/>")));

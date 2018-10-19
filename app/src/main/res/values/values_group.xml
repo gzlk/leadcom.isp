@@ -88,6 +88,7 @@
     <string name="ui_group_details_no_permission_to_member_duty">您没有权限查看组织成员的履职统计信息</string>
     <string name="ui_group_details_no_permission_to_squad_duty">您没有权限查看支部履职统计</string>
     <string name="ui_group_header_minmeng_flag">&#xe68d;&#xe68e;&#xe693;&#xe694;&#xe697;&#xe699;</string>
+    <string name="ui_group_header_tongzhan_flag">&#xe6b9;&#xe6b7;&#xe6b6;&#xe6b2;</string>
     <string name="ui_group_archive_fragment_title">组织档案</string>
     <string name="ui_group_archive_fragment_search_hint">输入标题进行搜索</string>
     <string name="ui_group_member_fragment_title">组织成员</string>
@@ -98,6 +99,16 @@
     <string name="ui_organization_details_not_exists">抱歉，该组织不存在</string>
 
     <string name="ui_group_constructor_fragment_title">组织架构</string>
+    <string-array name="ui_group_tong_zhans">
+        <item>民盟</item>
+        <item>九三学社</item>
+        <item>民建</item>
+        <item>致公党</item>
+        <item>民革</item>
+        <item>农工党</item>
+        <item>台盟</item>
+        <item>民主促进会</item>
+    </string-array>
     <string-array name="ui_group_constructor_items">
         <item>0|上级组织||1|0xe6ae</item>
         <item>1|基层组织||1|0xe6af</item>

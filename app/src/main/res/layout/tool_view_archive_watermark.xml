@@ -11,6 +11,7 @@
     android:visibility="gone">
 
     <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_holder_view_archive_watermark_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/ui_group_header_minmeng_flag"
