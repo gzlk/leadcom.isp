@@ -766,7 +766,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                         leaveButton.setVisibility(null == member ? View.GONE : View.VISIBLE);
                     }
                     // 是否可以查看统计
-                    reportButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_REPORT_COLLECT) ? View.VISIBLE : View.GONE);
+                    reportButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_REPORT_COLLECT) || Cache.cache().isMe() ? View.VISIBLE : View.GONE);
                     if (null == member) {
                         // 返回的member为空则说明不能报名，此时如果当前用户是组织管理员的话，提醒其下发活动
                         //reportButton.setVisibility(View.VISIBLE);

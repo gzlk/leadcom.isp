@@ -532,6 +532,14 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     /**
+     * 拉取活动详情
+     */
+    public void findActivity(String activityId) {
+        String url = format("/group/groActivity%s?id=%s", FIND, activityId);
+        executeHttpRequest(getRequest(SingleArchive.class, url, "", HttpMethods.Get));
+    }
+
+    /**
      * 拉取组织的活动列表
      */
     public void listActivities(String groupId, int pageNumber) {

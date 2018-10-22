@@ -361,7 +361,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         } else {
             fetchingSingleDraft();
         }
-        if (Cache.cache().userId.equals("592ade752f573530e45ab66e")) {
+        if (Cache.cache().isMe()) {
             mVideoIcon.setVisibility(View.VISIBLE);
             mAudioIcon.setVisibility(View.VISIBLE);
         }

@@ -28,13 +28,22 @@
                 android:layout_margin="@dimen/ui_static_dp_2"
                 android:gravity="top|start"
                 android:hint="@string/ui_text_archive_creator_editor_template_topic_hint"
-                android:maxLines="5"
+                android:maxLines="10"
+                android:minLines="5"
                 android:padding="@dimen/ui_base_dimen_margin_padding"
                 app:cet_active_border="@color/colorBorderActive"
                 app:cet_corner_size="@dimen/ui_base_dimen_button_corner_size"
                 app:cet_normal_border="@color/windowBackground" />
 
-            <include layout="@layout/tool_view_recycler_view_warp_content" />
+            <TextView
+                android:id="@+id/ui_group_activity_reply_content_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/ui_base_dimen_margin_padding" />
+
+            <include
+                layout="@layout/tool_view_recycler_view_warp_content"
+                android:visibility="gone" />
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

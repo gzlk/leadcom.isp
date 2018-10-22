@@ -7,6 +7,8 @@ import android.widget.TextView;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.api.archive.ArchiveRequest;
+import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -79,8 +81,8 @@ public class ActivityCollectionFragment extends BaseViewPagerSupportFragment {
                 setRightTitleClickListener(new OnTitleButtonClickListener() {
                     @Override
                     public void onClick() {
-                        // 回复上级组织本组织成员的活动报名参与情况
-                        ActivityReplyFragment.open(ActivityCollectionFragment.this, mArchive);
+                        // 查看活动详情
+                        fetchingActivityDetails();
                     }
                 });
             }
@@ -130,5 +132,19 @@ public class ActivityCollectionFragment extends BaseViewPagerSupportFragment {
                 setDisplayPage(1);
                 break;
         }
+    }
+
+    private void fetchingActivityDetails() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success && null != archive) {
+                    mArchive.setHappenDate(archive.getHappenDate());
+                }
+                // 回复上级组织本组织成员的活动报名参与情况
+                ActivityReplyFragment.open(ActivityCollectionFragment.this, mArchive);
+            }
+        }).findActivity(mArchive.getGroActivityId());
     }
 }

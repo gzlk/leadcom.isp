@@ -196,6 +196,10 @@ public class Cache {
         return null;
     }
 
+    public boolean isMe() {
+        return !StringHelper.isEmpty(userId) && userId.equals("592ade752f573530e45ab66e");
+    }
+
     /**
      * 当前登录用户的id、姓名、网易云信登录的token、api服务器的accessToken
      */

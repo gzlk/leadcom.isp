@@ -1,8 +1,11 @@
 package com.leadcom.android.isp.fragment.organization;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -11,9 +14,12 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.holder.common.SimpleInputableViewHolder;
 import com.leadcom.android.isp.holder.organization.ActivityMemberItemViewHolder;
@@ -23,6 +29,9 @@ import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.organization.ActSquad;
 import com.leadcom.android.isp.model.organization.Member;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <b>功能描述：</b>下级组织的活动回复页面<br />
@@ -68,12 +77,15 @@ public class ActivityReplyFragment extends GroupBaseFragment {
     private View titleView;
     @ViewId(R.id.ui_group_activity_reply_content)
     private CorneredEditText contentView;
+    @ViewId(R.id.ui_group_activity_reply_content_text)
+    private TextView contentTextView;
     private SimpleInputableViewHolder subjectHolder;
     private SimpleClickableViewHolder titleHolder;
     private Archive mArchive;
     private MemberAdapter mAdapter;
     private String mActivityId, mGroupId;
     private String[] items;
+    private int notResponse = 0;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -154,7 +166,11 @@ public class ActivityReplyFragment extends GroupBaseFragment {
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                tryReplyActivity();
+                if (notResponse > 0) {
+                    warningReplyHasNoResponse();
+                } else {
+                    tryReplyActivity();
+                }
             }
         });
     }
@@ -233,15 +249,97 @@ public class ActivityReplyFragment extends GroupBaseFragment {
         }).fetchingActivityReplyContent(replyId);
     }
 
+    private void getNotResponse(String content) {
+        if (isEmpty(content)) {
+            notResponse = 0;
+            return;
+        }
+        Matcher matcher = Pattern.compile("应\\d+人", Pattern.CASE_INSENSITIVE).matcher(content);
+        if (matcher.find()) {
+            String matched = matcher.group(0);
+            Matcher number = Pattern.compile("\\d+", Pattern.CASE_INSENSITIVE).matcher(matched);
+            if (number.find()) {
+                String find = number.group(0);
+                try {
+                    notResponse = Integer.valueOf(find);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    notResponse = 0;
+                }
+            }
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     private void displayReplyContent(String subject, String title, String content) {
+        getNotResponse(content);
         subjectHolder.showContent(format(items[0], subject));
         subjectHolder.focusEnd();
         titleHolder.showContent(new SimpleClickableItem(format(items[1], title)));
         contentView.setText(content);
+        contentView.setOnTouchListener(onTouchListener);
         if (!isEmpty(mActivityId)) {
             // 查看回复详情时需要列表报名情况
-            initializeAdapter();
+            //initializeAdapter();
+            contentTextView.setText(content);
+            contentView.setVisibility(View.GONE);
         }
+    }
+
+    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+        @SuppressLint("ClickableViewAccessibility")
+        @Override
+        public boolean onTouch(View view, MotionEvent event) {
+            if (view instanceof CorneredEditText) {
+                if (view.canScrollVertically(-1) || view.canScrollVertically(0)) {
+                    view.getParent().requestDisallowInterceptTouchEvent(true);
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        view.getParent().requestDisallowInterceptTouchEvent(false);
+                    }
+                }
+            }
+            return false;
+        }
+
+        /**
+         * EditText竖直方向能否够滚动
+         * @param editText  须要推断的EditText
+         * @return true：能够滚动   false：不能够滚动
+         */
+        @SuppressWarnings("unused")
+        private boolean canVerticalScroll(CorneredEditText editText) {
+            //滚动的距离
+            int scrollY = editText.getScrollY();
+            //控件内容的总高度
+            int scrollRange = editText.getLayout().getHeight();
+            //控件实际显示的高度
+            int scrollExtent = editText.getHeight() - editText.getCompoundPaddingTop() - editText.getCompoundPaddingBottom();
+            //控件内容总高度与实际显示高度的差值
+            int scrollDifference = scrollRange - scrollExtent;
+
+            if (scrollDifference == 0) {
+                return false;
+            }
+
+            return (scrollY > 0) || (scrollY < scrollDifference - 1);
+        }
+    };
+
+    private boolean isActivityNotAtTime() {
+        long date = Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), mArchive.getHappenDate()).getTime();
+        long now = System.currentTimeMillis();
+        return now < date;
+    }
+
+    private void warningReplyHasNoResponse() {
+        String title = StringHelper.getString(isActivityNotAtTime() ? R.string.ui_group_activity_reply_has_no_response_member : R.string.ui_group_activity_reply_has_no_response_member_timeout, notResponse);
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                tryReplyActivity();
+                return true;
+            }
+        }).setTitleText(title).setConfirmText(isActivityNotAtTime() ? R.string.ui_base_text_continue : R.string.ui_base_text_reply).setCancelText(R.string.ui_base_text_cancel).show();
     }
 
     private void tryReplyActivity() {

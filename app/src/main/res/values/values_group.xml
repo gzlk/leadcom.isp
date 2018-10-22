@@ -202,6 +202,13 @@
         <item>回复：|%s|回复主题|||0</item>
         <item>1|主题：|%s|0|</item>
     </string-array>
+    <string name="ui_group_activity_reply_has_not_time">活动报名截止时间还未到，且</string>
+    <string name="ui_group_activity_reply_has_no_response_member">
+        <![CDATA[未到报名截止时间，且还有<font color="#3cbaff">【%d】</font>人未响应活动号召(<font color="#a1a1a1">后续再报名成员可能无法统计</font>)，您确定现在就要回复吗？]]>
+    </string>
+    <string name="ui_group_activity_reply_has_no_response_member_timeout">
+        <![CDATA[截止到报名结束，还有<font color="#3cbaff">【%d】</font>人未响应活动号召。]]>
+    </string>
     <string name="ui_group_activity_reply_subject_is_null">回复的主题不能为空</string>
     <string name="ui_group_activity_reply_content_is_null">回复的内容不能为空</string>
     <string name="ui_group_activity_reply_success">报名情况已回复，请勿重复提交</string>
