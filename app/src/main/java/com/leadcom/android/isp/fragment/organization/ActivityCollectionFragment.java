@@ -140,6 +140,7 @@ public class ActivityCollectionFragment extends BaseViewPagerSupportFragment {
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success && null != archive) {
+                    mArchive.setState(archive.getState());
                     mArchive.setHappenDate(archive.getHappenDate());
                 }
                 // 回复上级组织本组织成员的活动报名参与情况

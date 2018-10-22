@@ -178,6 +178,11 @@ public class ActivityReplyFragment extends GroupBaseFragment {
     private void loadingActivityReplyList() {
         displayLoading(true);
         displayNothing(false);
+        if (isActivityNotAtTime()) {
+            loadingDefaultReplyContent();
+            resetRightEvent(R.string.ui_base_text_complete);
+            return;
+        }
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
@@ -199,6 +204,7 @@ public class ActivityReplyFragment extends GroupBaseFragment {
                         loadingDefaultReplyContent();
                     } else {
                         mQueryId = replyId;
+                        mActivityId = mArchive.getId();
                         loadingReplyContent(mQueryId);
                     }
                 }
