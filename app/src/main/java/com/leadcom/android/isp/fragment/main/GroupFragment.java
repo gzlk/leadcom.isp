@@ -58,6 +58,7 @@ import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -523,10 +524,28 @@ public class GroupFragment extends GroupBaseFragment {
         }
     };
 
+    private List<String> tzNames;
+
+    // 是否统战系的基层组织
+    private boolean isTongZhan(String groupName) {
+        if (null == tzNames) {
+            tzNames = Arrays.asList(StringHelper.getStringArray(R.array.ui_group_tong_zhans));
+        }
+        if (isEmpty(groupName)) {
+            return false;
+        }
+        for (String string : tzNames) {
+            if (groupName.contains(string + "黄浦区基层")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void onGroupChange(Organization group) {
         titleTextView.setText(Html.fromHtml(group.getName()));
-        PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), group.getId());
         if (!isNeedPermission) {
+            PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), group.getId());
             currentGroup = group.getId();
         }
         if (null != gAdapter) {
@@ -580,6 +599,16 @@ public class GroupFragment extends GroupBaseFragment {
             //}
         } else {
             dAdapter.remove(item);
+        }
+        // 统战系的组织，只显示几个特定的项目
+        if (!isNeedPermission && isTongZhan(group.getName())) {
+            item = new SimpleClickableItem(items[1]);
+            dAdapter.remove(item);
+            item = new SimpleClickableItem(items[2]);
+            dAdapter.remove(item);
+            item = new SimpleClickableItem(items[4]);
+            dAdapter.remove(item);
+            return;
         }
         // 是否有授权管理权限
 //        item = new SimpleClickableItem(items[6]);
