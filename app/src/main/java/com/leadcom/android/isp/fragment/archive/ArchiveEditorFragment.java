@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -403,7 +404,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 if (isActivity()) {
                     // 发布
                     if (resetActivityParameters()) {
-                        createActivity();
+                        if (!tryUploadingTemplateImages()) {
+                            createActivity();
+                        }
                     }
                 } else {
                     // 显示附加菜单信息
@@ -1541,8 +1544,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     }
                     // 不是分享活动草稿时，直接创建活动档案
                     if (!isShareDraft) {
-                        // 模板档案上传图片完毕之后尝试发布档案
-                        createArchive();
+                        if (mArchive.isActivity()) {
+                            createActivity();
+                        } else {
+                            // 模板档案上传图片完毕之后尝试发布档案
+                            createArchive();
+                        }
                     }
                     break;
             }
@@ -2195,7 +2202,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             authorHolder.showContent(format(templateItems[3], Cache.cache().userName));
         }
         if (mArchive.isActivity()) {
-            templateImages.setVisibility(View.GONE);
+            //templateImages.setVisibility(View.GONE);
             titleView.setMaxLength(20);
             minuteTitle.setText(StringHelper.getString(R.string.ui_group_activity_editor_minute_title));
             imageTitle.setText(StringHelper.getString(R.string.ui_group_activity_editor_files_title));
@@ -2402,11 +2409,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         private int dimen = getDimension(R.dimen.ui_base_dimen_margin_padding);
 
         @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
             int position = parent.getChildAdapterPosition(view);
-            outRect.bottom = 0;
+            outRect.bottom = dimen;
             outRect.left = 0;
             GridLayoutManager manager = (GridLayoutManager) parent.getLayoutManager();
+            assert manager != null;
             int spanCount = manager.getSpanCount();
             // 第一行有顶部无空白，其余行顶部有空白
             outRect.top = (position / spanCount == 0) ? 0 : dimen;

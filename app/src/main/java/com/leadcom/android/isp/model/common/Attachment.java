@@ -231,16 +231,17 @@ public class Attachment extends Model {
         @Override
         public boolean shouldSkipField(FieldAttributes f) {
             // Attachment 中上传到服务器上时不需要的字段
-            return f.getName().equals("id") ||          // id
-                    f.getName().startsWith("_") ||      // _id
-                    f.getName().equals("type") ||       // type
-                    f.getName().contains("pdf") ||      // pdf
-                    f.getName().equals("archiveId") ||  // archiveId
-                    f.getName().contains("fullPath") || // fullPath
-                    f.getName().contains("ext") ||      // ext
-                    f.getName().startsWith("is") ||     // isSelectable, isSelected
-                    f.getName().startsWith("size") ||   // 文件大小
-                    f.getName().startsWith("local");    // localDeleted
+            return !f.getName().equals("name") && !f.getName().equals("url");
+//            return f.getName().equals("id") ||          // id
+//                    f.getName().startsWith("_") ||      // _id
+//                    f.getName().equals("type") ||       // type
+//                    f.getName().contains("pdf") ||      // pdf
+//                    f.getName().equals("archiveId") ||  // archiveId
+//                    f.getName().contains("fullPath") || // fullPath
+//                    f.getName().contains("ext") ||      // ext
+//                    f.getName().startsWith("is") ||     // isSelectable, isSelected
+//                    f.getName().startsWith("size") ||   // 文件大小
+//                    f.getName().startsWith("local");    // localDeleted
         }
 
         @Override

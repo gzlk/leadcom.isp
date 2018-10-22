@@ -524,6 +524,7 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("topic", checkNull(archive.getTopic()))
                     .put("content", checkNull(archive.getContent()))
                     .put("groupIdList", new JSONArray(archive.getGroupIdList()))
+                    .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
                     .put("groSquMemberList", new JSONArray(SubMember.toJson(archive.getGroSquMemberList(), new String[]{"userName", "type"})));
         } catch (JSONException e) {
             e.printStackTrace();
