@@ -99,16 +99,6 @@
     <string name="ui_organization_details_not_exists">抱歉，该组织不存在</string>
 
     <string name="ui_group_constructor_fragment_title">组织架构</string>
-    <string-array name="ui_group_tong_zhans">
-        <item>民盟</item>
-        <item>九三学社</item>
-        <item>民建</item>
-        <item>致公党</item>
-        <item>民革</item>
-        <item>农工党</item>
-        <item>台盟</item>
-        <item>民主促进会</item>
-    </string-array>
     <string-array name="ui_group_constructor_items">
         <item>0|上级组织||1|0xe6ae</item>
         <item>1|基层组织||1|0xe6af</item>

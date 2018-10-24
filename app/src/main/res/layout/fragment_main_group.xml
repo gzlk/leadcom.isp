@@ -9,6 +9,16 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary">
 
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_main_group_title_flag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+            android:text="@string/ui_group_header_tongzhan_flag"
+            android:textSize="@dimen/ui_base_text_size_small"
+            android:visibility="gone" />
+
         <include
             layout="@layout/tool_view_activity_normal_title_left_container"
             android:visibility="gone" />
@@ -23,8 +33,14 @@
                 android:id="@+id/ui_main_group_title_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:gravity="center"
+                android:marqueeRepeatLimit="3"
+                android:maxWidth="@dimen/ui_static_dp_120"
                 android:minHeight="@dimen/ui_base_dimen_simple_item_height"
+                android:singleLine="true"
                 android:text="@string/app_name_default"
                 android:textSize="@dimen/ui_base_text_size_big" />
 

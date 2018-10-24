@@ -46,8 +46,6 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_group_header_edit_icon)
     private CustomTextView editIcon;
 
-    private List<String> tzNames;
-
     private boolean showEditorIcon = true;
 
     public GroupHeaderViewHolder(View itemView, BaseFragment fragment) {
@@ -60,25 +58,6 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
                 viewClick(logoView);
             }
         });
-        tzNames = Arrays.asList(StringHelper.getStringArray(R.array.ui_group_tong_zhans));
-    }
-
-    // 是否民盟系组织
-    private boolean isMinMeng(String name) {
-        return !isEmpty(name) && Pattern.compile(".*(民盟|民主同盟).*").matcher(name).find();
-    }
-
-    // 是否统战系组织
-    private boolean isTongZhan(String name) {
-        if (isEmpty(name)) {
-            return false;
-        }
-        for (String string : tzNames) {
-            if (name.contains(string + "黄浦区基层")) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void showEditorIcon(boolean shown) {
@@ -90,10 +69,8 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
         if (isEmpty(logo)) {
             logo = "drawable://" + R.drawable.img_default_group_icon;
         }
-        boolean isMM = isMinMeng(group.getName());
-        boolean isTZ = isTongZhan(group.getName());
-        minmentTag.setVisibility(isMM || isTZ ? View.VISIBLE : View.GONE);
-        waterMarkView.setText(isTZ ? R.string.ui_group_header_tongzhan_flag : R.string.ui_group_header_minmeng_flag);
+        minmentTag.setVisibility(group.isMM() || group.isTZ() ? View.VISIBLE : View.GONE);
+        waterMarkView.setText(group.isTZ() ? R.string.ui_group_header_tongzhan_flag : R.string.ui_group_header_minmeng_flag);
         logoView.displayImage(logo, getDimension(R.dimen.ui_static_dp_60), false, false);
         logo = group.getIntro();
         introView.setText(isEmpty(logo) ? "" : Html.fromHtml(logo.replaceAll("\n", "<br/>")));

@@ -78,6 +78,24 @@ public class Organization extends Model {
         int NONE = 0;
     }
 
+    /**
+     * 组织性质
+     */
+    public interface NatureType {
+        /**
+         * 无任何性质
+         */
+        int NONE = 0;
+        /**
+         * 民盟系
+         */
+        int MINMENT = 1;
+        /**
+         * 统战系
+         */
+        int TONGZHAN = 2;
+    }
+
     public static Organization get(String id) {
         return new Dao<>(Organization.class).query(id);
     }
@@ -89,7 +107,7 @@ public class Organization extends Model {
     @Column(Field.UpperName)
     private String upName;         //上级组织名称
     @Column(Field.Nature)
-    private String nature;         //组织性质
+    private int nature;         //组织性质
     @Column(Field.Logo)
     private String logo;           //组织LOGO
     @Column(Field.Introduction)
@@ -147,12 +165,24 @@ public class Organization extends Model {
         this.upName = upName;
     }
 
-    public String getNature() {
+    public int getNature() {
         return nature;
     }
 
-    public void setNature(String nature) {
+    public void setNature(int nature) {
         this.nature = nature;
+    }
+
+    public boolean isMM() {
+        return nature == NatureType.MINMENT;
+    }
+
+    public boolean isTZ() {
+        return nature == NatureType.TONGZHAN;
+    }
+
+    public boolean isNoneNature() {
+        return !isMM() && !isTZ();
     }
 
     public String getLogo() {

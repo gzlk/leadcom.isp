@@ -34,6 +34,7 @@ import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
 import com.leadcom.android.isp.fragment.organization.GroupBaseFragment;
 import com.leadcom.android.isp.fragment.organization.GroupConstructFragment;
 import com.leadcom.android.isp.fragment.organization.GroupCreateFragment;
+import com.leadcom.android.isp.fragment.organization.GroupsFragment;
 import com.leadcom.android.isp.fragment.organization.MemberDutyFragment;
 import com.leadcom.android.isp.fragment.organization.MemberNatureMainFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
@@ -58,7 +59,6 @@ import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -77,6 +77,7 @@ public class GroupFragment extends GroupBaseFragment {
 
     private static final String PARAM_SINGLE = "gf_single";
     private static final String PARAM_SELECTED = "gf_selected";
+    private static final String PARAM_NATURE = "gf_nature";
     private static final String PARAM_PERMISSION = "gf_need_permission";
     private static boolean isFirst = true;
 
@@ -86,16 +87,17 @@ public class GroupFragment extends GroupBaseFragment {
         return gf;
     }
 
-    private static Bundle getBundle(String groupId, boolean needPermission) {
+    private static Bundle getBundle(String groupId, int nature, boolean needPermission) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putBoolean(PARAM_SINGLE, true);
+        bundle.putInt(PARAM_NATURE, nature);
         bundle.putBoolean(PARAM_PERMISSION, needPermission);
         return bundle;
     }
 
-    public static void open(BaseFragment fragment, String groupId, boolean needPermission) {
-        fragment.openActivity(GroupFragment.class.getName(), getBundle(groupId, needPermission), false, false);
+    public static void open(BaseFragment fragment, String groupId, int nature, boolean needPermission) {
+        fragment.openActivity(GroupFragment.class.getName(), getBundle(groupId, nature, needPermission), false, false);
     }
 
 //    public static void open(Context context, String groupId) {
@@ -107,6 +109,7 @@ public class GroupFragment extends GroupBaseFragment {
         super.getParamsFromBundle(bundle);
         isSingle = bundle.getBoolean(PARAM_SINGLE, false);
         selectedIndex = bundle.getInt(PARAM_SELECTED, -1);
+        mNature = bundle.getInt(PARAM_NATURE, Organization.NatureType.NONE);
         // 默认是需要权限才可以查看组织相应的内容的
         isNeedPermission = bundle.getBoolean(PARAM_PERMISSION, true);
     }
@@ -116,6 +119,7 @@ public class GroupFragment extends GroupBaseFragment {
         super.saveParamsToBundle(bundle);
         bundle.putBoolean(PARAM_SINGLE, isSingle);
         bundle.putInt(PARAM_SELECTED, selectedIndex);
+        bundle.putInt(PARAM_NATURE, mNature);
         bundle.putBoolean(PARAM_PERMISSION, isNeedPermission);
     }
 
@@ -123,6 +127,8 @@ public class GroupFragment extends GroupBaseFragment {
     private View toolBar;
     @ViewId(R.id.ui_ui_custom_title_left_container)
     private View leftContainer;
+    @ViewId(R.id.ui_main_group_title_flag)
+    private CustomTextView tagView;
     @ViewId(R.id.ui_main_group_title_text)
     private TextView titleTextView;
     @ViewId(R.id.ui_main_group_title_allow)
@@ -142,7 +148,7 @@ public class GroupFragment extends GroupBaseFragment {
     private DetailsAdapter dAdapter;
     private String[] items;
     private boolean isSingle = false;
-    private int selectedIndex = -1;
+    private int selectedIndex = -1, mNature;
     private String currentGroup = "";
     private boolean isNeedPermission = true;
 
@@ -162,7 +168,9 @@ public class GroupFragment extends GroupBaseFragment {
         super.onActivityCreated(savedInstanceState);
         //tryPaddingContent(toolBar, false);
         int color = getColor(Cache.sdk >= 23 ? R.color.textColor : R.color.textColorLight);
+        titleTextView.setSelected(true);
         titleTextView.setTextColor(color);
+        tagView.setTextColor(getColor(Cache.sdk >= 23 ? R.color.colorPrimary : R.color.textColorLight));
         titleAllow.setTextColor(color);
         createView.setTextColor(color);
         isLoadingComplete(true);
@@ -451,6 +459,17 @@ public class GroupFragment extends GroupBaseFragment {
         }
         if (null != list) {
             for (Organization group : list) {
+                if (!isEmpty(group.getName())) {
+                    if (group.getName().contains("历康")) {
+                        if (group.getName().contains("测试")) {
+                            //group.setNature(Organization.NatureType.MINMENT);
+                        } else {
+                            //group.setNature(Organization.NatureType.MINMENT);
+                        }
+                    } else if (group.getName().contains("测试")) {
+                        group.setNature(Organization.NatureType.MINMENT);
+                    }
+                }
                 group.setSelectable(true);
                 Cache.cache().updateGroup(group);
             }
@@ -524,26 +543,14 @@ public class GroupFragment extends GroupBaseFragment {
         }
     };
 
-    private List<String> tzNames;
-
-    // 是否统战系的基层组织
-    private boolean isTongZhan(String groupName) {
-        if (null == tzNames) {
-            tzNames = Arrays.asList(StringHelper.getStringArray(R.array.ui_group_tong_zhans));
-        }
-        if (isEmpty(groupName)) {
-            return false;
-        }
-        for (String string : tzNames) {
-            if (groupName.contains(string + "黄浦区基层")) {
-                return true;
-            }
-        }
-        return false;
+    private boolean isTZ() {
+        return mNature == Organization.NatureType.TONGZHAN;
     }
 
     private void onGroupChange(Organization group) {
         titleTextView.setText(Html.fromHtml(group.getName()));
+        //tagView.setVisibility(group.isNoneNature() || isSingle ? View.GONE : View.VISIBLE);
+        //tagView.setText(group.isTZ() ? R.string.ui_group_header_tongzhan_flag : R.string.ui_group_header_minmeng_flag);
         if (!isNeedPermission) {
             PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), group.getId());
             currentGroup = group.getId();
@@ -567,6 +574,9 @@ public class GroupFragment extends GroupBaseFragment {
             dAdapter.replace(group, 0);
         }
         //resetQuantity(group.getCalculate());
+        if (isSingle && isTZ()) {
+            return;
+        }
         // 是否可以查看履职统计数据
         SimpleClickableItem item = new SimpleClickableItem(items[2]);
         if (!isNeedPermission || isMember(group.getId())) {
@@ -601,15 +611,15 @@ public class GroupFragment extends GroupBaseFragment {
             dAdapter.remove(item);
         }
         // 统战系的组织，只显示几个特定的项目
-        if (!isNeedPermission && isTongZhan(group.getName())) {
-            item = new SimpleClickableItem(items[1]);
-            dAdapter.remove(item);
-            item = new SimpleClickableItem(items[2]);
-            dAdapter.remove(item);
-            item = new SimpleClickableItem(items[4]);
-            dAdapter.remove(item);
-            return;
-        }
+//        if (!isNeedPermission && group.isTZ()) {
+//            item = new SimpleClickableItem(items[1]);
+//            dAdapter.remove(item);
+//            item = new SimpleClickableItem(items[2]);
+//            dAdapter.remove(item);
+//            item = new SimpleClickableItem(items[4]);
+//            dAdapter.remove(item);
+//            return;
+//        }
         // 是否有授权管理权限
 //        item = new SimpleClickableItem(items[6]);
 //        if (!isNeedPermission || hasOperation(group.getId(), GRPOperation.GROUP_PERMISSION)) {
@@ -731,12 +741,19 @@ public class GroupFragment extends GroupBaseFragment {
 
             dAdapter.add(new Organization());
             for (String string : items) {
-                if (string.contains("3|") || string.contains("6|")) {
-                    //if (string.contains("6|") || string.contains("7|") || string.contains("8|")) {
-                    continue;
+                if (isTZ()) {
+                    if (string.startsWith("1|") || string.startsWith("4|") || string.startsWith("6|")) {
+                        SimpleClickableItem item = new SimpleClickableItem(format(string, 0));
+                        dAdapter.add(item);
+                    }
+                } else {
+                    if (string.startsWith("3|") || string.startsWith("6|")) {
+                        //if (string.contains("6|") || string.contains("7|") || string.contains("8|")) {
+                        continue;
+                    }
+                    SimpleClickableItem item = new SimpleClickableItem(format(string, 0));
+                    dAdapter.add(item);
                 }
-                SimpleClickableItem item = new SimpleClickableItem(format(string, 0));
-                dAdapter.add(item);
             }
             if (isSingle) {
                 fetchingRemoteOrganization(mQueryId);
@@ -747,6 +764,9 @@ public class GroupFragment extends GroupBaseFragment {
     @Override
     protected void onFetchingRemoteOrganizationComplete(Organization organization) {
         if (null != organization) {
+            if (isSingle) {
+                organization.setNature(mNature);
+            }
             onGroupChange(organization);
         }
         stopRefreshing();
@@ -838,6 +858,7 @@ public class GroupFragment extends GroupBaseFragment {
                 break;
             case 2:
                 // 组织架构
+                GroupsFragment.NATURE = group.getNature();
                 GroupConstructFragment.open(this, group.getId(), group.getName());
                 break;
             case 3:

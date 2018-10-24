@@ -27,6 +27,7 @@ import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.operation.GRPOperation;
+import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.organization.SubMember;
@@ -48,6 +49,8 @@ import java.util.List;
 public class GroupsFragment extends GroupBaseFragment {
 
     private static final String PARAM_GROUPS_TYPE = "gf_param_groups_type";
+
+    public static int NATURE = Organization.NatureType.NONE;
 
     public static GroupsFragment newInstance(Bundle bundle) {
         GroupsFragment gf = new GroupsFragment();
@@ -163,6 +166,12 @@ public class GroupsFragment extends GroupBaseFragment {
     @Override
     public int getLayout() {
         return R.layout.fragment_searchable_list_swipe_disabled;
+    }
+
+    @Override
+    public void onDestroy() {
+        NATURE = Organization.NatureType.NONE;
+        super.onDestroy();
     }
 
     @Override
@@ -357,7 +366,7 @@ public class GroupsFragment extends GroupBaseFragment {
                         selectAllIcon.setTextColor(getColor(mAllSelected ? R.color.colorPrimary : R.color.textColorHintLight));
                     } else if (mRelateType == RelateGroup.RelationType.SUBORDINATE) {
                         // 查看下级组织，且不需要任何权限即可全部查看
-                        GroupFragment.open(GroupsFragment.this, group.getGroupId(), !Role.hasOperation(mQueryId, GRPOperation.GROUP_PROPERTY_SUBORDINATE));
+                        GroupFragment.open(GroupsFragment.this, group.getGroupId(), NATURE, !Role.hasOperation(mQueryId, GRPOperation.GROUP_PROPERTY_SUBORDINATE));
                     }
                     break;
             }
