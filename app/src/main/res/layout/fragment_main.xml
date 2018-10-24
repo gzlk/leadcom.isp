@@ -14,9 +14,27 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </RelativeLayout>
+        <TextView
+            android:id="@+id/ui_main_alpha_label_flag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/ui_fragment_main_frame_layout"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="-22dp"
+            android:layout_marginBottom="10dp"
+            android:alpha="0.5"
+            android:background="@color/colorPrimary"
+            android:paddingStart="@dimen/ui_static_dp_30"
+            android:paddingTop="@dimen/ui_static_dp_5"
+            android:paddingEnd="@dimen/ui_static_dp_30"
+            android:paddingBottom="@dimen/ui_static_dp_5"
+            android:rotation="45"
+            android:text="@string/ui_text_main_inner_test_text"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/ui_base_text_size_tiny"
+            android:visibility="gone" />
 
-    <include layout="@layout/tool_view_alpha_label" />
+    </RelativeLayout>
 
     <include layout="@layout/tool_view_main_bottom_menu" />
 </RelativeLayout>
