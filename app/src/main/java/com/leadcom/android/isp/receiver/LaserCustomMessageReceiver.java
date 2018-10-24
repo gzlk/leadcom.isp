@@ -83,6 +83,7 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
                                 if (null != doc) {
                                     ArchiveDetailsFragment.open(context, doc, isAppForeground);
                                 } else {
+                                    ActivitiesFragment.HOST_GROUP = groupId;
                                     ActivitiesFragment.open(context, groupId, "");
                                 }
                             }

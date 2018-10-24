@@ -39,6 +39,8 @@ import java.util.List;
  */
 public class ActivitiesFragment extends GroupBaseFragment {
 
+    public static String HOST_GROUP = "";
+
     public static ActivitiesFragment newInstance(Bundle bundle) {
         ActivitiesFragment fragment = new ActivitiesFragment();
         fragment.setArguments(bundle);
@@ -149,7 +151,7 @@ public class ActivitiesFragment extends GroupBaseFragment {
                 displayLoading(false);
                 stopRefreshing();
             }
-        }).listActivities(mQueryId, remotePageNumber);
+        }).listActivities(mQueryId, HOST_GROUP, remotePageNumber);
     }
 
     private void initializeAdapter() {

@@ -859,6 +859,9 @@ public class GroupFragment extends GroupBaseFragment {
             case 2:
                 // 组织架构
                 GroupsFragment.NATURE = group.getNature();
+                if (!isSingle) {
+                    ActivitiesFragment.HOST_GROUP = group.getId();
+                }
                 GroupConstructFragment.open(this, group.getId(), group.getName());
                 break;
             case 3:
@@ -872,6 +875,9 @@ public class GroupFragment extends GroupBaseFragment {
                 break;
             case 4:
                 // 活动管理
+                if (!isSingle) {
+                    ActivitiesFragment.HOST_GROUP = group.getId();
+                }
                 ActivitiesFragment.open(this, group.getId(), group.getName());
                 break;
             case 5:

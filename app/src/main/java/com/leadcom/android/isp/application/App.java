@@ -335,7 +335,7 @@ public class App extends BaseActivityManagedApplication {
                     completeListener.onComplete();
                 }
             }
-        }).listActivities(groupId, 0);
+        }).listActivities(groupId, groupId, 0);
     }
 
     public synchronized Archive getActivity(String activityId) {

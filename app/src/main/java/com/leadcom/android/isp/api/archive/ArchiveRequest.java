@@ -543,8 +543,8 @@ public class ArchiveRequest extends Request<Archive> {
     /**
      * 拉取组织的活动列表
      */
-    public void listActivities(String groupId, int pageNumber) {
-        String url = format("/group/groActivityNotice%s?groupId=%s&pageNumber=%d", LIST, groupId, pageNumber);
+    public void listActivities(String groupId, String currentGroupId, int pageNumber) {
+        String url = format("/group/groActivityNotice%s?groupId=%s&currentGroupId=%s&pageNumber=%d", LIST, groupId, currentGroupId, pageNumber);
         executeHttpRequest(getRequest(ListArchive.class, url, "", HttpMethods.Get));
     }
 
