@@ -397,7 +397,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             setCustomTitle(StringHelper.getString(R.string.ui_text_document_create_fragment_title, title));
         }
         setRightIcon(0);
-        setRightText(isActivity() ? R.string.ui_base_text_publish : R.string.ui_base_text_next_step);
+        setRightText(isActivity() ? R.string.ui_base_text_publish : R.string.ui_base_text_commit);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
@@ -809,18 +809,18 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 //                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_branch_null);
 //                return false;
 //            }
-        if (returnAble) {
-            if (isEmpty(mArchive.getProperty())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_property_null);
-                return false;
-            }
-        }
-        if (returnAble) {
-            if (isEmpty(mArchive.getCategory())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_category_null);
-                return false;
-            }
-        }
+//        if (returnAble) {
+//            if (isEmpty(mArchive.getProperty())) {
+//                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_property_null);
+//                return false;
+//            }
+//        }
+//        if (returnAble) {
+//            if (isEmpty(mArchive.getCategory())) {
+//                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_category_null);
+//                return false;
+//            }
+//        }
         return true;
     }
 
@@ -876,38 +876,38 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 return;
             }
         }
-        if (isGroupArchive) {
-            if (isUserArchive) {
-                mArchive.setOwnType(Archive.Type.ALL);
-            } else {
-                mArchive.setOwnType(Archive.Type.GROUP);
-            }
-            if (isEmpty(mArchive.getGroupId())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_null);
-                return;
-            }
-            if (mArchive.isDefaultHappenDate()) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_happen_date_null);
-                return;
-            }
-            if (isEmpty(mArchive.getProperty())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_property_null);
-                return;
-            }
-            if (isEmpty(mArchive.getCategory())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_category_null);
-                return;
-            }
-        } else {
-            mArchive.setOwnType(Archive.Type.USER);
-            // 个人档案需要清空组织id
-            mArchive.setGroupId("");
-        }
+//        if (isGroupArchive) {
+//            if (isUserArchive) {
+//                mArchive.setOwnType(Archive.Type.ALL);
+//            } else {
+//                mArchive.setOwnType(Archive.Type.GROUP);
+//            }
+//            if (isEmpty(mArchive.getGroupId())) {
+//                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_null);
+//                return;
+//            }
+//            if (mArchive.isDefaultHappenDate()) {
+//                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_happen_date_null);
+//                return;
+//            }
+//            if (isEmpty(mArchive.getProperty())) {
+//                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_property_null);
+//                return;
+//            }
+//            if (isEmpty(mArchive.getCategory())) {
+//                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_category_null);
+//                return;
+//            }
+//        } else {
+//            mArchive.setOwnType(Archive.Type.USER);
+//            // 个人档案需要清空组织id
+//            mArchive.setGroupId("");
+//        }
         // 个人档案需要标签
-        if (isEmpty(mArchive.getGroupId()) && mArchive.getLabel().size() < 1) {
-            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_label_null);
-            return;
-        }
+//        if (isEmpty(mArchive.getGroupId()) && mArchive.getLabel().size() < 1) {
+//            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_label_null);
+//            return;
+//        }
         String author = mArchive.isTemplateArchive() ? authorHolder.getValue() : creatorText.getValue();
         if (isEmpty(author)) {
             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_author_null);
