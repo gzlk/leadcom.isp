@@ -433,16 +433,30 @@ public class ArchiveRequest extends Request<Archive> {
             if (!isIndividual) {
                 object.put("groupId", archive.getGroupId())// 必要字段
                         .put("groupName", archive.getGroupName())
-                        // 组织档案需要增加以下参数
-                        .put("happenDate", archive.getHappenDate())
                         .put("site", checkNull(archive.getSite()))
-                        .put("property", checkNull(archive.getProperty()))
-                        .put("category", checkNull(archive.getCategory()))
-                        .put("docClassifyId", checkNull(archive.getDocClassifyId()))
-                        .put("participant", checkNull(archive.getParticipant()))
-                        .put("squadId", archive.getSquadId())
-                        .put("branch", archive.getBranch())
-                        .put("participantIdList", new JSONArray(archive.getParticipantIdList()));
+                        .put("branch", archive.getBranch());
+
+                if (!isEmpty(archive.getHappenDate()) && !archive.isDefaultHappenDate()) {
+                    object.put("happenDate", archive.getHappenDate());
+                }
+                if (!isEmpty(archive.getProperty())) {
+                    object.put("property", checkNull(archive.getProperty()));
+                }
+                if (!isEmpty(archive.getCategory())) {
+                    object.put("property", checkNull(archive.getProperty()));
+                }
+                if (!isEmpty(archive.getDocClassifyId())) {
+                    object.put("docClassifyId", checkNull(archive.getDocClassifyId()));
+                }
+                if (!isEmpty(archive.getParticipant())) {
+                    object.put("participant", checkNull(archive.getParticipant()));
+                }
+                if (!isEmpty(archive.getSquadId())) {
+                    object.put("squadId", archive.getSquadId());
+                }
+                if (archive.getParticipantIdList().size() > 0) {
+                    object.put("participantIdList", new JSONArray(archive.getParticipantIdList()));
+                }
                 //if (archive.isTemplateArchive()) {
                 //    object.put("happenDate", archive.getHappenDate());
                 //}

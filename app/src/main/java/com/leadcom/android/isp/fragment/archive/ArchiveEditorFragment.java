@@ -50,6 +50,7 @@ import com.leadcom.android.isp.fragment.organization.GroupAllPickerFragment;
 import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
 import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
 import com.leadcom.android.isp.fragment.organization.SquadPickerFragment;
+import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DateTimeHelper;
@@ -168,6 +169,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         // 默认草稿作者为当前登录用户
         mArchive.setUserId(Cache.cache().userId);
         mArchive.setUserName(Cache.cache().userName);
+        // 档案来源
+        mArchive.setSource(Cache.cache().userName);
         // 档案模板设置为图文或附件
         mArchive.setDocType(editorType);
         // 默认草稿的创建日期为当前日期
@@ -317,6 +320,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         editorFocused = false;
         super.onActivityCreated(savedInstanceState);
+        // 组织id默认当前首页选中的组织
+        String groupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
+        if (isEmpty(groupId)) {
+            ToastHelper.make().showMsg(0);
+            finish();
+            return;
+        }
+        mArchive.setGroupId(groupId);
         registerDraftSavingReceiver();
         mEditor.setPadding(10, 10, 10, 10);
         mEditor.setBackgroundColor(Color.WHITE);
@@ -410,7 +421,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     }
                 } else {
                     // 显示附加菜单信息
-                    openSettingDialog();
+                    tryCreateArchive();
+                    //openSettingDialog();
                 }
             }
         });
@@ -697,7 +709,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         if (null != siteText) {
             mArchive.setSite(siteText.getValue());
-            mArchive.setSource(creatorText.getValue());
+            //mArchive.setSource(creatorText.getValue());
             // 保存可能手动输入添加的参与人
             mArchive.setParticipant(participantText.getValue());
         }
@@ -876,6 +888,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 return;
             }
         }
+        mArchive.setOwnType(Archive.Type.GROUP);
 //        if (isGroupArchive) {
 //            if (isUserArchive) {
 //                mArchive.setOwnType(Archive.Type.ALL);
@@ -908,7 +921,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 //            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_label_null);
 //            return;
 //        }
-        String author = mArchive.isTemplateArchive() ? authorHolder.getValue() : creatorText.getValue();
+        String author = mArchive.isTemplateArchive() ? authorHolder.getValue() : Cache.cache().userName;
         if (isEmpty(author)) {
             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_author_null);
             return;
