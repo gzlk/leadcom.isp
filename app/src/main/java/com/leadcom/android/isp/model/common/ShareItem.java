@@ -174,4 +174,11 @@ public class ShareItem extends Model {
     public boolean transformable() {
         return index == 13;
     }
+
+    /**
+     * 是否设置档案属性
+     */
+    public boolean propertyEditable() {
+        return index == 14;
+    }
 }

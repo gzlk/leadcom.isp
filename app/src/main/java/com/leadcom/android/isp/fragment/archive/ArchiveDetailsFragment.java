@@ -50,12 +50,18 @@ import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
+import com.leadcom.android.isp.fragment.common.LabelPickFragment;
 import com.leadcom.android.isp.fragment.organization.ActivityCollectionFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAllPickerFragment;
+import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
+import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
+import com.leadcom.android.isp.fragment.organization.SquadPickerFragment;
 import com.leadcom.android.isp.helper.DownloadingHelper;
 import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.ArchiveDetailsHelper;
+import com.leadcom.android.isp.helper.popup.DateTimeHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.publishable.Collectable;
@@ -73,6 +79,7 @@ import com.leadcom.android.isp.model.archive.ArchivePushTarget;
 import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.common.ArchivePermission;
 import com.leadcom.android.isp.model.common.Attachment;
+import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.common.ShareInfo;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Concern;
@@ -85,6 +92,8 @@ import com.leadcom.android.isp.model.user.Collection;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -478,6 +487,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     enableAwarded = data.isAwardable() && data.isAwarded();
                     enableReplay = data.isRepliable();
                     enableClassify = data.isClassifiable();
+                    enableProperty = data.isDeletable();
                     fetchingShareInfo();
                 }
             }
@@ -1401,6 +1411,108 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         } else {
             openShareDialog();
         }
+    }
+
+    ArchiveDetailsHelper _helper;
+
+    @Override
+    protected void archiveSetting() {
+        if (null == _helper) {
+            _helper = ArchiveDetailsHelper.helper().init(this).setArchive(mArchive).setOnElementClickListener(new ArchiveDetailsHelper.OnElementClickListener() {
+                @Override
+                public void onClick(View view) {
+                    switch (view.getId()) {
+                        case R.id.ui_popup_rich_editor_setting_type_user:
+                            break;
+                        case R.id.ui_popup_rich_editor_setting_type_group:
+
+                            break;
+                        case R.id.ui_popup_rich_editor_setting_group_picker:
+                            //isOpenOther = true;
+                            GroupPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), false);
+                            break;
+                        case R.id.ui_popup_rich_editor_setting_branch_picker:
+                            if (isEmpty(mArchive.getGroupId())) {
+                                ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
+                            } else {
+                                //isOpenOther = true;
+                                SquadPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), mArchive.getBranch());
+                            }
+                            break;
+                        case R.id.ui_popup_rich_editor_setting_time:
+                            // 发生时间
+                            openDateTimePicker();
+                            break;
+                        case R.id.ui_popup_rich_editor_setting_property:
+                            // 档案性质
+                            if (isEmpty(mArchive.getGroupId())) {
+                                ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
+                            } else {
+                                //isOpenOther = true;
+                                LabelPickFragment.open(ArchiveDetailsFragment.this, LabelPickFragment.TYPE_PROPERTY, mArchive.getGroupId(), mArchive.getDocClassifyId());
+                            }
+                            break;
+                        case R.id.ui_popup_rich_editor_setting_category:
+                            // 档案类型
+                            //isOpenOther = true;
+                            LabelPickFragment.open(ArchiveDetailsFragment.this, LabelPickFragment.TYPE_CATEGORY, mArchive.getGroupId(), mArchive.getCategory());
+                            break;
+                        case R.id.ui_popup_rich_editor_setting_participant:
+                            GroupContactPickFragment.open(ArchiveDetailsFragment.this, REQUEST_SELECT, "", true, false, "[]");
+                            break;
+                        case R.id.ui_popup_rich_editor_setting_public:
+                            break;
+                        case R.id.ui_popup_rich_editor_setting_public_public:
+                            mArchive.setAuthPublic(Seclusion.Type.Public);
+                            resetPublicStatus();
+                            break;
+                        case R.id.ui_popup_rich_editor_setting_public_private:
+                            mArchive.setAuthPublic(isEmpty(mArchive.getGroupId()) ? Seclusion.Type.Private : Seclusion.Type.Group);
+                            resetPublicStatus();
+                            break;
+                        case R.id.ui_popup_rich_editor_setting_label:
+                            LabelPickFragment.open(ArchiveDetailsFragment.this, LabelPickFragment.TYPE_LABEL, mArchive.getGroupId(), mArchive.getLabel());
+                            break;
+                        case R.id.ui_popup_rich_editor_setting_share:
+                        case R.id.ui_popup_rich_editor_setting_share_draft:
+                            break;
+                        case R.id.ui_popup_rich_editor_setting_commit:
+                            break;
+                    }
+                }
+
+                private void resetPublicStatus() {
+                    boolean isPublic = mArchive.getAuthPublic() == Seclusion.Type.Public;
+                    _helper.resetPublicStatus(isPublic);
+                }
+            });
+        }
+        _helper.show();
+    }
+
+    private void openDateTimePicker() {
+        // 发生时间
+        DateTimeHelper.helper().setOnDateTimePickListener(new DateTimeHelper.OnDateTimePickListener() {
+            @Override
+            public void onPicked(Date date) {
+                if (mArchive.isActivity()) {
+                    Calendar calendar = Calendar.getInstance();
+                    if (date.getTime() < calendar.getTime().getTime()) {
+                        ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_now);
+                        return;
+                    }
+                    calendar.add(Calendar.HOUR, 24);
+                    if (date.getTime() < calendar.getTime().getTime()) {
+                        ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_24h_after_now);
+                        return;
+                    }
+                }
+                String fullTime = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date);
+                mArchive.setHappenDate(fullTime);
+                String time = mArchive.isActivity() ? formatDateTime(fullTime) : formatDate(fullTime);
+                _helper.showHappenDate(time);
+            }
+        }).show(ArchiveDetailsFragment.this, true, true, true, mArchive.isActivity(), mArchive.isActivity(), false, !mArchive.isTemplateArchive(), mArchive.getHappenDate());
     }
 
     @Override

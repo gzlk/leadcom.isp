@@ -578,7 +578,8 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     protected boolean enableShareWX = true, enableShareTimeLine = true, enableShareQQ = true, enableShareQZone = true,
             enableShareDelete = false, enableShareForward = false, enableShareRecommend = false, enableShareRecommended = false,
-            enableAward = false, enableAwarded = false, enableClassify = false, enableReplay = false, enableTransform = false;
+            enableAward = false, enableAwarded = false, enableClassify = false, enableReplay = false, enableTransform = false,
+            enableProperty = false;
 
     /**
      * 打开分享选择对话框
@@ -618,7 +619,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                                     (item.recommendable() && enableShareRecommend) || (item.unrecommendable() && enableShareRecommended) ||
                                     (item.awardable() && enableAward) || (item.unawardable() && enableAwarded) ||
                                     (item.classfiyable() && enableClassify) || (item.repliable() && enableReplay) ||
-                                    (item.transformable() && enableTransform)) {
+                                    (item.transformable() && enableTransform) || (item.propertyEditable() && enableProperty)) {
                                 sAdapter.add(item);
                                 count++;
                             }
@@ -687,6 +688,9 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                     break;
                 case 13:
                     transform();
+                    break;
+                case 14:
+                    archiveSetting();
                     break;
             }
             shareDialogHelper.dismiss();
@@ -836,6 +840,12 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * 下发活动
      */
     protected void transform() {
+    }
+
+    /**
+     * 打开设置窗口
+     */
+    protected void archiveSetting() {
     }
 
     /**
