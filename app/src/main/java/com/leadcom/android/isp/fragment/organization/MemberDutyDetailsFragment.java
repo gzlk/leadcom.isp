@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.organization;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
@@ -16,6 +17,7 @@ import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.common.TextViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
 
 import java.util.List;
@@ -133,6 +135,24 @@ public class MemberDutyDetailsFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void destroyView() {
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_DELETE:
+                String id = getResultedData(data);
+                Model result = getResultModel(data, RESULT_ARCHIVE);
+                if (null != result) {
+                    //mAdapter.update((Archive) result);
+                } else if (!isEmpty(id)) {
+                    Archive archive = new Archive();
+                    archive.setId(id);
+                    mAdapter.remove(archive);
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, data);
     }
 
     private void initializeAdapter() {

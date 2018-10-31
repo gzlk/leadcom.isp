@@ -147,13 +147,13 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         isLoaded = false;
         archive.setOwnType(isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP);
         Bundle bundle = getBundle(archive, archive.getId(), isDraft, true);
-        fragment.openActivity(ArchiveDetailsFragment.class.getName(), bundle, true, false);
+        fragment.openActivity(ArchiveDetailsFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
     }
 
     public static void open(Context context, Archive archive, boolean innerOpen) {
         isLoaded = false;
         Bundle bundle = getBundle(archive, archive.getId(), false, innerOpen);
-        BaseActivity.openActivity(context, ArchiveDetailsFragment.class.getName(), bundle, true, false);
+        BaseActivity.openActivity(context, ArchiveDetailsFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
     }
 
     public static void open(Context context, String groupId, String archiveId, boolean isDraft, boolean innerOpen, String authorId) {
@@ -163,7 +163,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         archive.setUserId(authorId);
         isLoaded = false;
         Bundle bundle = getBundle(archive, archiveId, isDraft, innerOpen);
-        BaseActivity.openActivity(context, ArchiveDetailsFragment.class.getName(), bundle, true, false);
+        BaseActivity.openActivity(context, ArchiveDetailsFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
     }
 
     private static Bundle getBundle(Archive archive, String archiveId, boolean isDraft, boolean innerOpen) {
@@ -406,6 +406,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     @Override
     protected boolean onBackKeyPressed() {
         resetResultData();
+        //finish();
         return super.onBackKeyPressed();
     }
 

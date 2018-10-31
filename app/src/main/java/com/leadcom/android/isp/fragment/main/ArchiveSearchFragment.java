@@ -1,6 +1,7 @@
 package com.leadcom.android.isp.fragment.main;
 
 import android.animation.Animator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -258,6 +259,24 @@ public class ArchiveSearchFragment extends GroupBaseFragment {
         }
 
         initializePositions();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_DELETE:
+                String id = getResultedData(data);
+                Model result = getResultModel(data, RESULT_ARCHIVE);
+                if (null != result) {
+                    mAdapter.update(result);
+                } else if (!isEmpty(id)) {
+                    Archive archive = new Archive();
+                    archive.setId(id);
+                    mAdapter.remove(archive);
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, data);
     }
 
     private TextView timePickerTitle;

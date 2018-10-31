@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.organization;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,8 +15,8 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.user.UserMsgRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
-import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
@@ -39,7 +40,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class ArchivesFragment extends BaseCmtLikeColFragment {
+public class ArchivesFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_TITLE = "af_title";
     private static final String PARAM_HAS_TITLE = "af_has_title";
@@ -171,14 +172,6 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
                     mAdapter.remove(archive);
                 }
                 break;
-            case REQUEST_CHANGE:
-            case REQUEST_CREATE:
-                // 新增组织档案、组织档案管理页面返回时，重新刷新第一页
-                onSwipeRefreshing();
-                break;
-            case REQUEST_SELECT:
-                //ArchiveEditorFragment.open(ArchivesFragment.this, "", getResultedData(data));
-                break;
         }
         super.onActivityResult(requestCode, data);
     }
@@ -255,20 +248,20 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
             }
         }
     };
-
-    @Override
-    protected void onLikeComplete(boolean success, Model model) {
-        if (success) {
-            mAdapter.update((Archive) model);
-        }
-    }
-
-    @Override
-    protected void onCollectComplete(boolean success, Model model) {
-        if (success) {
-            mAdapter.update((Archive) model);
-        }
-    }
+//
+//    @Override
+//    protected void onLikeComplete(boolean success, Model model) {
+//        if (success) {
+//            mAdapter.update((Archive) model);
+//        }
+//    }
+//
+//    @Override
+//    protected void onCollectComplete(boolean success, Model model) {
+//        if (success) {
+//            mAdapter.update((Archive) model);
+//        }
+//    }
 
     private class ArchiveAdapter extends RecyclerViewAdapter<ArchiveHomeRecommendedViewHolder, Archive> {
 
