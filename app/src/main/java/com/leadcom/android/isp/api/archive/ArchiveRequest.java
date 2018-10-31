@@ -152,6 +152,16 @@ public class ArchiveRequest extends Request<Archive> {
      * 更改档案来源
      */
     public static final int TYPE_SOURCE = 4;
+    /**
+     * 更改所属组织
+     */
+    public static final int TYPE_GROUP = 5;
+    /*更改所属支部*/
+    public static final int TYPE_SQUAD = 6;
+    /**/
+    public static final int TYPE_HAPPEN = 7;
+    public static final int TYPE_PROPERTY = 8;
+    public static final int TYPE_CATEGROY = 9;
 
     /**
      * 更新档案内容
@@ -165,14 +175,30 @@ public class ArchiveRequest extends Request<Archive> {
                 case TYPE_AUTH:
                     object.put("authPublic", archive.getAuthPublic());
                     break;
-                case TYPE_LABEL:
-                    object.put("label", new JSONArray(archive.getLabel()));
+                case TYPE_CATEGROY:
+                    object.put("category", archive.getCategory());
                     break;
                 case TYPE_COVER:
                     object.put("cover", archive.getCover());
                     break;
+                case TYPE_GROUP:
+                    object.put("groupId", archive.getGroupId());
+                    break;
+                case TYPE_HAPPEN:
+                    object.put("happenDate", archive.getHappenDate());
+                    break;
+                case TYPE_LABEL:
+                    object.put("label", new JSONArray(archive.getLabel()));
+                    break;
+                case TYPE_PROPERTY:
+                    object.put("docClassifyId", archive.getDocClassifyId())
+                            .put("property", archive.getProperty());
+                    break;
                 case TYPE_SOURCE:
                     object.put("source", archive.getSource());
+                    break;
+                case TYPE_SQUAD:
+                    object.put("squadId", archive.getSquadId());
                     break;
             }
         } catch (JSONException e) {
@@ -443,7 +469,7 @@ public class ArchiveRequest extends Request<Archive> {
                     object.put("property", checkNull(archive.getProperty()));
                 }
                 if (!isEmpty(archive.getCategory())) {
-                    object.put("property", checkNull(archive.getProperty()));
+                    object.put("category", checkNull(archive.getCategory()));
                 }
                 if (!isEmpty(archive.getDocClassifyId())) {
                     object.put("docClassifyId", checkNull(archive.getDocClassifyId()));

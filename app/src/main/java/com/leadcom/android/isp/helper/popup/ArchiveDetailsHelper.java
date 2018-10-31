@@ -1,25 +1,37 @@
 package com.leadcom.android.isp.helper.popup;
 
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.gson.reflect.TypeToken;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.OrgRequest;
+import com.leadcom.android.isp.api.org.SquadRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.Label;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.organization.Organization;
+import com.leadcom.android.isp.model.organization.RelateGroup;
+import com.leadcom.android.isp.model.organization.Squad;
+
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>档案详细属性设定对话框helper<br />
@@ -56,6 +68,23 @@ public class ArchiveDetailsHelper {
         return this;
     }
 
+    private boolean showTypes = false;
+
+    /**
+     * 是否显示组织、个人档案选择项，默认不显示
+     */
+    public ArchiveDetailsHelper setShowTypes(boolean shown) {
+        showTypes = shown;
+        return this;
+    }
+
+    private boolean showCommit = true;
+
+    public ArchiveDetailsHelper setShowCommit(boolean shown) {
+        showCommit = shown;
+        return this;
+    }
+
     private boolean isEmpty(String string) {
         return StringHelper.isEmpty(string);
     }
@@ -81,7 +110,7 @@ public class ArchiveDetailsHelper {
     private CustomTextView userIcon, groupIcon, publicIcon, privateIcon;
     private ClearEditText participantText, siteText;
     private ClearEditText creatorText;
-    private View archiveTypeUser, shareDraftButton;
+    private View archiveTypeUser, shareDraftButton, commitButton;
 
     public void show() {
         isGroupArchive = !isEmpty(mArchive.getGroupId());
@@ -109,9 +138,31 @@ public class ArchiveDetailsHelper {
                     privateIcon = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_public_private_icon);
                     shareDraftButton = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft);
                     branchText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker_text);
+                    commitButton = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_commit);
                 }
                 return settingDialogView;
             }
+
+            private TextWatcher textWatcher = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (null != s && s.length() > 0) {
+                        String source = s.toString();
+                        mArchive.setSource(source);
+                        updatingArchive(ArchiveRequest.TYPE_SOURCE);
+                    }
+                }
+            };
 
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
@@ -120,9 +171,12 @@ public class ArchiveDetailsHelper {
                 } else {
                     titleText.setText(mArchive.getTitle());
                 }
+                commitButton.setVisibility(showCommit ? View.VISIBLE : View.GONE);
+                shareDraftButton.setVisibility(View.GONE);
                 String source = mArchive.getSource();
                 creatorText.setValue(isEmpty(source) ? mArchive.getUserName() : source);
                 creatorText.focusEnd();
+                creatorText.addTextChangedListener(textWatcher);
                 String text = mArchive.getCreateDate();
                 if (!isEmpty(text) && !text.equals(Model.DFT_DATE)) {
                     text = Utils.format(mArchive.getCreateDate(), getString(R.string.ui_base_text_date_time_format), "yyyy.MM.dd");
@@ -142,8 +196,8 @@ public class ArchiveDetailsHelper {
                 siteText.setValue(mArchive.getSite());
                 siteText.focusEnd();
 
-                resetProperty();
-                resetCategory();
+                resetProperty(false);
+                resetCategory(false);
 
                 if (isEmpty(mArchive.getParticipant())) {
                     participantText.setValue("");
@@ -172,6 +226,12 @@ public class ArchiveDetailsHelper {
                     }
                 } else {
                     resetGroupInfo(mArchive.getGroupId());
+                }
+
+                if (isEmpty(mArchive.getSquadId())) {
+                    branchText.setText(R.string.ui_text_archive_details_editor_setting_branch_desc);
+                } else {
+                    fetchingSquad(mArchive.getSquadId());
                 }
 
                 archiveTypeUser.setVisibility(mArchive.isAttachmentArchive() ? View.GONE : View.VISIBLE);
@@ -204,20 +264,22 @@ public class ArchiveDetailsHelper {
                 }).find(groupId);
             }
 
-            private void resetProperty() {
-                if (isEmpty(mArchive.getProperty())) {
-                    propertyText.setText(R.string.ui_text_archive_details_editor_setting_property_title);
-                } else {
-                    propertyText.setText(mArchive.getProperty());
-                }
-            }
-
-            private void resetCategory() {
-                if (isEmpty(mArchive.getCategory())) {
-                    categoryText.setText(R.string.ui_text_archive_details_editor_setting_category_title);
-                } else {
-                    categoryText.setText(mArchive.getCategory());
-                }
+            private void fetchingSquad(final String squadId) {
+                SquadRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Squad>() {
+                    @Override
+                    public void onResponse(Squad squad, boolean success, String message) {
+                        super.onResponse(squad, success, message);
+                        if (success) {
+                            if (null != squad && !isEmpty(squad.getId())) {
+                                branchText.setText(squad.getName());
+                            } else {
+                                branchText.setText(R.string.ui_text_archive_details_editor_setting_branch_error);
+                            }
+                        } else {
+                            branchText.setText(R.string.ui_text_archive_details_editor_setting_branch_not_exists);
+                        }
+                    }
+                }).find(squadId);
             }
 
             /**
@@ -240,7 +302,7 @@ public class ArchiveDetailsHelper {
                 // 个人档案需要选择标签
                 settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label).setVisibility(isUserArchive ? View.VISIBLE : View.GONE);
                 // 模板档案不需要组织、个人选择
-                settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type).setVisibility(mArchive.isTemplateArchive() || mArchive.isAttachmentArchive() ? View.GONE : View.VISIBLE);
+                settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type).setVisibility(!showTypes || mArchive.isTemplateArchive() || mArchive.isAttachmentArchive() ? View.GONE : View.VISIBLE);
                 // 模板档案不需要有封面
                 //settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_cover).setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
                 // 模板档案不需要来源
@@ -249,7 +311,7 @@ public class ArchiveDetailsHelper {
                 settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker).setVisibility(isGroupArchive ? View.VISIBLE : View.GONE);
                 // 个人档案不需要分享草稿
                 if (!mArchive.isAttachmentArchive()) {
-                    settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft).setVisibility(isGroupArchive ? View.VISIBLE : View.GONE);
+                    //settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft).setVisibility(isGroupArchive ? View.VISIBLE : View.GONE);
                 }
             }
 
@@ -284,15 +346,108 @@ public class ArchiveDetailsHelper {
         }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
     }
 
-    public void resetPublicStatus(boolean isPublic) {
+    public void handleActivityResult(int requestCode, Intent data) {
+        switch (requestCode) {
+            case BaseFragment.REQUEST_CATEGORY:
+                // 档案类型
+                mArchive.setCategory(BaseFragment.getResultedData(data));
+                resetCategory(true);
+                break;
+            case BaseFragment.REQUEST_PROPERTY:
+                // 档案性质
+                String res = BaseFragment.getResultedData(data);
+                String[] properties = res.split(",");
+                mArchive.setDocClassifyId(properties[0]);
+                mArchive.setProperty(properties[1]);
+                resetProperty(true);
+                break;
+            case BaseFragment.REQUEST_GROUP:
+                // 档案所属组织
+                ArrayList<RelateGroup> groups = RelateGroup.from(BaseFragment.getResultedData(data));
+                if (null != groups && groups.size() > 0) {
+                    // 设置组织id
+                    mArchive.setGroupId(groups.get(0).getGroupId());
+                    if (null != groupNameText) {
+                        groupNameText.setText(Html.fromHtml(groups.get(0).getGroupName()));
+                    }
+                    updatingArchive(ArchiveRequest.TYPE_GROUP);
+                }
+                break;
+            case BaseFragment.REQUEST_SQUAD:
+                // 选择了小组
+                String string = BaseFragment.getResultedData(data);
+                if (!isEmpty(string)) {
+                    Squad squad = Squad.fromJson(string);
+                    if (null != squad && !isEmpty(squad.getId())) {
+                        mArchive.setBranch(squad.getName());
+                        mArchive.setSquadId(squad.getId());
+                        branchText.setText(squad.getName());
+                        updatingArchive(ArchiveRequest.TYPE_SQUAD);
+                    }
+                }
+                break;
+            case BaseFragment.REQUEST_LABEL:
+                String labelJson = BaseFragment.getResultedData(data);
+                ArrayList<String> list = Json.gson().fromJson(labelJson, new TypeToken<ArrayList<String>>() {
+                }.getType());
+                if (null != list) {
+                    mArchive.getLabel().clear();
+                    mArchive.getLabel().addAll(list);
+                    updatingArchive(ArchiveRequest.TYPE_LABEL);
+                }
+                if (null != labelText) {
+                    labelText.setText(Label.getLabelDesc(mArchive.getLabel()));
+                }
+                break;
+        }
+    }
+
+    private void resetProperty(boolean updatable) {
+        if (isEmpty(mArchive.getProperty())) {
+            propertyText.setText(R.string.ui_text_archive_details_editor_setting_property_title);
+        } else {
+            propertyText.setText(mArchive.getProperty());
+        }
+        if (updatable) {
+            updatingArchive(ArchiveRequest.TYPE_PROPERTY);
+        }
+    }
+
+    private void resetCategory(boolean updatable) {
+        if (isEmpty(mArchive.getCategory())) {
+            categoryText.setText(R.string.ui_text_archive_details_editor_setting_category_title);
+        } else {
+            categoryText.setText(mArchive.getCategory());
+        }
+        if (updatable) {
+            updatingArchive(ArchiveRequest.TYPE_CATEGROY);
+        }
+    }
+
+    public void resetPublicStatus() {
+        boolean isPublic = mArchive.getAuthPublic() == Seclusion.Type.Public;
         publicIcon.setTextColor(getColor(isPublic ? R.color.colorPrimary : R.color.textColorHintLight));
         privateIcon.setTextColor(getColor(!isPublic ? R.color.colorPrimary : R.color.textColorHintLight));
+        updatingArchive(ArchiveRequest.TYPE_AUTH);
     }
 
     public void showHappenDate(String time) {
         if (null != happenDate) {
             happenDate.setText(time);
         }
+        updatingArchive(ArchiveRequest.TYPE_HAPPEN);
+    }
+
+    private void updatingArchive(int type) {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(R.string.ui_text_archive_details_update_success);
+                }
+            }
+        }).update(mArchive, type);
     }
 
     private OnElementClickListener clickListener;

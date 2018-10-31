@@ -551,7 +551,7 @@ public class GroupFragment extends GroupBaseFragment {
         titleTextView.setText(Html.fromHtml(group.getName()));
         //tagView.setVisibility(group.isNoneNature() || isSingle ? View.GONE : View.VISIBLE);
         //tagView.setText(group.isTZ() ? R.string.ui_group_header_tongzhan_flag : R.string.ui_group_header_minmeng_flag);
-        if (!isNeedPermission) {
+        if (isNeedPermission) {
             PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), group.getId());
             currentGroup = group.getId();
         }

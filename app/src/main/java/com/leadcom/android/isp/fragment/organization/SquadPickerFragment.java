@@ -83,6 +83,7 @@ public class SquadPickerFragment extends GroupBaseFragment {
                 }
             });
             setLoadingText(R.string.ui_organization_squad_contact_loading_squads);
+            setNothingText(R.string.ui_group_squads_loading_nothing);
             displayLoading(true);
             mAdapter = new SquadAdapter();
             mRecyclerView.setAdapter(mAdapter);

@@ -796,6 +796,13 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 return false;
             }
         }
+        if (returnAble) {
+            mArchive.setParticipant(participantHolder.getValue());
+            if (isEmpty(mArchive.getParticipant())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_participant_null);
+                return false;
+            }
+        }
         mArchive.setTopic(topicContent.getValue());
         if (returnAble) {
             if (isEmpty(mArchive.getTopic())) {
@@ -807,13 +814,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         if (returnAble) {
             if (isEmpty(mArchive.getResolution())) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_minute_null);
-                return false;
-            }
-        }
-        if (returnAble) {
-            mArchive.setParticipant(participantHolder.getValue());
-            if (isEmpty(mArchive.getParticipant())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_participant_null);
                 return false;
             }
         }

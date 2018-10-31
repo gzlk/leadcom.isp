@@ -175,7 +175,7 @@
         <item>1|1|&#xe61f;|#f7f7f7|#425f78|#333333|朋友圈</item>
         <item>2|1|&#xe852;|#f7f7f7|#4dafea|#7065fb|QQ</item>
         <item>3|1|&#xe663;|#f7f7f7|#faaa2d|#facd98|QQ空间</item>
-        <item>14|0|&#xe663;|#f7f7f7|#148dfe|#295391|属性设置</item>
+        <item>14|0|&#xe6bb;|#f7f7f7|#295391|#425f78|属性设置</item>
         <item>4|0|&#xe667;|#f7f7f7|#df4d69|#f26666|微博</item>
         <item>5|0|&#xe602;|#f7f7f7|#ff4081|#c44423|删除</item>
         <item>6|0|&#xe67c;|#f7f7f7|#148dfe|#295391|转发</item>
@@ -187,6 +187,7 @@
         <item>12|0|&#xe6a0;|#f7f7f7|#54c1fd|#a1a1a1|回复</item>
         <item>13|0|&#xe67c;|#f7f7f7|#148dfe|#295391|下发</item>
     </string-array>
+    <string name="ui_text_archive_details_update_success">属性修改成功</string>
 
     <string name="ui_text_archive_details_editor_setting_time_title">发生时间</string>
     <string name="ui_text_archive_details_editor_setting_site_title">发生地点</string>
@@ -195,6 +196,8 @@
     <string name="ui_text_archive_details_editor_setting_group_empty">请选择档案所属的组织</string>
     <string name="ui_text_archive_details_editor_setting_branch_title">所属支部</string>
     <string name="ui_text_archive_details_editor_setting_branch_desc">档案所属支部</string>
+    <string name="ui_text_archive_details_editor_setting_branch_error">错误的支部信息</string>
+    <string name="ui_text_archive_details_editor_setting_branch_not_exists">不存在的支部</string>
     <string name="ui_text_archive_details_editor_setting_property_title">档案性质</string>
     <string name="ui_text_archive_details_editor_setting_category_title">档案类型</string>
     <string name="ui_text_archive_details_editor_setting_participant_title">参与人员(点击选择或直接输入)</string>

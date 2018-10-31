@@ -920,7 +920,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             // 需要跳转到会话页面并且关闭档案详情页
             //String teamId = getResultedData(data);
             //NimUIKit.startTeamSession(Activity(), teamId);
-        } else if (requestCode == REQUEST_GROUP) {
+        } else if (!isChooseGroup && requestCode == REQUEST_GROUP) {
             ArrayList<RelateGroup> groups = RelateGroup.from(getResultedData(data));
             // 转发到指定的组织
             if (null != groups && groups.size() > 0) {
@@ -938,6 +938,10 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 openForwardDialog(ids, name);
             }
         }
+        if (null != _helper) {
+            _helper.handleActivityResult(requestCode, data);
+        }
+        isChooseGroup = false;
         super.onActivityResult(requestCode, data);
     }
 
@@ -1414,6 +1418,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     }
 
     ArchiveDetailsHelper _helper;
+    private boolean isChooseGroup = false;
 
     @Override
     protected void archiveSetting() {
@@ -1428,10 +1433,12 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
                             break;
                         case R.id.ui_popup_rich_editor_setting_group_picker:
-                            //isOpenOther = true;
+                            // 所属组织
+                            isChooseGroup = true;
                             GroupPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), false);
                             break;
                         case R.id.ui_popup_rich_editor_setting_branch_picker:
+                            // 所属支部
                             if (isEmpty(mArchive.getGroupId())) {
                                 ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
                             } else {
@@ -1458,19 +1465,22 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                             LabelPickFragment.open(ArchiveDetailsFragment.this, LabelPickFragment.TYPE_CATEGORY, mArchive.getGroupId(), mArchive.getCategory());
                             break;
                         case R.id.ui_popup_rich_editor_setting_participant:
-                            GroupContactPickFragment.open(ArchiveDetailsFragment.this, REQUEST_SELECT, "", true, false, "[]");
+                            //GroupContactPickFragment.open(ArchiveDetailsFragment.this, REQUEST_SELECT, "", true, false, "[]");
                             break;
                         case R.id.ui_popup_rich_editor_setting_public:
                             break;
                         case R.id.ui_popup_rich_editor_setting_public_public:
+                            // 设为公开
                             mArchive.setAuthPublic(Seclusion.Type.Public);
                             resetPublicStatus();
                             break;
                         case R.id.ui_popup_rich_editor_setting_public_private:
+                            // 设为私密
                             mArchive.setAuthPublic(isEmpty(mArchive.getGroupId()) ? Seclusion.Type.Private : Seclusion.Type.Group);
                             resetPublicStatus();
                             break;
                         case R.id.ui_popup_rich_editor_setting_label:
+                            // 档案标签
                             LabelPickFragment.open(ArchiveDetailsFragment.this, LabelPickFragment.TYPE_LABEL, mArchive.getGroupId(), mArchive.getLabel());
                             break;
                         case R.id.ui_popup_rich_editor_setting_share:
@@ -1482,10 +1492,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 }
 
                 private void resetPublicStatus() {
-                    boolean isPublic = mArchive.getAuthPublic() == Seclusion.Type.Public;
-                    _helper.resetPublicStatus(isPublic);
+                    _helper.setArchive(mArchive).resetPublicStatus();
                 }
-            });
+            }).setShowCommit(false);
         }
         _helper.show();
     }
@@ -1510,7 +1519,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 String fullTime = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date);
                 mArchive.setHappenDate(fullTime);
                 String time = mArchive.isActivity() ? formatDateTime(fullTime) : formatDate(fullTime);
-                _helper.showHappenDate(time);
+                _helper.setArchive(mArchive).showHappenDate(time);
             }
         }).show(ArchiveDetailsFragment.this, true, true, true, mArchive.isActivity(), mArchive.isActivity(), false, !mArchive.isTemplateArchive(), mArchive.getHappenDate());
     }

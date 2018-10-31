@@ -126,6 +126,9 @@ public class GroupPickerFragment extends GroupBaseFragment {
             mAdapter = new GroupAdapter();
             mRecyclerView.setAdapter(mAdapter);
             OverScrollDecoratorHelper.setUpOverScroll(mRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
+            setLoadingText("正在获取您加入的组织信息");
+            setNothingText("您还没有加入过任何组织");
+            displayLoading(true);
             fetchingJoinedRemoteOrganizations(OrgRequest.GROUP_LIST_OPE_JOINED);
         }
     }
@@ -140,6 +143,7 @@ public class GroupPickerFragment extends GroupBaseFragment {
                 mAdapter.update(group);
             }
         }
+        displayNothing(mAdapter.getItemCount() <= 0);
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {

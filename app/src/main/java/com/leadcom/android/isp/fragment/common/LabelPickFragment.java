@@ -318,6 +318,9 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
 
                     int count = 0;
                     for (Classify classify : list) {
+                        if (classify.getId().equals("0") && classify.getParentId() == 0) {
+                            continue;
+                        }
                         classify.set_id(classify.getId());
                         classify.setSelected(labelNames.contains(classify.getId()));
                         if (isEmpty(classifyId)) {
@@ -336,6 +339,8 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
                         }
                         Classify fetch = (Classify) mAdapter.get(topClassify.get(fetchingIndex));
                         loadingClassify(fetch.getId());
+                    } else {
+                        stopRefreshing();
                     }
                 }
             }
