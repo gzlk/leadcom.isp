@@ -156,12 +156,26 @@ public class ArchiveRequest extends Request<Archive> {
      * 更改所属组织
      */
     public static final int TYPE_GROUP = 5;
-    /*更改所属支部*/
+    /**
+     * 更改所属支部
+     */
     public static final int TYPE_SQUAD = 6;
-    /**/
+    /**
+     * 更改发生日期
+     */
     public static final int TYPE_HAPPEN = 7;
+    /**
+     * 档案性质
+     */
     public static final int TYPE_PROPERTY = 8;
+    /**
+     * 档案类别
+     */
     public static final int TYPE_CATEGROY = 9;
+    /**
+     * 参与人
+     */
+    public static final int TYPE_PARTICIPANT = 10;//participant
 
     /**
      * 更新档案内容
@@ -189,6 +203,10 @@ public class ArchiveRequest extends Request<Archive> {
                     break;
                 case TYPE_LABEL:
                     object.put("label", new JSONArray(archive.getLabel()));
+                    break;
+                case TYPE_PARTICIPANT:
+                    object.put("participant", archive.getParticipant())
+                            .put("participantIdList", new JSONArray(archive.getParticipantIdList()));
                     break;
                 case TYPE_PROPERTY:
                     object.put("docClassifyId", archive.getDocClassifyId())

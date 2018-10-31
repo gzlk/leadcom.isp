@@ -143,6 +143,7 @@ public class GroupPickerFragment extends GroupBaseFragment {
                 mAdapter.update(group);
             }
         }
+        displayLoading(false);
         displayNothing(mAdapter.getItemCount() <= 0);
     }
 

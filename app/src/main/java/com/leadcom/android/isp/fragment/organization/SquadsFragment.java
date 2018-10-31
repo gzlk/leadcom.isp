@@ -53,6 +53,8 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
  */
 public class SquadsFragment extends GroupBaseFragment {
 
+    public static boolean isOpenable = false;
+
     public static SquadsFragment newInstance(Bundle bundle) {
         SquadsFragment sf = new SquadsFragment();
         sf.setArguments(bundle);
@@ -135,7 +137,22 @@ public class SquadsFragment extends GroupBaseFragment {
             }
             setNothingText(R.string.ui_group_squad_nothing);
         } else {
-            selectAllTitle.setText(Html.fromHtml(StringHelper.getString(R.string.ui_group_activity_editor_participator_select_all_2)));
+            if (isOpenable) {
+                setCustomTitle("选择成员");
+                setRightText(R.string.ui_base_text_confirm);
+                setRightTitleClickListener(new OnTitleButtonClickListener() {
+                    @Override
+                    public void onClick() {
+                        ArrayList<SubMember> list = getSelectedItems();
+                        if (list.size() <= 0) {
+                            ToastHelper.make().showMsg(R.string.ui_group_activity_editor_participator_select_none);
+                        } else {
+                            resultData(SubMember.toJson(list));
+                        }
+                    }
+                });
+            }
+            selectAllTitle.setText(Html.fromHtml(StringHelper.getString(isOpenable ? R.string.ui_base_text_select_all : R.string.ui_group_activity_editor_participator_select_all_2)));
         }
         searchInputableView.setVisibility(selectable ? View.GONE : View.VISIBLE);
         InputableSearchViewHolder searchViewHolder = new InputableSearchViewHolder(searchInputableView, this);

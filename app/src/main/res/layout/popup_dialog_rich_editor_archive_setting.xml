@@ -16,8 +16,8 @@
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical"
-        android:paddingEnd="@dimen/ui_static_dp_zero"
-        android:paddingStart="@dimen/ui_static_dp_15">
+        android:paddingStart="@dimen/ui_static_dp_15"
+        android:paddingEnd="@dimen/ui_static_dp_zero">
 
         <LinearLayout
             android:id="@+id/ui_popup_rich_editor_setting_title_layout"
@@ -60,13 +60,13 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                         android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
+                        android:layout_marginBottom="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                         android:background="@drawable/ui_background_clickable"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-                        android:paddingStart="@dimen/ui_static_dp_zero">
+                        android:paddingStart="@dimen/ui_static_dp_zero"
+                        android:paddingEnd="@dimen/ui_base_dimen_margin_padding">
 
                         <TextView
                             android:layout_width="0dp"
@@ -101,13 +101,13 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                         android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
+                        android:layout_marginBottom="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                         android:background="@drawable/ui_background_clickable"
                         android:baselineAligned="false"
                         android:orientation="horizontal"
-                        android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-                        android:paddingStart="@dimen/ui_static_dp_zero">
+                        android:paddingStart="@dimen/ui_static_dp_zero"
+                        android:paddingEnd="@dimen/ui_base_dimen_margin_padding">
 
                         <LinearLayout
                             android:id="@+id/ui_popup_rich_editor_setting_type_user"
@@ -169,8 +169,8 @@
                     android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                     android:background="@drawable/ui_background_clickable"
                     android:orientation="vertical"
-                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:paddingStart="@dimen/ui_static_dp_zero"
+                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:visibility="gone">
 
                     <TextView
@@ -214,8 +214,8 @@
                     android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                     android:background="@drawable/ui_background_clickable"
                     android:orientation="vertical"
-                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:paddingStart="@dimen/ui_static_dp_zero"
+                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:visibility="gone">
 
                     <TextView
@@ -256,8 +256,8 @@
                     android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                     android:background="@drawable/ui_background_clickable"
                     android:orientation="vertical"
-                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:paddingStart="@dimen/ui_static_dp_zero"
+                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:visibility="gone">
 
                     <TextView
@@ -298,8 +298,8 @@
                     android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                     android:background="@drawable/ui_background_clickable"
                     android:orientation="vertical"
-                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:paddingStart="@dimen/ui_static_dp_zero"
+                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:visibility="gone">
 
                     <TextView
@@ -340,8 +340,8 @@
                     android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                     android:background="@drawable/ui_background_clickable"
                     android:orientation="vertical"
-                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:paddingStart="@dimen/ui_static_dp_zero"
+                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:visibility="gone">
 
                     <TextView
@@ -376,14 +376,55 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/ui_popup_rich_editor_setting_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
+                    android:background="@drawable/ui_background_clickable"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/ui_static_dp_zero"
+                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ui_base_text_label"
+                        android:textColor="@color/textColorHint"
+                        android:textSize="@dimen/ui_base_text_size_small" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/ui_static_dp_5">
+
+                        <TextView
+                            android:id="@+id/ui_popup_rich_editor_setting_label_text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/ui_base_text_other" />
+
+                        <com.hlk.hlklib.lib.view.CustomTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ui_icon_right" />
+                    </LinearLayout>
+
+                    <include layout="@layout/tool_view_half_line_horizontal" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/ui_popup_rich_editor_setting_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                     android:background="@drawable/ui_background_clickable"
                     android:orientation="vertical"
-                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:paddingStart="@dimen/ui_static_dp_zero"
+                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:visibility="gone">
 
                     <TextView
@@ -424,8 +465,8 @@
                     android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                     android:background="@drawable/ui_background_clickable"
                     android:orientation="vertical"
-                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:paddingStart="@dimen/ui_static_dp_zero"
+                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:visibility="gone">
 
                     <LinearLayout
@@ -484,55 +525,14 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ui_popup_rich_editor_setting_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
-                    android:background="@drawable/ui_background_clickable"
-                    android:orientation="vertical"
-                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-                    android:paddingStart="@dimen/ui_static_dp_zero">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/ui_base_text_label"
-                        android:textColor="@color/textColorHint"
-                        android:textSize="@dimen/ui_base_text_size_small" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
-                        android:orientation="horizontal"
-                        android:paddingTop="@dimen/ui_static_dp_5">
-
-                        <TextView
-                            android:id="@+id/ui_popup_rich_editor_setting_label_text"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/ui_base_text_other" />
-
-                        <com.hlk.hlklib.lib.view.CustomTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/ui_icon_right" />
-                    </LinearLayout>
-
-                    <include layout="@layout/tool_view_half_line_horizontal" />
-
-                </LinearLayout>
-
-                <LinearLayout
                     android:id="@+id/ui_popup_rich_editor_setting_public"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                     android:background="@drawable/ui_background_clickable"
                     android:orientation="vertical"
-                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-                    android:paddingStart="@dimen/ui_static_dp_zero">
+                    android:paddingStart="@dimen/ui_static_dp_zero"
+                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -548,8 +548,8 @@
                         android:background="@drawable/ui_background_clickable"
                         android:baselineAligned="false"
                         android:orientation="horizontal"
-                        android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-                        android:paddingStart="@dimen/ui_static_dp_zero">
+                        android:paddingStart="@dimen/ui_static_dp_zero"
+                        android:paddingEnd="@dimen/ui_base_dimen_margin_padding">
 
                         <LinearLayout
                             android:id="@+id/ui_popup_rich_editor_setting_public_public"
@@ -632,8 +632,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                     android:orientation="vertical"
-                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-                    android:paddingStart="@dimen/ui_static_dp_zero">
+                    android:paddingStart="@dimen/ui_static_dp_zero"
+                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -677,8 +677,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                     android:orientation="vertical"
-                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:paddingStart="@dimen/ui_static_dp_zero"
+                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:visibility="gone">
 
                     <TextView
@@ -711,12 +711,12 @@
                     android:id="@+id/ui_popup_rich_editor_setting_share"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                     android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
+                    android:layout_marginBottom="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
                     android:background="@drawable/ui_background_clickable"
                     android:orientation="vertical"
-                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:paddingStart="@dimen/ui_static_dp_zero"
+                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
                     android:visibility="gone">
 
                     <TextView
@@ -759,8 +759,8 @@
                 android:id="@+id/ui_popup_rich_editor_setting_share_draft"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/ui_base_dimen_button_height"
-                android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
                 android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+                android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/ui_text_archive_details_editor_setting_share_title"
@@ -777,8 +777,8 @@
                 android:id="@+id/ui_popup_rich_editor_setting_commit"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/ui_base_dimen_button_height"
-                android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
                 android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+                android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/ui_base_text_commit"

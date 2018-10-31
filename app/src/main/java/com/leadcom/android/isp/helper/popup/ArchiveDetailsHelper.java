@@ -17,7 +17,6 @@ import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.api.org.SquadRequest;
-import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -30,8 +29,11 @@ import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Squad;
+import com.leadcom.android.isp.model.organization.SubMember;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>档案详细属性设定对话框helper<br />
@@ -211,19 +213,19 @@ public class ArchiveDetailsHelper {
                     happenDate.setText(mArchive.getHappenDate().substring(0, 10));
                 }
 
-                if (mArchive.isAttachmentArchive()) {
-                    isGroupArchive = true;
-                    isUserArchive = false;
-                }
+                //if (mArchive.isAttachmentArchive()) {
+                //    isGroupArchive = true;
+                //    isUserArchive = false;
+                //}
 
                 if (isEmpty(mArchive.getGroupId())) {
                     // 如果用户只有一个组织则直接填入组织id和名字
-                    if (isGroupArchive && Cache.cache().getGroups().size() == 1) {
-                        mArchive.setGroupId(Cache.cache().getGroups().get(0).getGroupId());
-                        resetGroupInfo(mArchive.getGroupId());
-                    } else {
-                        groupNameText.setText(R.string.ui_text_archive_details_editor_setting_group_desc);
-                    }
+                    //if (isGroupArchive && Cache.cache().getGroups().size() == 1) {
+                    //    mArchive.setGroupId(Cache.cache().getGroups().get(0).getGroupId());
+                    //    resetGroupInfo(mArchive.getGroupId());
+                    //} else {
+                    groupNameText.setText(R.string.ui_text_archive_details_editor_setting_group_desc);
+                    //}
                 } else {
                     resetGroupInfo(mArchive.getGroupId());
                 }
@@ -290,25 +292,27 @@ public class ArchiveDetailsHelper {
                 groupIcon.setTextColor(getColor(isGroupArchive ? R.color.colorPrimary : R.color.textColorHintLight));
                 int groupVisibility = isGroupArchive ? View.VISIBLE : View.GONE;
                 // 组织档案需要发生时间
-                if (!mArchive.isTemplateArchive()) {
-                    settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_time).setVisibility(groupVisibility);
-                }
+                //if (!mArchive.isTemplateArchive()) {
+                settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_time).setVisibility(View.VISIBLE);
+                //}
                 // 组织档案需要选择组织
                 settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_group_picker).setVisibility(groupVisibility);
+                // 支部
+                settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker).setVisibility(groupVisibility);
                 // 组织档案需要设置档案的性质
                 settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_property).setVisibility(groupVisibility);
                 // 组织档案需要设置档案的类型
                 settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_category).setVisibility(groupVisibility);
                 // 个人档案需要选择标签
                 settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label).setVisibility(isUserArchive ? View.VISIBLE : View.GONE);
+                // 参与人
+                settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_participant).setVisibility(groupVisibility);
                 // 模板档案不需要组织、个人选择
                 settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type).setVisibility(!showTypes || mArchive.isTemplateArchive() || mArchive.isAttachmentArchive() ? View.GONE : View.VISIBLE);
                 // 模板档案不需要有封面
                 //settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_cover).setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
                 // 模板档案不需要来源
                 settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_source).setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
-                // 模板档案需要显示支部选择器
-                settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker).setVisibility(isGroupArchive ? View.VISIBLE : View.GONE);
                 // 个人档案不需要分享草稿
                 if (!mArchive.isAttachmentArchive()) {
                     //settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft).setVisibility(isGroupArchive ? View.VISIBLE : View.GONE);
@@ -372,6 +376,54 @@ public class ArchiveDetailsHelper {
                     }
                     updatingArchive(ArchiveRequest.TYPE_GROUP);
                 }
+                break;
+            case BaseFragment.REQUEST_CREATE:
+            //case BaseFragment.REQUEST_SELECT:
+                // 档案参与人选择完毕
+                ArrayList<SubMember> members = SubMember.fromJson(BaseFragment.getResultedData(data));
+                String names = "";
+                String old = participantText.getValue();
+                List<String> oNames = null;
+                if (!isEmpty(old)) {
+                    oNames = Arrays.asList(old.split("、"));
+                }
+                if (null != oNames) {
+                    for (String name : oNames) {
+                        names += (isEmpty(names) ? "" : "、") + name;
+                    }
+                }
+                if (null != members && members.size() > 0) {
+                    for (SubMember member : members) {
+                        if (null == oNames || !oNames.contains(member.getUserName())) {
+                            if (!names.contains(member.getUserName())) {
+                                names += (isEmpty(names) ? "" : "、") + member.getUserName();
+                            }
+                        }
+                        if (mArchive.isActivity()) {
+                            if (member.isGroup()) {
+                                if (!mArchive.getGroupIdList().contains(member.getUserId())) {
+                                    mArchive.getGroupIdList().add(member.getUserId());
+                                }
+                            } else if (member.isMember()) {
+                                if (!mArchive.getGroSquMemberList().contains(member)) {
+                                    mArchive.getGroSquMemberList().add(member);
+                                }
+                            }
+                        } else {
+                            if (!mArchive.getParticipantIdList().contains(member.getUserId())) {
+                                mArchive.getParticipantIdList().add(member.getUserId());
+                            }
+                        }
+                    }
+                }
+                mArchive.setParticipant(names);
+                mArchive.setParticipator(names);
+                participantText.setValue(names);
+                participantText.focusEnd();
+                updatingArchive(ArchiveRequest.TYPE_PARTICIPANT);
+                //if (null != participantHolder) {
+                //    participantHolder.showContent(format(templateItems[2], names));
+                //}
                 break;
             case BaseFragment.REQUEST_SQUAD:
                 // 选择了小组

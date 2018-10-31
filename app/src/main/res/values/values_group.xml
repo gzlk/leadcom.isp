@@ -157,6 +157,7 @@
     <string name="ui_group_activity_editor_participator_select_all_3">
         <![CDATA[全选<font color="#3cbaff">(组织成员)</font>]]>
     </string>
+    <string name="ui_group_activity_editor_participator_select_none">请选择参与的成员</string>
     <string name="ui_group_activity_details_deliver">下发</string>
     <string name="ui_group_activity_details_sign_up">报名</string>
     <string name="ui_group_activity_details_signed_up">已报名</string>

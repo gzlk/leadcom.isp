@@ -3,7 +3,7 @@
 
     <dimen name="ui_archive_creator_selector_icon_size">@dimen/ui_static_dp_60</dimen>
     <string name="ui_archive_creator_selector_text_title">任选一种新建档案，您说了算</string>
-    <string name="ui_archive_creator_selector_text_template">纪要</string>
+    <string name="ui_archive_creator_selector_text_template">记录</string>
     <string name="ui_archive_creator_selector_text_image">文章</string>
     <string name="ui_archive_creator_selector_text_attachment">上传</string>
     <string name="ui_archive_creator_selector_text_moment">动态</string>

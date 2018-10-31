@@ -53,9 +53,9 @@ import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.common.LabelPickFragment;
 import com.leadcom.android.isp.fragment.organization.ActivityCollectionFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAllPickerFragment;
-import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
 import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
 import com.leadcom.android.isp.fragment.organization.SquadPickerFragment;
+import com.leadcom.android.isp.fragment.organization.SquadsFragment;
 import com.leadcom.android.isp.helper.DownloadingHelper;
 import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -117,6 +117,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private static final String PARAM_REPORT_STATUS = "adwvf_act_report_status";
     private static boolean isCollected = false;
     private static boolean isLoaded = false;
+    public static boolean isIndividual = false;
 
     public static ArchiveDetailsFragment newInstance(Bundle bundle) {
         ArchiveDetailsFragment adwvf = new ArchiveDetailsFragment();
@@ -263,6 +264,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         if (null != webView) {
             webView.destroy();
         }
+        isIndividual = false;
         isCollected = false;
         super.onDestroy();
     }
@@ -896,7 +898,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        if (requestCode == REQUEST_SELECT) {
+        if (!isChooseGroup && requestCode == REQUEST_SELECT) {
             // 选择了下发的成员
             String result = getResultedData(data);
             if (isEmpty(result)) {
@@ -1465,6 +1467,10 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                             LabelPickFragment.open(ArchiveDetailsFragment.this, LabelPickFragment.TYPE_CATEGORY, mArchive.getGroupId(), mArchive.getCategory());
                             break;
                         case R.id.ui_popup_rich_editor_setting_participant:
+                            // 参与者
+                            SquadsFragment.isOpenable = true;
+                            SquadsFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), "", true, null);
+                            //GroupSquadContactPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), "", "[]");
                             //GroupContactPickFragment.open(ArchiveDetailsFragment.this, REQUEST_SELECT, "", true, false, "[]");
                             break;
                         case R.id.ui_popup_rich_editor_setting_public:

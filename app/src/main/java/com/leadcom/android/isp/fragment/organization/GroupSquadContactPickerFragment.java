@@ -7,6 +7,7 @@ import android.view.View;
 import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
@@ -42,18 +43,34 @@ public class GroupSquadContactPickerFragment extends GroupBaseFragment {
     private static final String PARAM_FORCE_LOCK = "gscpf_force_to_lock";
     private static final String PARAM_SELECTED = "gscpf_selected";
 
-    public static GroupSquadContactPickerFragment newInstance(String params) {
+    public static GroupSquadContactPickerFragment newInstance(Bundle bundle) {
         GroupSquadContactPickerFragment gscpf = new GroupSquadContactPickerFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
-        // 组织的id
-        bundle.putString(PARAM_QUERY_ID, strings[0]);
-        // 是否锁定传过来的已存在项目
-        bundle.putBoolean(PARAM_FORCE_LOCK, Boolean.valueOf(strings[1]));
-        // 已选中的成员列表
-        bundle.putString(PARAM_USERS, replaceJson(strings[2], true));
+//        String[] strings = splitParameters(params);
+//        Bundle bundle = new Bundle();
+//        // 组织的id
+//        bundle.putString(PARAM_QUERY_ID, strings[0]);
+//        // 是否锁定传过来的已存在项目
+//        bundle.putBoolean(PARAM_FORCE_LOCK, Boolean.valueOf(strings[1]));
+//        // 已选中的成员列表
+//        bundle.putString(PARAM_USERS, replaceJson(strings[2], true));
         gscpf.setArguments(bundle);
         return gscpf;
+    }
+
+    private static Bundle getBundle(String groupId, String groupName, boolean forceLock, String exists) {
+        Bundle bundle = new Bundle();
+        // 组织的id
+        bundle.putString(PARAM_QUERY_ID, groupId);
+        // 是否锁定传过来的已存在项目
+        bundle.putBoolean(PARAM_FORCE_LOCK, forceLock);
+        // 已选中的成员列表
+        bundle.putString(PARAM_USERS, replaceJson(exists, true));
+        return bundle;
+    }
+
+    public static void open(BaseFragment fragment, String groupId, String groupName, String exists) {
+        Bundle bundle = getBundle(groupId, "", false, exists);
+        fragment.openActivity(GroupSquadContactPickerFragment.class.getName(), bundle, REQUEST_SELECT, true, false);
     }
 
     @Override

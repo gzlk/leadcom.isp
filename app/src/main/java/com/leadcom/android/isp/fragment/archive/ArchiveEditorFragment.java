@@ -888,7 +888,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 return;
             }
         }
-        mArchive.setOwnType(Archive.Type.GROUP);
+        mArchive.setOwnType(Archive.Type.ALL);
 //        if (isGroupArchive) {
 //            if (isUserArchive) {
 //                mArchive.setOwnType(Archive.Type.ALL);
