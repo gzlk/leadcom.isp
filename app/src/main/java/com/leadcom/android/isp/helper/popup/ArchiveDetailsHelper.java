@@ -141,10 +141,14 @@ public class ArchiveDetailsHelper {
                     shareDraftButton = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft);
                     branchText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker_text);
                     commitButton = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_commit);
+
+                    creatorText.addTextChangedListener(textWatcher);
+                    participantText.addTextChangedListener(participate);
                 }
                 return settingDialogView;
             }
 
+            private boolean creatorEditable = true;
             private TextWatcher textWatcher = new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -158,10 +162,36 @@ public class ArchiveDetailsHelper {
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if (null != s && s.length() > 0) {
-                        String source = s.toString();
-                        mArchive.setSource(source);
-                        updatingArchive(ArchiveRequest.TYPE_SOURCE);
+                    if (creatorEditable) {
+                        if (null != s && s.length() > 0) {
+                            String source = s.toString();
+                            mArchive.setSource(source);
+                            updatingArchive(ArchiveRequest.TYPE_SOURCE);
+                        }
+                    }
+                }
+            };
+
+            private boolean participateEditable = true;
+            private TextWatcher participate = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (participateEditable) {
+                        if (null != s && s.length() > 0) {
+                            String member = s.toString();
+                            mArchive.setParticipant(member);
+                            updatingArchive(ArchiveRequest.TYPE_PARTICIPANT);
+                        }
                     }
                 }
             };
@@ -175,10 +205,13 @@ public class ArchiveDetailsHelper {
                 }
                 commitButton.setVisibility(showCommit ? View.VISIBLE : View.GONE);
                 shareDraftButton.setVisibility(View.GONE);
+
+                creatorEditable = false;
                 String source = mArchive.getSource();
                 creatorText.setValue(isEmpty(source) ? mArchive.getUserName() : source);
                 creatorText.focusEnd();
-                creatorText.addTextChangedListener(textWatcher);
+                creatorEditable = true;
+
                 String text = mArchive.getCreateDate();
                 if (!isEmpty(text) && !text.equals(Model.DFT_DATE)) {
                     text = Utils.format(mArchive.getCreateDate(), getString(R.string.ui_base_text_date_time_format), "yyyy.MM.dd");
@@ -201,12 +234,15 @@ public class ArchiveDetailsHelper {
                 resetProperty(false);
                 resetCategory(false);
 
+                participateEditable = false;
                 if (isEmpty(mArchive.getParticipant())) {
                     participantText.setValue("");
                 } else {
                     participantText.setValue(mArchive.getParticipant());
                 }
                 participantText.focusEnd();
+                participateEditable = true;
+
                 if (mArchive.isDefaultHappenDate()) {
                     happenDate.setText(R.string.ui_text_archive_details_editor_setting_time_title);
                 } else {
@@ -378,7 +414,7 @@ public class ArchiveDetailsHelper {
                 }
                 break;
             case BaseFragment.REQUEST_CREATE:
-            //case BaseFragment.REQUEST_SELECT:
+                //case BaseFragment.REQUEST_SELECT:
                 // 档案参与人选择完毕
                 ArrayList<SubMember> members = SubMember.fromJson(BaseFragment.getResultedData(data));
                 String names = "";
@@ -420,7 +456,7 @@ public class ArchiveDetailsHelper {
                 mArchive.setParticipator(names);
                 participantText.setValue(names);
                 participantText.focusEnd();
-                updatingArchive(ArchiveRequest.TYPE_PARTICIPANT);
+                //updatingArchive(ArchiveRequest.TYPE_PARTICIPANT);
                 //if (null != participantHolder) {
                 //    participantHolder.showContent(format(templateItems[2], names));
                 //}
