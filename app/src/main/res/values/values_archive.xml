@@ -217,7 +217,7 @@
     <string name="ui_text_archive_details_public_group">已设为公开，可以推荐到首页</string>
     <string name="ui_text_archive_details_publicable">档案已设为私密</string>
     <string name="ui_text_archive_details_push_dialog_title">转发到：</string>
-    <string name="ui_text_archive_details_push_dialog_nothing">本组织没有其他关注者</string>
+    <string name="ui_text_archive_details_push_dialog_nothing">没有其他关联组织供转发</string>
     <string name="ui_text_archive_details_push_user_names_title">手动添加参与人</string>
     <string name="ui_text_archive_details_push_user_names_hint">请以顿号(、)隔开多个人名</string>
 

@@ -239,6 +239,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             @Override
             public void onClick() {
                 if (!webView.canGoBack()) {
+                    resetResultData();
                     finish();
                 } else {
                     webView.goBack();
@@ -987,7 +988,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private View pushDialog;
     private TextView pushTitleText, nothingText;
     private RecyclerView concerned;
-    private View nothingView;
+    private View nothingView, confirmButton;
     private ConcernAdapter cAdapter;
 
     private void openPushDialog() {
@@ -999,6 +1000,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     pushTitleText = pushDialog.findViewById(R.id.ui_dialog_archive_push_title);
                     nothingView = pushDialog.findViewById(R.id.ui_tool_nothing_container);
                     nothingText = pushDialog.findViewById(R.id.ui_tool_nothing_text);
+                    confirmButton = pushDialog.findViewById(R.id.ui_dialog_button_confirm);
                     concerned = pushDialog.findViewById(R.id.ui_tool_swipe_refreshable_recycler_view);
                     concerned.setLayoutManager(new CustomLinearLayoutManager(concerned.getContext()));
                     cAdapter = new ConcernAdapter();
@@ -1020,7 +1022,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                                 cAdapter.add(concern);
                             }
                         }
-                        nothingView.setVisibility(null == list || list.size() <= 0 ? View.VISIBLE : View.GONE);
+                        boolean nothing = null == list || list.size() <= 0;
+                        nothingView.setVisibility(nothing ? View.VISIBLE : View.GONE);
+                        confirmButton.setVisibility(nothing ? View.GONE : View.VISIBLE);
                     }
                 }).listTransfer(mArchive.getGroupId());
             }
@@ -1036,7 +1040,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                                 cAdapter.add(classify);
                             }
                         }
-                        nothingView.setVisibility(null == list || list.size() <= 0 ? View.VISIBLE : View.GONE);
+                        boolean nothing = null == list || list.size() <= 0;
+                        nothingView.setVisibility(nothing ? View.VISIBLE : View.GONE);
+                        confirmButton.setVisibility(nothing ? View.GONE : View.VISIBLE);
                     }
                 }).list(mArchive.getGroupId());
             }
@@ -1063,7 +1069,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                             }
                             squads.addAll(list);
                         }
-                        nothingView.setVisibility(null == list || list.size() <= 0 ? View.VISIBLE : View.GONE);
+                        boolean nothing = null == list || list.size() <= 0;
+                        nothingView.setVisibility(nothing ? View.VISIBLE : View.GONE);
+                        confirmButton.setVisibility(nothing ? View.GONE : View.VISIBLE);
                     }
                 }).list(mArchive.getGroupId(), 1);
             }

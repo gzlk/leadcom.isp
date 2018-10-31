@@ -39,6 +39,7 @@ import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.OrgRequest;
+import com.leadcom.android.isp.api.org.SquadRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.etc.Utils;
@@ -73,6 +74,7 @@ import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.ArchiveQuery;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
+import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Squad;
@@ -324,6 +326,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         String groupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
         if (isEmpty(groupId)) {
             ToastHelper.make().showMsg(0);
+            // 不必要保存草稿
+            isOpenOther = true;
             finish();
             return;
         }
@@ -382,6 +386,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         aAdapter = new AttachmentAdapter();
         attachmentRecyclerView.setAdapter(aAdapter);
         resetTitle();
+        // 根据组织id拉取支部列表，并且查看当前用户所在的第一个支部
+        resetSquadInfo();
     }
 
     private void resetTitle() {
@@ -426,6 +432,31 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         });
+    }
+
+    private void resetSquadInfo() {
+        if (isEmpty(mArchive.getGroupId())) {
+            return;
+        }
+        // 拉取当前用户加入的第一个组织支部
+        SquadRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Squad>() {
+            @Override
+            public void onResponse(List<Squad> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success && null != list) {
+                    for (Squad squad : list) {
+                        for (Member member : squad.getGroSquMemberList()) {
+                            if (member.getUserId().equals(Cache.cache().userId)) {
+                                if (isEmpty(mArchive.getSquadId())) {
+                                    mArchive.setSquadId(squad.getId());
+                                    mArchive.setBranch(squad.getName());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }).list(mArchive.getGroupId(), 1);
     }
 
     private void createActivity() {
@@ -479,6 +510,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void restoreArchiveToEdit() {
+        if (isEmpty(mArchive.getGroupId())) {
+            // 草稿重新编辑时，重置组织信息
+            mArchive.setGroupId(PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), ""));
+            resetSquadInfo();
+        }
         resetEditorLayout();
         isGroupArchive = !isEmpty(mArchive.getGroupId());
         isUserArchive = !isGroupArchive;

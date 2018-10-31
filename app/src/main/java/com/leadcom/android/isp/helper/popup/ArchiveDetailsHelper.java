@@ -80,6 +80,16 @@ public class ArchiveDetailsHelper {
         return this;
     }
 
+    private boolean groupSquadSelectable = false;
+
+    /**
+     * 设置组织和支部是否可以选择
+     */
+    public ArchiveDetailsHelper setGroupSquadSelectable(boolean selectable) {
+        groupSquadSelectable = selectable;
+        return this;
+    }
+
     private boolean showCommit = true;
 
     public ArchiveDetailsHelper setShowCommit(boolean shown) {
@@ -332,9 +342,9 @@ public class ArchiveDetailsHelper {
                 settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_time).setVisibility(View.VISIBLE);
                 //}
                 // 组织档案需要选择组织
-                settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_group_picker).setVisibility(groupVisibility);
+                settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_group_picker).setVisibility(groupSquadSelectable && isGroupArchive ? View.VISIBLE : View.GONE);
                 // 支部
-                settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker).setVisibility(groupVisibility);
+                settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker).setVisibility(groupSquadSelectable && isGroupArchive ? View.VISIBLE : View.GONE);
                 // 组织档案需要设置档案的性质
                 settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_property).setVisibility(groupVisibility);
                 // 组织档案需要设置档案的类型
