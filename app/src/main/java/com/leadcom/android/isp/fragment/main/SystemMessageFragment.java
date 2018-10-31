@@ -337,7 +337,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public int itemLayout(int viewType) {
-            return R.layout.holder_view_system_message_deleteable;
+            return R.layout.holder_view_system_message;
         }
 
         @Override

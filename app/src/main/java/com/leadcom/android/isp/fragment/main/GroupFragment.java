@@ -597,16 +597,24 @@ public class GroupFragment extends GroupBaseFragment {
         //boolean hasNatureCount = false;
         if (!isNeedPermission || hasOperation(group.getId(), GRPOperation.MEMBER_NATURE_COUNT)) {
             //hasNatureCount = true;
-            // 成员信息统计在组织档案后面
-            int in = dAdapter.indexOf(new SimpleClickableItem(items[4]));
-            if (dAdapter.indexOf(item) < 0) {
-                dAdapter.add(item, in + 1);
-            } else {
-                dAdapter.update(item);
+            // 广州市民盟不需要成员统计
+            boolean not = group.getNature() == 1 && group.getName().contains("广州市");
+            if (!not) {
+                // 不需要权限时，需要判断是否属于民盟的基层组织
+                not = !isNeedPermission && group.getNature() == 1 && group.isBaseLevel();
             }
-            //if (isSingle) {
-            //    dAdapter.remove(item);
-            //}
+            if (!not) {
+                // 成员信息统计在组织档案后面
+                int in = dAdapter.indexOf(new SimpleClickableItem(items[4]));
+                if (dAdapter.indexOf(item) < 0) {
+                    dAdapter.add(item, in + 1);
+                } else {
+                    dAdapter.update(item);
+                }
+                //if (isSingle) {
+                //    dAdapter.remove(item);
+                //}
+            }
         } else {
             dAdapter.remove(item);
         }

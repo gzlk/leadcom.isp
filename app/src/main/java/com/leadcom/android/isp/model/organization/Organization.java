@@ -62,6 +62,7 @@ public class Organization extends Model {
         String Concerned = "concerned";
         String ShortName = "shortName";
         String GroupRoleId = "groupRoleId";
+        String Level = "level";
     }
 
     /**
@@ -94,6 +95,20 @@ public class Organization extends Model {
          * 统战系
          */
         int TONGZHAN = 2;
+    }
+
+    /**
+     * 组织层级
+     */
+    public interface LevelType {
+        /**
+         * 基层
+         */
+        int BASE = 0;
+        /**
+         * 上级组织
+         */
+        int UPPER = 1;
     }
 
     public static Organization get(String id) {
@@ -133,6 +148,8 @@ public class Organization extends Model {
     private int concernTo;          // 关注方式 1.我关注的组织，2.关注我的组织
     @Column(Field.ShortName)
     private String shortName;                  //组织简称
+    @Column(Field.Level)
+    private int level;
 
     @Ignore
     private ArrayList<Concern> conGroup; // 关注的组织列表
@@ -298,6 +315,18 @@ public class Organization extends Model {
 
     public void setShortName(String shortName) {
         this.shortName = shortName;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public boolean isBaseLevel() {
+        return level == LevelType.BASE;
     }
 
     public ArrayList<Member> getGroMemberList() {
