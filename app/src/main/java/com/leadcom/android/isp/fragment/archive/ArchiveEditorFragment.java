@@ -48,7 +48,6 @@ import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.common.LabelPickFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAllPickerFragment;
-import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
 import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
 import com.leadcom.android.isp.fragment.organization.SquadPickerFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
@@ -69,9 +68,9 @@ import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.archive.Label;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.ArchiveQuery;
+import com.leadcom.android.isp.model.archive.Label;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.organization.Member;
@@ -1286,34 +1285,34 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         break;
                     case R.id.ui_popup_rich_editor_setting_share:
                     case R.id.ui_popup_rich_editor_setting_share_draft:
-                        if (!isEmpty(mArchive.getGroupId())) {
-                            // 组织档案才能分享草稿
-                            if (mArchive.isMultimediaArchive()) {
-                                mArchive.setTitle(titleView.getValue());
-                                if (isEmpty(mArchive.getTitle())) {
-                                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_title_invalid);
-                                } else if (isEmpty(mArchive.getContent())) {
-                                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
-                                } else {
-                                    isShareDraft = true;
-                                    isOpenOther = true;
-                                    GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
-                                }
-                            } else if (mArchive.isTemplateArchive()) {
-                                if (resetTemplateArchive(true)) {
-                                    // 分享活动草稿
-                                    isShareDraft = true;
-                                    // 如果选择了图片，则压缩图片然后上传
-                                    tryUploadingTemplateImages();
-                                    isOpenOther = true;
-                                    // 活动档案分享时选择要分享的人
-                                    GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
-                                }
-                            }
-                            //getDraftShareInfo();
-                        } else {
-                            ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
-                        }
+//                        if (!isEmpty(mArchive.getGroupId())) {
+//                            // 组织档案才能分享草稿
+//                            if (mArchive.isMultimediaArchive()) {
+//                                mArchive.setTitle(titleView.getValue());
+//                                if (isEmpty(mArchive.getTitle())) {
+//                                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_title_invalid);
+//                                } else if (isEmpty(mArchive.getContent())) {
+//                                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
+//                                } else {
+//                                    isShareDraft = true;
+//                                    isOpenOther = true;
+//                                    GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
+//                                }
+//                            } else if (mArchive.isTemplateArchive()) {
+//                                if (resetTemplateArchive(true)) {
+//                                    // 分享活动草稿
+//                                    isShareDraft = true;
+//                                    // 如果选择了图片，则压缩图片然后上传
+//                                    tryUploadingTemplateImages();
+//                                    isOpenOther = true;
+//                                    // 活动档案分享时选择要分享的人
+//                                    GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
+//                                }
+//                            }
+//                            //getDraftShareInfo();
+//                        } else {
+//                            ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
+//                        }
                         break;
                     case R.id.ui_popup_rich_editor_setting_commit:
                         if (isUserArchive && isGroupArchive) {
@@ -1367,7 +1366,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private void openMemberPicker() {
         isOpenOther = true;
-        GroupContactPickFragment.open(this, REQUEST_SELECT, "", true, false, "[]");
+        GroupAllPickerFragment.IS_FOR_DELIVER = true;
+        GroupAllPickerFragment.open(this, mArchive.getGroupId(), "参与人", null, null);
     }
 
     private void openDateTimePicker() {
@@ -2309,7 +2309,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(View view, int index) {
             if (mArchive.isActivity()) {
                 // 组织、下级组织、成员拾取器
-                GroupAllPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), mArchive.getGroupName(),
+                GroupAllPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), "参与人",
                         mArchive.getGroupIdList(), mArchive.getGroSquMemberList());
             } else {
                 // 参与者

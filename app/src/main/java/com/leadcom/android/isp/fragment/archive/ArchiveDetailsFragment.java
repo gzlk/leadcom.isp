@@ -320,7 +320,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 break;
             case R.id.ui_archive_details_activity_deliver:
                 GroupAllPickerFragment.IS_FOR_DELIVER = true;
-                GroupAllPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), mArchive.getGroupName(), null, null);
+                GroupAllPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), "活动下发", null, null);
                 //openActivityDeliverDialog(true);
                 break;
         }
@@ -1571,7 +1571,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     protected void transform() {
         pushingType = PUSH_TRANSFORM;
         GroupAllPickerFragment.IS_FOR_DELIVER = true;
-        GroupAllPickerFragment.open(this, mArchive.getGroupId(), mArchive.getGroupName(), null, null);
+        GroupAllPickerFragment.open(this, mArchive.getGroupId(), "下发", null, null);
         //openPushDialog();
     }
 
