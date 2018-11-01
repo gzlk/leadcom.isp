@@ -142,7 +142,7 @@ repositories {
     // 视频播放器
     maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
     // 文件选择器
-    maven { url 'https://jitpack.io' }
+    //maven { url 'https://jitpack.io' }
     flatDir {
         dirs 'libs'
     }
@@ -245,7 +245,9 @@ dependencies {
 
     // 文件管理器
     implementation(name: 'filepicker-release', ext: 'aar')
-    implementation 'com.github.jaiselrahman:FilePicker:1.0.5'
+    // fork下来之后自己修改了一下
+    //implementation(name: 'filepicker', ext: 'aar')
+    //implementation 'com.github.jaiselrahman:FilePicker:1.0.5'
     // TinyPinyin核心包，约80KB
     implementation 'com.github.promeg:tinypinyin:2.0.3'
     // 时间选择器

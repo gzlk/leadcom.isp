@@ -275,9 +275,9 @@
         android:id="@+id/ui_archive_creator_rich_editor_attachment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="1.4"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <View
             android:layout_width="match_parent"
@@ -286,8 +286,7 @@
 
         <include
             android:id="@+id/ui_archive_creator_rich_editor_participant1"
-            layout="@layout/holder_view_simple_inputable"
-            android:visibility="gone" />
+            layout="@layout/holder_view_simple_inputable" />
 
         <include layout="@layout/holder_view_attachment_picker" />
 

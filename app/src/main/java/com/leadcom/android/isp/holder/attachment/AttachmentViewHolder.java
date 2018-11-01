@@ -102,6 +102,8 @@ public class AttachmentViewHolder extends BaseViewHolder {
             } else {
                 sizeTextView.setText(null);
             }
+        } else {
+            sizeTextView.setText(attachment.getSize() > 0 ? Utils.formatSize(attachment.getSize()) : null);
         }
         loadingView.setVisibility(attachment.isSelected() ? View.VISIBLE : View.GONE);
         deleteView.setVisibility(attachment.isSelected() ? View.GONE : View.VISIBLE);

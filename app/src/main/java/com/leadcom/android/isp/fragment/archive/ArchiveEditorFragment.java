@@ -19,10 +19,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
-import com.github.angads25.filepicker.controller.DialogSelectionListener;
-import com.github.angads25.filepicker.model.DialogConfigs;
-import com.github.angads25.filepicker.model.DialogProperties;
-import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.gson.reflect.TypeToken;
 import com.hlk.hlklib.layoutmanager.CustomGridLayoutManager;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
@@ -330,6 +326,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         editorFocused = false;
         super.onActivityCreated(savedInstanceState);
+        if (null == templateItems) {
+            templateItems = StringHelper.getStringArray(R.array.ui_text_archive_creator_editor_template_values);
+        }
         // 组织id默认当前首页选中的组织
         String groupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
         if (isEmpty(groupId)) {
@@ -393,6 +392,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         attachmentRecyclerView.setLayoutManager(new CustomLinearLayoutManager(attachmentRecyclerView.getContext()));
         aAdapter = new AttachmentAdapter();
         attachmentRecyclerView.setAdapter(aAdapter);
+        participantHolder1 = new SimpleInputableViewHolder(participantView1, this);
+        participantHolder1.setOnViewHolderElementClickListener(elementClickListener);
+        participantHolder1.showContent(format(templateItems[2], ""));
+        participantHolder1.setEditable(false);
         resetTitle();
         // 根据组织id拉取支部列表，并且查看当前用户所在的第一个支部
         resetSquadInfo();
@@ -662,7 +665,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 // 档案参与人选择完毕
                 ArrayList<SubMember> members = SubMember.fromJson(getResultedData(data));
                 String names = "";
-                String old = participantHolder.getValue();
+                String old = "";
+                if (null != participantHolder) {
+                    old = participantHolder.getValue();
+                }
                 List<String> oNames = null;
                 if (!isEmpty(old)) {
                     oNames = Arrays.asList(old.split("、"));
@@ -700,6 +706,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 mArchive.setParticipator(names);
                 if (null != participantHolder) {
                     participantHolder.showContent(format(templateItems[2], names));
+                }
+                if (null != participantHolder1) {
+                    participantHolder1.showContent(format(templateItems[2], names));
                 }
                 break;
             case REQUEST_MEMBER:
@@ -1589,6 +1598,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     // 上传了多个附件（一次最多9个）
                     //mEditor.insertHtml("");
                     if (null != uploaded) {
+                        aAdapter.clear();
                         for (Attachment attachment : uploaded) {
                             if (attachment.isImage()) {
                                 mArchive.getImage().add(attachment);
@@ -1873,127 +1883,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }).setPopupType(DialogHelper.FADE).show();
     }
 
-    private View attachmentDialogView;
-    private RecyclerView recyclerView;
-    private TextView attachmentDesc;
-    private FileAdapter mAdapter;
     private AttachmentAdapter aAdapter;
-
-    private void openAttachmentDialog() {
-        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
-            @Override
-            public View onInitializeView() {
-                if (null == attachmentDialogView) {
-                    attachmentDialogView = View.inflate(Activity(), R.layout.popup_dialog_rich_editor_attachment, null);
-                    attachmentDesc = attachmentDialogView.findViewById(R.id.ui_popup_rich_editor_attachment_description);
-                    recyclerView = attachmentDialogView.findViewById(R.id.ui_tool_swipe_refreshable_recycler_view);
-                    recyclerView.setLayoutManager(new CustomLinearLayoutManager(recyclerView.getContext()));
-                    mAdapter = new FileAdapter();
-                    recyclerView.setAdapter(mAdapter);
-                }
-                return attachmentDialogView;
-            }
-
-            @Override
-            public void onBindData(View dialogView, DialogHelper helper) {
-                attachmentDesc.setVisibility(mAdapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
-            }
-        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
-            @Override
-            public int[] clickEventHandleIds() {
-                return new int[]{R.id.ui_popup_rich_editor_attachment_navigate};
-            }
-
-            @Override
-            public boolean onClick(View view) {
-                switch (view.getId()) {
-                    case R.id.ui_popup_rich_editor_attachment_navigate:
-                        // 浏览本地文件
-                        openFilePickDialog();
-                        //chooseVideoFromLocalBeforeKitKat(REQUEST_ATTACHMENT);
-                        return false;
-                }
-                return true;
-            }
-        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
-            @Override
-            public boolean onConfirm() {
-                uploadType = UP_ATTACH;
-                showUploading(true);
-                uploadFiles();
-                return true;
-            }
-        }).addOnDialogDismissListener(new DialogHelper.OnDialogDismissListener() {
-            @Override
-            public void onDismiss() {
-                log("attachment dialog dismissed");
-                mAttachmentIcon.setTextColor(getColor(R.color.textColorHint));
-            }
-        }).setConfirmText(R.string.ui_text_archive_creator_editor_attachment_dialog_confirm_text).setPopupType(DialogHelper.FADE).show();
-    }
-
-    // 文件选择
-    private FilePickerDialog filePickerDialog;
-
-    private void openFilePickDialog() {
-        if (null == filePickerDialog) {
-            DialogProperties properties = new DialogProperties();
-            // 选择文件
-            properties.selection_type = DialogConfigs.FILE_SELECT;
-            // 可以多选
-            properties.selection_mode = DialogConfigs.MULTI_MODE;
-            // 最多可选文件数量
-            properties.maximum_count = 9;
-            // 文件扩展名过滤
-            //properties.extensions = StringHelper.getStringArray(R.array.ui_base_file_pick_types);
-            filePickerDialog = new FilePickerDialog(Activity(), properties);
-            filePickerDialog.setTitle(StringHelper.getString(R.string.ui_text_document_picker_title));
-            filePickerDialog.setPositiveBtnName(StringHelper.getString(R.string.ui_base_text_confirm));
-            filePickerDialog.setNegativeBtnName(StringHelper.getString(R.string.ui_base_text_cancel));
-            filePickerDialog.setDialogSelectionListener(dialogSelectionListener);
-        }
-        resetSelectedFiles();
-        filePickerDialog.show();
-    }
-
-    private DialogSelectionListener dialogSelectionListener = new DialogSelectionListener() {
-        @Override
-        public void onSelectedFilePaths(String[] strings) {
-            attachmentDesc.setVisibility((null == strings || strings.length < 1) ? View.VISIBLE : View.GONE);
-            // 更新待上传文件列表
-            getWaitingForUploadFiles().clear();
-            if (null != strings) {
-                getWaitingForUploadFiles().addAll(Arrays.asList(strings));
-                for (String string : getWaitingForUploadFiles()) {
-                    Attachment attachment = new Attachment(string);
-                    mAdapter.update(attachment);
-                }
-            }
-        }
-    };
-
-    private void resetSelectedFiles() {
-        int size = mAdapter.getItemCount();
-        if (size > 0) {
-            List<String> tmp = new ArrayList<>();
-            for (int i = 0; i < size; i++) {
-                Attachment att = mAdapter.get(i);
-                if (att.isLocalFile()) {
-                    tmp.add(att.getFullPath());
-                }
-            }
-            filePickerDialog.markFiles(tmp);
-        }
-    }
-
-    private OnViewHolderClickListener selectedAttachmentViewHolderClickListener = new OnViewHolderClickListener() {
-        @Override
-        public void onClick(int index) {
-            Attachment attachment = mAdapter.get(index);
-            mArchive.getAttach().remove(attachment);
-            mAdapter.remove(attachment);
-        }
-    };
 
     private OnViewHolderClickListener uploadedAttachmentViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
@@ -2072,7 +1962,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 .setShowFiles(type == UP_ATTACH)
                 .setSkipZeroSizeFiles(true)
                 .setMaxSelection(getMaxSelectable())
-                .setSuffixes("txt", "pdf", "html", "zip", "tar", "gz", "rar", "7z", "doc", "docx", "ppt", "pptx", "xls", "xlsx")
+                .setSuffixes("txt", "pdf", "zip", "tar", "gz", "rar", "7z", "doc", "docx", "ppt", "pptx", "xls", "xlsx")
                 .build();
         intent.putExtra(FilePickerActivity.CONFIGS, configurations);
         return intent;
@@ -2106,30 +1996,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
 
-    }
-
-    private class FileAdapter extends RecyclerViewAdapter<AttachmentViewHolder, Attachment> {
-        @Override
-        public AttachmentViewHolder onCreateViewHolder(View itemView, int viewType) {
-            AttachmentViewHolder holder = new AttachmentViewHolder(itemView, ArchiveEditorFragment.this);
-            holder.addOnViewHolderClickListener(selectedAttachmentViewHolderClickListener);
-            return holder;
-        }
-
-        @Override
-        public int itemLayout(int viewType) {
-            return R.layout.holder_view_attachment;
-        }
-
-        @Override
-        public void onBindHolderOfView(final AttachmentViewHolder holder, int position, @Nullable Attachment item) {
-            holder.showContent(item);
-        }
-
-        @Override
-        protected int comparator(Attachment item1, Attachment item2) {
-            return 0;
-        }
     }
 
     private class AttachmentAdapter extends RecyclerViewAdapter<AttachmentViewHolder, Attachment> {
@@ -2334,15 +2200,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     @SuppressLint("ClickableViewAccessibility")
     private void initializeTemplate() {
-        if (null == templateItems) {
-            templateItems = StringHelper.getStringArray(R.array.ui_text_archive_creator_editor_template_values);
+        if (null == imageAdapter) {
             if (mArchive.isActivity()) {
                 templateItems[0] = templateItems[0].replace("时间", "报名截止于");
             }
             topicContent.setOnTouchListener(onTouchListener);
             minuteContent.setOnTouchListener(onTouchListener);
-        }
-        if (null == imageAdapter) {
             // 模板档案的图片
             templateRecyclerView.setLayoutManager(new CustomGridLayoutManager(templateRecyclerView.getContext(), 4));
             templateRecyclerView.addItemDecoration(new SpacesItemDecoration());
