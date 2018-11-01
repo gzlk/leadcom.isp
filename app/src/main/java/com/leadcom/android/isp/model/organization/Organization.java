@@ -149,7 +149,7 @@ public class Organization extends Model {
     @Column(Field.ShortName)
     private String shortName;                  //组织简称
     @Column(Field.Level)
-    private int level;
+    private String level;
 
     @Ignore
     private ArrayList<Concern> conGroup; // 关注的组织列表
@@ -317,16 +317,16 @@ public class Organization extends Model {
         this.shortName = shortName;
     }
 
-    public int getLevel() {
+    public String getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
+    public void setLevel(String level) {
         this.level = level;
     }
 
     public boolean isBaseLevel() {
-        return level == LevelType.BASE;
+        return !isEmpty(level) && Integer.valueOf(level) == LevelType.BASE;
     }
 
     public ArrayList<Member> getGroMemberList() {

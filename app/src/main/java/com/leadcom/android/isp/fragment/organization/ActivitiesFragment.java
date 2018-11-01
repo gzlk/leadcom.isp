@@ -11,6 +11,7 @@ import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
+import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -166,14 +167,26 @@ public class ActivitiesFragment extends GroupBaseFragment {
         }
     }
 
-    private void warningDeleteActivity(String activityId) {
+    private void warningDeleteActivity(final String activityId) {
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                ToastHelper.make().showMsg("api暂时不支持删除操作");
+                deleteActivity(activityId);
                 return true;
             }
         }).setTitleText(R.string.ui_group_activity_item_delete).setConfirmText(R.string.ui_base_text_delete).setCancelText(R.string.ui_base_text_cancel).show();
+    }
+
+    private void deleteActivity(final String activityId) {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    mAdapter.remove(activityId);
+                }
+            }
+        }).deleteActivity(activityId);
     }
 
     private RecyclerViewAdapter.OnDataHandingListener handingListener = new RecyclerViewAdapter.OnDataHandingListener() {

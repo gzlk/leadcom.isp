@@ -671,4 +671,11 @@ public class ArchiveRequest extends Request<Archive> {
         executeHttpRequest(getRequest(SingleArchive.class, param, "", HttpMethods.Get));
     }
 
+    /**
+     * 删除活动
+     */
+    public void deleteActivity(String activityId) {
+        String param = format("/group/groActivityNotice%s?groActivityNoticeId=%s", DELETE, activityId);
+        executeHttpRequest(getRequest(BoolArchive.class, param, "", HttpMethods.Get));
+    }
 }
