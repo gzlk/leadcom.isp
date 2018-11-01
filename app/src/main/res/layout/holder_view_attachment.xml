@@ -33,8 +33,8 @@
         android:id="@+id/ui_holder_view_attachment_image"
         android:layout_width="@dimen/ui_static_dp_30"
         android:layout_height="@dimen/ui_static_dp_30"
-        android:layout_marginEnd="@dimen/ui_static_dp_5"
         android:layout_marginStart="@dimen/ui_static_dp_5"
+        android:layout_marginEnd="@dimen/ui_static_dp_5"
         android:visibility="gone"
         app:id_image_scale_type="centerCrop"
         app:id_image_src="@mipmap/img_image_default"
@@ -82,14 +82,25 @@
 
     </LinearLayout>
 
+    <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+        android:id="@+id/ui_holder_view_attachment_uploading"
+        android:layout_width="@dimen/ui_static_dp_40"
+        android:layout_height="@dimen/ui_static_dp_40"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:mlpb_enable_circle_background="false"
+        app:mlpb_progress_color="@color/colorProgressing"
+        app:mlpb_progress_stoke_width="@dimen/ui_static_dp_2"
+        app:mlpb_progress_text_visibility="invisible" />
+
     <com.hlk.hlklib.lib.view.CustomTextView
         android:id="@+id/ui_holder_view_attachment_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:minHeight="@dimen/ui_base_dimen_button_height"
-        android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
         android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+        android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
         android:text="@string/ui_icon_delete"
         app:ctv_active_color="@color/colorPrimary"
         app:ctv_normal_color="@color/textColor" />

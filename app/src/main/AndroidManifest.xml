@@ -143,7 +143,11 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />
-
+        <!--第三方文件选择器-->
+        <activity
+            android:name="com.jaiselrahman.filepicker.activity.FilePickerActivity"
+            android:theme="@style/AppTheme.Container"
+            tools:replace="android:theme" />
         <!--Android 7.0+的uri权限-->
         <provider
             android:name="android.support.v4.content.FileProvider"

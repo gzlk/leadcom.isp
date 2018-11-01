@@ -31,6 +31,9 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.hlk.hlklib.lib.view.CustomTextView;
+import com.jaiselrahman.filepicker.activity.FilePickerActivity;
+import com.jaiselrahman.filepicker.config.Configurations;
+import com.jaiselrahman.filepicker.model.MediaFile;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
@@ -268,10 +271,16 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private View multimediaView;
     @ViewId(R.id.ui_archive_creator_rich_editor_attachment)
     private View attachmentView;
+    @ViewId(R.id.ui_archive_creator_rich_editor_participant1)
+    private View participantView1;
+    @ViewId(R.id.ui_tool_attachment_button_upload)
+    private View attachmentUploadView;
     @ViewId(R.id.ui_archive_creator_rich_editor_template)
     private View templateView;
     @ViewId(R.id.ui_tool_swipe_refreshable_recycler_view)
     private RecyclerView attachmentRecyclerView;
+
+    private SimpleInputableViewHolder participantHolder1;
     // 创建成功的档案信息
     private Archive mArchive;
     /**
@@ -632,7 +641,16 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 resetProperty();
                 break;
             case REQUEST_ATTACHMENT:
-
+                if (null != data) {
+                    mediaFiles.clear();
+                    mediaFiles.addAll(data.<MediaFile>getParcelableArrayListExtra(FilePickerActivity.MEDIA_FILES));
+                    aAdapter.clear();
+                    for (MediaFile file : mediaFiles) {
+                        Attachment attachment = new Attachment(file.getPath());
+                        aAdapter.add(attachment);
+                    }
+                }
+                attachmentUploadView.setVisibility(aAdapter.getItemCount() > 0 ? View.VISIBLE : View.GONE);
                 break;
             case REQUEST_DRAFT:
                 // 草稿选择完毕
@@ -1583,7 +1601,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                             }
                             aAdapter.update(attachment);
                         }
-                        mAdapter.clear();
+                        //mAdapter.clear();
                     }
                     break;
                 case UP_TEMPLATE:
@@ -1986,8 +2004,104 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             mArchive.getOffice().remove(attachment);
             mArchive.getVideo().remove(attachment);
             aAdapter.remove(attachment);
+            attachmentUploadView.setVisibility(aAdapter.getItemCount() > 0 ? View.VISIBLE : View.GONE);
         }
     };
+
+    private View fileTypeDialogView;
+
+    private void openFileTypeChooserDialog() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == fileTypeDialogView) {
+                    fileTypeDialogView = View.inflate(Activity(), R.layout.popup_dialog_rich_editor_attachment_chooser, null);
+                }
+                return fileTypeDialogView;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+
+            }
+        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+            @Override
+            public int[] clickEventHandleIds() {
+                return new int[]{
+                        R.id.ui_popup_rich_editor_attachment_audios,
+                        R.id.ui_popup_rich_editor_attachment_documents,
+                        R.id.ui_popup_rich_editor_attachment_images,
+                        R.id.ui_popup_rich_editor_attachment_videos
+                };
+            }
+
+            @Override
+            public boolean onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.ui_popup_rich_editor_attachment_audios:
+                        chooseAttachment(getIntent(UP_MUSIC));
+                        break;
+                    case R.id.ui_popup_rich_editor_attachment_documents:
+                        chooseAttachment(getIntent(UP_ATTACH));
+                        break;
+                    case R.id.ui_popup_rich_editor_attachment_images:
+                        chooseAttachment(getIntent(UP_IMAGE));
+                        break;
+                    case R.id.ui_popup_rich_editor_attachment_videos:
+                        chooseAttachment(getIntent(UP_VIDEO));
+                        break;
+                }
+                return true;
+            }
+        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
+    }
+
+    private ArrayList<MediaFile> mediaFiles = new ArrayList<>();
+
+    private Intent getIntent(int type) {
+        maxSelectable = 9;
+        Intent intent = new Intent(Activity(), FilePickerActivity.class);
+        Configurations configurations = new Configurations.Builder()
+                .setCheckPermission(true)
+                .setSelectedMediaFiles(mediaFiles)
+                .enableVideoCapture(type == UP_VIDEO)
+                .enableImageCapture(type == UP_IMAGE)
+                .setShowAudios(type == UP_MUSIC)
+                .setShowVideos(type == UP_VIDEO)
+                .setShowImages(type == UP_IMAGE)
+                .setShowFiles(type == UP_ATTACH)
+                .setSkipZeroSizeFiles(true)
+                .setMaxSelection(getMaxSelectable())
+                .setSuffixes("txt", "pdf", "html", "zip", "tar", "gz", "rar", "7z", "doc", "docx", "ppt", "pptx", "xls", "xlsx")
+                .build();
+        intent.putExtra(FilePickerActivity.CONFIGS, configurations);
+        return intent;
+    }
+
+    private void chooseAttachment(Intent intent) {
+        startActivityForResult(intent, REQUEST_ATTACHMENT);
+    }
+
+    private void prepareUploadAttachment() {
+        if (aAdapter.getItemCount() > 0) {
+            Iterator<Attachment> iterator = aAdapter.iterator();
+            getWaitingForUploadFiles().clear();
+            while (iterator.hasNext()) {
+                Attachment attachment = iterator.next();
+                if (attachment.getFullPath().charAt(0) == '/') {
+                    // 是本地文件时，放入待上传列表
+                    getWaitingForUploadFiles().add(attachment.getFullPath());
+                    attachment.setSelected(true);
+                    aAdapter.update(attachment);
+                }
+            }
+            if (getWaitingForUploadFiles().size() > 0) {
+                uploadType = UP_ATTACH;
+                showUploading(true);
+                uploadFiles();
+            }
+        }
+    }
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -2067,7 +2181,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             R.id.ui_archive_creator_action_heading3, R.id.ui_archive_creator_action_heading4,
             R.id.ui_archive_creator_action_heading5, R.id.ui_archive_creator_action_heading6,
             // 以下为模板方式点击事件
-            R.id.ui_archive_creator_rich_editor_template_images_clear})
+            R.id.ui_archive_creator_rich_editor_template_images_clear,
+            // 附件模板中的上传按钮
+            R.id.ui_tool_attachment_button_upload})
     private void elementClick(View view) {
         switch (view.getId()) {
             case R.id.ui_archive_creator_action_undo:
@@ -2101,7 +2217,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 mAttachmentIcon.setTextColor(getColor(R.color.colorAccent));
                 // 插入一个附件
                 // 附件的图标地址(24x24)http://120.25.124.199:8008/group1/M00/00/13/eBk66lngZ0-AW_1aAAAJiqCeKro517.png
-                openAttachmentDialog();
+                //openAttachmentDialog();
+                openFileTypeChooserDialog();
+                break;
+            case R.id.ui_tool_attachment_button_upload:
+                // 准备上传附件
+                prepareUploadAttachment();
                 break;
             case R.id.ui_archive_creator_action_video:
                 mVideoIcon.setTextColor(getColor(R.color.colorAccent));

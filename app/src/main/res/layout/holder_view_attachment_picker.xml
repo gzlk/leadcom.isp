@@ -9,58 +9,48 @@
     android:minHeight="@dimen/ui_base_dimen_simple_item_height"
     android:orientation="horizontal">
 
+    <com.hlk.hlklib.lib.view.CorneredView
+        android:id="@+id/ui_tool_attachment_button_upload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+        android:gravity="center"
+        android:minWidth="@dimen/ui_static_dp_60"
+        android:minHeight="@dimen/ui_static_dp_35"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/ui_static_dp_3"
+        android:paddingBottom="@dimen/ui_static_dp_3"
+        android:visibility="gone"
+        app:cv_active_border="@color/colorAccent"
+        app:cv_background="@color/colorPrimary"
+        app:cv_background_active="@color/colorAccent"
+        app:cv_background_type="fill"
+        app:cv_corner_size="@dimen/ui_static_dp_5"
+        app:cv_normal_border="@color/colorPrimary">
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_static_dp_5"
+            android:rotation="-90"
+            android:text="@string/ui_icon_upload"
+            android:textColor="@color/textColorLight" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_base_text_upload"
+            android:textColor="@color/textColorLight"
+            android:textSize="@dimen/ui_base_text_size_short" />
+    </com.hlk.hlklib.lib.view.CorneredView>
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="end|center_vertical"
-        android:visibility="invisible">
+        android:visibility="visible">
 
-        <LinearLayout
-            android:id="@+id/ui_holder_view_attachment_picker_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/ui_static_dp_20"
-            android:gravity="center_vertical"
-            android:minHeight="@dimen/ui_base_dimen_button_height"
-            android:orientation="horizontal">
-
-            <com.hlk.hlklib.lib.view.CustomTextView
-                android:id="@+id/ui_holder_view_attachment_picker_image_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/ui_static_dp_5"
-                android:text="@string/ui_icon_select_line"
-                android:textColor="@color/colorPrimary" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ui_base_text_image" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ui_holder_view_attachment_picker_other"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/ui_static_dp_20"
-            android:gravity="center_vertical"
-            android:minHeight="@dimen/ui_base_dimen_button_height"
-            android:orientation="horizontal">
-
-            <com.hlk.hlklib.lib.view.CustomTextView
-                android:id="@+id/ui_holder_view_attachment_picker_other_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/ui_static_dp_5"
-                android:text="@string/ui_icon_select_line"
-                android:textColor="@color/textColorHintLight" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ui_base_text_other" />
-        </LinearLayout>
     </LinearLayout>
 
     <TextView
@@ -74,10 +64,10 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
         android:gravity="center"
-        android:minHeight="@dimen/ui_static_dp_35"
         android:minWidth="@dimen/ui_static_dp_60"
-        android:paddingBottom="@dimen/ui_static_dp_3"
+        android:minHeight="@dimen/ui_static_dp_35"
         android:paddingTop="@dimen/ui_static_dp_3"
+        android:paddingBottom="@dimen/ui_static_dp_3"
         app:cv_active_border="@color/colorAccent"
         app:cv_corner_size="@dimen/ui_static_dp_5"
         app:cv_normal_border="@color/colorPrimary">

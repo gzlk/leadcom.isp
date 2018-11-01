@@ -284,6 +284,11 @@
             android:layout_height="@dimen/ui_static_dp_1"
             android:background="@color/windowBackground" />
 
+        <include
+            android:id="@+id/ui_archive_creator_rich_editor_participant1"
+            layout="@layout/holder_view_simple_inputable"
+            android:visibility="gone" />
+
         <include layout="@layout/holder_view_attachment_picker" />
 
         <include layout="@layout/tool_view_recycler_view_none_swipe_refreshable" />

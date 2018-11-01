@@ -164,6 +164,7 @@
     <string name="ui_base_text_classify">归类</string>
     <string name="ui_base_text_authorized">已授权</string>
     <string name="ui_base_text_authorizing">授权</string>
+    <string name="ui_base_text_upload">上传</string>
 
     <string name="ui_base_text_not_read">未读</string>
     <string name="ui_base_text_has_read">已读</string>
@@ -175,5 +176,7 @@
     <string name="ui_base_text_archive">文档</string>
     <string name="ui_base_text_image">图片</string>
     <string name="ui_base_text_video">视频</string>
+    <string name="ui_base_text_audio">音频</string>
+    <string name="ui_base_text_document">文档</string>
     <string name="ui_base_text_other">其他</string>
 </resources>
