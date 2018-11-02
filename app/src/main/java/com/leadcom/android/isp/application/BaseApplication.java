@@ -317,7 +317,7 @@ public class BaseApplication extends Application {
         //}
         //}
         sb.append("/").append(ROOT_DIR).append("/").append(dir).append("/");
-        if (dir.equals(DB_DIR)) {
+        if (dir.equals(DB_DIR) || dir.equals(IMAGE_UIL)) {
             sb.append(BuildConfig.BUILD_TYPE).append("/");
         }
         createDirs(sb.toString());
