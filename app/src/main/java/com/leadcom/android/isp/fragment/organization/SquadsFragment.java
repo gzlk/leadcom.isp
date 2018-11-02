@@ -193,6 +193,12 @@ public class SquadsFragment extends GroupBaseFragment {
     }
 
     @Override
+    public void onDestroy() {
+        isOpenable = false;
+        super.onDestroy();
+    }
+
+    @Override
     protected void onDelayRefreshComplete(int type) {
 
     }

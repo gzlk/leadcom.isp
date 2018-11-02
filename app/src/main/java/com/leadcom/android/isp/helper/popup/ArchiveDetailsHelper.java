@@ -424,7 +424,7 @@ public class ArchiveDetailsHelper {
                 }
                 break;
             case BaseFragment.REQUEST_CREATE:
-                //case BaseFragment.REQUEST_SELECT:
+            case BaseFragment.REQUEST_SELECT:
                 // 档案参与人选择完毕
                 ArrayList<SubMember> members = SubMember.fromJson(BaseFragment.getResultedData(data));
                 String names = "";

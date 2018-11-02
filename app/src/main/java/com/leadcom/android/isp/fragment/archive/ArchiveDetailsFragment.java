@@ -55,7 +55,6 @@ import com.leadcom.android.isp.fragment.organization.ActivityCollectionFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAllPickerFragment;
 import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
 import com.leadcom.android.isp.fragment.organization.SquadPickerFragment;
-import com.leadcom.android.isp.fragment.organization.SquadsFragment;
 import com.leadcom.android.isp.helper.DownloadingHelper;
 import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -1477,8 +1476,11 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                             break;
                         case R.id.ui_popup_rich_editor_setting_participant:
                             // 参与者
-                            SquadsFragment.isOpenable = true;
-                            SquadsFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), "", true, null);
+                            isChooseGroup = true;
+                            GroupAllPickerFragment.IS_FOR_DELIVER = true;
+                            GroupAllPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), "选择成员", null, null);
+                            //SquadsFragment.isOpenable = true;
+                            //SquadsFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), "", true, null);
                             //GroupSquadContactPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), "", "[]");
                             //GroupContactPickFragment.open(ArchiveDetailsFragment.this, REQUEST_SELECT, "", true, false, "[]");
                             break;

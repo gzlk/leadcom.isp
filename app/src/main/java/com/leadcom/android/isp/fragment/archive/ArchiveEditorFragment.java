@@ -650,6 +650,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     aAdapter.clear();
                     for (MediaFile file : mediaFiles) {
                         Attachment attachment = new Attachment(file.getPath());
+                        attachment.setUrl(file.getPath());
                         aAdapter.add(attachment);
                     }
                 }
@@ -1895,8 +1896,19 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             mArchive.getVideo().remove(attachment);
             aAdapter.remove(attachment);
             attachmentUploadView.setVisibility(aAdapter.getItemCount() > 0 ? View.VISIBLE : View.GONE);
+            removeSelectedFile(attachment.getFullPath());
         }
     };
+
+    private void removeSelectedFile(String path) {
+        Iterator<MediaFile> iterator = mediaFiles.iterator();
+        while (iterator.hasNext()) {
+            MediaFile file = iterator.next();
+            if (file.getPath().equals(path)) {
+                iterator.remove();
+            }
+        }
+    }
 
     private View fileTypeDialogView;
 
@@ -1962,7 +1974,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 .setShowFiles(type == UP_ATTACH)
                 .setSkipZeroSizeFiles(true)
                 .setMaxSelection(getMaxSelectable())
-                .setSuffixes("txt", "pdf", "zip", "tar", "gz", "rar", "7z", "doc", "docx", "ppt", "pptx", "xls", "xlsx")
+                .setSuffixes("txt", "pdf", "zip", "rar", "doc", "docx", "ppt", "pptx", "xls", "xlsx")
                 .build();
         intent.putExtra(FilePickerActivity.CONFIGS, configurations);
         return intent;

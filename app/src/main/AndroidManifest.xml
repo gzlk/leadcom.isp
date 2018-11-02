@@ -49,12 +49,12 @@
         android:fullBackupContent="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/app_name_default"
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:allowBackup">
+        tools:replace="android:allowBackup,android:label">
 
         <!--网易云通知栏点击之后的消息处理Activity，也即打开app后的欢迎页-->
         <activity
@@ -143,11 +143,6 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />
-        <!--第三方文件选择器-->
-        <activity
-            android:name="com.jaiselrahman.filepicker.activity.FilePickerActivity"
-            android:theme="@style/AppTheme.Container"
-            tools:replace="android:theme" />
         <!--Android 7.0+的uri权限-->
         <provider
             android:name="android.support.v4.content.FileProvider"
