@@ -10,6 +10,7 @@ import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.FilePreviewHelper;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.common.Attachment;
@@ -111,6 +112,9 @@ public class AttachmentViewHolder extends BaseViewHolder {
 
     public static int getFileExtension(String ext) {
         int res = R.string.ui_icon_attachment_unknown;
+        if (StringHelper.isEmpty(ext)) {
+            return res;
+        }
         ext = ext.toLowerCase(Locale.getDefault());
         if (ext.contains("doc")) {
             res = R.string.ui_icon_attachment_word;

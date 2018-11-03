@@ -338,6 +338,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             finish();
             return;
         }
+        if (null == mArchive) {
+            createNewDraftArchive();
+        }
         mArchive.setGroupId(groupId);
         registerDraftSavingReceiver();
         mEditor.setPadding(10, 10, 10, 10);
@@ -852,7 +855,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 return false;
             }
         }
-        mArchive.setSite(addressHolder.getValue());
+        if (null != addressHolder) {
+            mArchive.setSite(addressHolder.getValue());
+        }
         if (returnAble) {
             if (isEmpty(mArchive.getSite())) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_site_null);
@@ -860,20 +865,26 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             }
         }
         if (returnAble) {
-            mArchive.setParticipant(participantHolder.getValue());
+            if (null != participantHolder) {
+                mArchive.setParticipant(participantHolder.getValue());
+            }
             if (isEmpty(mArchive.getParticipant())) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_participant_null);
                 return false;
             }
         }
-        mArchive.setTopic(topicContent.getValue());
+        if (null != topicContent) {
+            mArchive.setTopic(topicContent.getValue());
+        }
         if (returnAble) {
             if (isEmpty(mArchive.getTopic())) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_topic_null);
                 return false;
             }
         }
-        mArchive.setResolution(minuteContent.getValue());
+        if (null != minuteContent) {
+            mArchive.setResolution(minuteContent.getValue());
+        }
         if (returnAble) {
             if (isEmpty(mArchive.getResolution())) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_minute_null);
