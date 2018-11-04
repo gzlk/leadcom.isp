@@ -72,7 +72,6 @@ import com.leadcom.android.isp.model.archive.ArchiveQuery;
 import com.leadcom.android.isp.model.archive.Label;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
-import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Squad;
@@ -453,24 +452,16 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             return;
         }
         // 拉取当前用户加入的第一个组织支部
-        SquadRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Squad>() {
+        SquadRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Squad>() {
             @Override
-            public void onResponse(List<Squad> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (success && null != list) {
-                    for (Squad squad : list) {
-                        for (Member member : squad.getGroSquMemberList()) {
-                            if (member.getUserId().equals(Cache.cache().userId)) {
-                                if (isEmpty(mArchive.getSquadId())) {
-                                    mArchive.setSquadId(squad.getId());
-                                    mArchive.setBranch(squad.getName());
-                                }
-                            }
-                        }
-                    }
+            public void onResponse(Squad squad, boolean success, String message) {
+                super.onResponse(squad, success, message);
+                if (success && null != squad && !isEmpty(squad.getId())) {
+                    mArchive.setSquadId(squad.getId());
+                    mArchive.setBranch(squad.getName());
                 }
             }
-        }).list(mArchive.getGroupId(), 1);
+        }).findFirstJoinedSquad(mArchive.getGroupId());
     }
 
     private void createActivity() {
