@@ -102,7 +102,7 @@ public class SquadRequest extends Request<Squad> {
      * 查找用户加入的第一个支部信息
      */
     public void findFirstJoinedSquad(String groupId) {
-        executeHttpRequest(getRequest(SingleSquad.class, format("%sGroSquadByUserIdAndGroupId?groupId=%s", url(FIND), groupId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleSquad.class, format("/group/groSquMember%sGroSquadByUserIdAndGroupId?groupId=%s", FIND, groupId), "", HttpMethods.Get));
     }
 
     /**
