@@ -87,6 +87,7 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
         countView.setVisibility(isGroup ? View.VISIBLE : View.GONE);
         countView.setText(format("报名%d", member.getReportNum()));
         statusView.setText(isGroup ? format("请假%d", member.getLeaveNum()) : member.getStatus());
+        statusView.setVisibility(View.VISIBLE);
         timeView.setVisibility(isGroup ? View.GONE : View.VISIBLE);
         timeView.setText(member.isCreateDateDefault() ? "-" : fragment().formatDate(member.getCreateDate(), R.string.ui_base_text_date_format));
         iconView.setVisibility(isGroup ? View.VISIBLE : View.GONE);
