@@ -202,7 +202,7 @@
     </string>
     <string name="ui_group_activity_reply_subject_is_null">回复的主题不能为空</string>
     <string name="ui_group_activity_reply_content_is_null">回复的内容不能为空</string>
-    <string name="ui_group_activity_reply_success">报名情况已回复，请勿重复提交</string>
+    <string name="ui_group_activity_reply_success">报名情况已回复</string>
 
     <string name="ui_organization_squad_add_title">名称：</string>
     <string name="ui_organization_squad_add_hint">分支名称(10个字以内)</string>
