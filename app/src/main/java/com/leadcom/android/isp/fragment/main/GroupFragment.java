@@ -459,40 +459,11 @@ public class GroupFragment extends GroupBaseFragment {
         }
         if (null != list) {
             for (Organization group : list) {
-                if (!isEmpty(group.getName())) {
-                    if (group.getName().contains("历康")) {
-                        if (group.getName().contains("测试")) {
-                            //group.setNature(Organization.NatureType.MINMENT);
-                        } else {
-                            //group.setNature(Organization.NatureType.MINMENT);
-                        }
-                    } else if (group.getName().contains("测试")) {
-                        group.setNature(Organization.NatureType.MINMENT);
-                    }
-                }
                 group.setSelectable(true);
                 Cache.cache().updateGroup(group);
             }
-            gAdapter.update(list, true);
-            if (isFirst) {
-                isFirst = false;
-                if (!isSingle) {
-                    // 如果是首页里的组织页面，则初始化组织列表的位置
-                    initializeGroupsPosition();
-                }
-                // 初始化第一个组织
-                restoreCurrentGroup();
-            } else {
-                restoreCurrentGroup();
-            }
+            gAdapter.setData(list);
         }
-        displayNothing(gAdapter.getItemCount() <= 0);
-        if (gAdapter.getItemCount() <= 0) {
-            titleTextView.setText(null);
-        }
-        // 重新拉取我的权限列表
-        App.app().fetchPermissions();
-        stopRefreshing();
     }
 
     private void restoreCurrentGroup() {
@@ -530,10 +501,46 @@ public class GroupFragment extends GroupBaseFragment {
     private void initGroupsAdapter() {
         if (null == gAdapter) {
             gAdapter = new GroupAdapter();
+            gAdapter.setOnDataHandingListener(handingListener);
             groupList.setLayoutManager(new CustomLinearLayoutManager(groupList.getContext()));
             groupList.setAdapter(gAdapter);
         }
     }
+
+    private RecyclerViewAdapter.OnDataHandingListener handingListener = new RecyclerViewAdapter.OnDataHandingListener() {
+        @Override
+        public void onStart() {
+
+        }
+
+        @Override
+        public void onProgress(int currentPage, int maxPage, int maxCount) {
+
+        }
+
+        @Override
+        public void onComplete() {
+            displayNothing(gAdapter.getItemCount() <= 0);
+            if (gAdapter.getItemCount() <= 0) {
+                titleTextView.setText(null);
+            } else {
+                if (isFirst) {
+                    isFirst = false;
+                    if (!isSingle) {
+                        // 如果是首页里的组织页面，则初始化组织列表的位置
+                        initializeGroupsPosition();
+                    }
+                    // 初始化第一个组织
+                    restoreCurrentGroup();
+                } else {
+                    restoreCurrentGroup();
+                }
+            }
+            // 重新拉取我的权限列表
+            App.app().fetchPermissions();
+            stopRefreshing();
+        }
+    };
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
@@ -598,7 +605,7 @@ public class GroupFragment extends GroupBaseFragment {
         if (!isNeedPermission || hasOperation(group.getId(), GRPOperation.MEMBER_NATURE_COUNT)) {
             //hasNatureCount = true;
             // 广州市民盟不需要成员统计
-            boolean not = group.getNature() == 1 && group.getName().contains("广州市");
+            boolean not = group.getNature() == 1 && !group.isBaseLevel();
             if (!not) {
                 // 不需要权限时，需要判断是否属于民盟的基层组织
                 not = !isNeedPermission && group.getNature() == 1 && group.isBaseLevel();
