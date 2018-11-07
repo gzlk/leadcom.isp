@@ -31,6 +31,7 @@ import com.leadcom.android.isp.fragment.main.GroupFragment;
 import com.leadcom.android.isp.fragment.main.HomeFragment;
 import com.leadcom.android.isp.fragment.main.PersonalityFragment;
 import com.leadcom.android.isp.fragment.main.SystemMessageFragment;
+import com.leadcom.android.isp.helper.LogcatHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.UpgradeHelper;
 import com.leadcom.android.isp.lib.permission.MPermission;
@@ -263,6 +264,7 @@ public class MainActivity extends TitleActivity {
             getContentResolver().unregisterContentObserver(contactObserver);
         }
         App.removeNotificationChangeCallback(callback);
+        LogcatHelper.helper().stop();
         super.onDestroy();
     }
 

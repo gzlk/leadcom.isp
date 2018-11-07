@@ -191,6 +191,7 @@ public class SettingCacheFragment extends BaseTransparentSupportFragment {
                     // 清理其他缓存（比如下载了的app安装文件）
                     paths.add(App.app().getCachePath(App.TEMP_DIR));
                     paths.add(App.app().getCachePath(App.OTHER_DIR));
+                    paths.add(App.app().getCachePath(App.LOGCAT_DIR));
                     break;
             }
             for (String path : paths) {

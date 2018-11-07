@@ -101,9 +101,11 @@
         <item>2|手动清理缓存|</item>
         <item>3|检查更新|Ver %s|1</item>
         <item>4|关于我们|</item>
-        <item>5|保存log|</item>
+        <item>5|抓取实时log|%d</item>
     </string-array>
-    <string name="ui_text_setting_log_save_dialog_title">马上保存当前app内的log以便分析。</string>
+    <string name="ui_text_setting_log_save_dialog_title">
+        <![CDATA[<b>实时内容抓取提醒</b><br/>抓取log过程完毕之后别忘了回来这里关闭后台操作<br/><font color="#a1a1a1">长时间抓取log会导致手机变慢，请及时回来停止操作</font>]]>
+    </string>
     <string name="ui_text_setting_fragment_title">@string/ui_base_text_setting</string>
     <string name="ui_text_setting_fragment_no_update">您已经安装的是最新版了</string>
     <string name="ui_text_setting_sign_out">退出登录</string>

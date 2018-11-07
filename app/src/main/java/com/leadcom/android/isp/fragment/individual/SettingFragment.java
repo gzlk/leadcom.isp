@@ -2,21 +2,27 @@ package com.leadcom.android.isp.fragment.individual;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ToggleButton;
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
+import com.leadcom.android.isp.apache.poi.FileUtils;
 import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
+import com.leadcom.android.isp.helper.LogcatHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.UpgradeHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
+import com.leadcom.android.isp.holder.common.ToggleableViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 
 /**
@@ -60,13 +66,13 @@ public class SettingFragment extends BaseTransparentSupportFragment {
     private SimpleClickableViewHolder cacheHolder;
     private SimpleClickableViewHolder upgradeHolder;
     private SimpleClickableViewHolder aboutHolder;
-    private SimpleClickableViewHolder logHolder;
+    private ToggleableViewHolder logHolder;
     private String[] strings;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        saveLogView.setVisibility(View.GONE);
+        saveLogView.setVisibility(Cache.isReleasable() ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -132,9 +138,9 @@ public class SettingFragment extends BaseTransparentSupportFragment {
             aboutHolder.showContent(strings[4]);
         }
         if (null == logHolder) {
-            logHolder = new SimpleClickableViewHolder(saveLogView, this);
-            logHolder.addOnViewHolderClickListener(holderClickListener);
-            logHolder.showContent(strings[5]);
+            logHolder = new ToggleableViewHolder(saveLogView, this);
+            logHolder.addOnViewHolderToggleChangedListener(toggleChangedListener);
+            logHolder.showContent(format(strings[5], LogcatHelper.helper().isStarting() ? 1 : 0));
         }
     }
 
@@ -144,6 +150,21 @@ public class SettingFragment extends BaseTransparentSupportFragment {
         App.app().logout();
         finishToSignIn();
     }
+
+    private ToggleableViewHolder.OnViewHolderToggleChangedListener toggleChangedListener = new ToggleableViewHolder.OnViewHolderToggleChangedListener() {
+
+        @Override
+        public void onChange(int index, boolean togged) {
+            if (togged) {
+                // 清理log缓存目录
+                //FileUtils.removeFile(App.app().getCachePath(App.LOGCAT_DIR));
+                // 保存log
+                warningLogSaving();
+            } else {
+                LogcatHelper.helper().stop();
+            }
+        }
+    };
 
     private OnViewHolderClickListener holderClickListener = new OnViewHolderClickListener() {
         @Override
@@ -169,23 +190,17 @@ public class SettingFragment extends BaseTransparentSupportFragment {
                     // 关于
                     openActivity(AboutFragment.class.getName(), "", true, false);
                     break;
-                case 5:
-                    // 保存log
-                    //warningLogSaving();
-                    break;
             }
         }
     };
 
     private void warningLogSaving() {
-        // 清理log缓存目录
-        //FileUtils.removeFile(App.app().getCachePath("nim") + "log/");
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                //CrashSaver.save(App.app(), new IllegalArgumentException("Manual saving logs."), false);
+                LogcatHelper.helper().start();
                 return true;
             }
-        }).setTitleText(R.string.ui_text_setting_log_save_dialog_title).setConfirmText(R.string.ui_base_text_save).show();
+        }).setTitleText(R.string.ui_text_setting_log_save_dialog_title).setConfirmText(R.string.ui_base_text_confirm).show();
     }
 }

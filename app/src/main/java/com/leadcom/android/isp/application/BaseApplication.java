@@ -137,6 +137,10 @@ public class BaseApplication extends Application {
 
     public static final String NOMEDIA = ".nomedia";
     /**
+     * 本地保存的logcat目录
+     */
+    public static final String LOGCAT_DIR = "logcat";
+    /**
      * 本地缓存路径
      */
     public static final String CACHE_DIR = "cache";

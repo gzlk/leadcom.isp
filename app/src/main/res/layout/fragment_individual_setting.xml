@@ -31,7 +31,7 @@
 
     <include
         android:id="@+id/ui_setting_to_log"
-        layout="@layout/holder_view_simple_clickable" />
+        layout="@layout/holder_view_toggle" />
 
     <com.hlk.hlklib.lib.view.CorneredButton
         android:id="@+id/ui_setting_sign_out"
