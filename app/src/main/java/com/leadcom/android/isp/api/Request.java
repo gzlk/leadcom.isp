@@ -282,8 +282,8 @@ public abstract class Request<T> {
                         }
                     }
                 } else {
-                    ToastHelper.make().showMsg(null == data ? "content is null" : data.getMsg());
-                    fireFailedListenerEvents(null == data ? "content is null" : data.getMsg());
+                    ToastHelper.make().showMsg(null == data ? "api has response null content" : data.getMsg());
+                    fireFailedListenerEvents(null == data ? "api has response null content" : data.getMsg());
                     if (null != data && data.relogin()) {
                         relogin = true;
                         App.app().logout();
