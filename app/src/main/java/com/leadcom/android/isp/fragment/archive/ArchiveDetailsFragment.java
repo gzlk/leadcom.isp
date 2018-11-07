@@ -117,6 +117,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private static boolean isCollected = false;
     private static boolean isLoaded = false;
     public static boolean isIndividual = false;
+    public static boolean isOnlyDetails = false;
 
     public static ArchiveDetailsFragment newInstance(Bundle bundle) {
         ArchiveDetailsFragment adwvf = new ArchiveDetailsFragment();
@@ -266,6 +267,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         }
         isIndividual = false;
         isCollected = false;
+        isOnlyDetails = false;
         super.onDestroy();
     }
 
@@ -438,6 +440,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     }
 
     private void resetRightIconEvent(int icon, int text) {
+        if (isOnlyDetails) {
+            return;
+        }
         setRightText(text);
         setRightIcon(icon);
         setRightTitleClickListener(new OnTitleButtonClickListener() {

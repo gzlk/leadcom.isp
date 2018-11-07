@@ -188,6 +188,7 @@ public class MemberDutyDetailsFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener clickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
+            ArchiveDetailsFragment.isOnlyDetails = true;
             ArchiveDetailsFragment.open(MemberDutyDetailsFragment.this, mAdapter.get(index));
         }
     };
