@@ -217,82 +217,90 @@ public abstract class Request<T> {
                 log(format("\nurl(%s): %s\naccessToken: %s, terminalType: android\n%ssuccess: %s(%s,%s, time used: %dms)\nraw: %s", methods, url, accessToken,
                         (isEmpty(body) ? "" : format("body: %s\n", body)), (null == data ? "null" : data.success()),
                         (null == data ? "null" : data.getCode()), (null == data ? "null" : data.getMsg()), (end - start), response.getRawString()));
-                if (null != data && data.success()) {
-                    if (data instanceof PaginationQuery) {
-                        if (null != onMultipleRequestListener) {
-                            PaginationQuery<T> paginationQuery = (PaginationQuery<T>) data;
-                            Pagination<T> pagination = paginationQuery.getData();
-                            save(pagination.getList());
-                            onMultipleRequestListener.invtNum = paginationQuery.getInvtNum();
-                            onMultipleRequestListener.userInfoNum = paginationQuery.getUserInfoNum();
-                            onMultipleRequestListener.lastHeadPhoto = paginationQuery.getLastHeadPhoto();
-                            onMultipleRequestListener.onResponse(pagination.getList(), data.success(),
-                                    pagination.getTotalPages(), pagination.getPageSize(),
-                                    pagination.getTotal(), pagination.getPageNumber());
-                        }
-                    } else if (data instanceof PageQuery) {
-                        if (null != onMultipleRequestListener) {
-                            PageQuery<T> pageQuery = (PageQuery<T>) data;
-                            onMultipleRequestListener.onResponse(pageQuery.getRows(), pageQuery.success(), pageQuery.getPages(),
-                                    pageQuery.getSize(), pageQuery.getTotal(), pageQuery.getCurrent());
-                        }
-                    } else if (data instanceof ListQuery) {
-                        if (null != onMultipleRequestListener) {
-                            ListQuery<T> listQuery = (ListQuery<T>) data;
-                            save(listQuery.getData());
-                            onMultipleRequestListener.unreadNum = listQuery.getUnreadNum();
-                            onMultipleRequestListener.onResponse(listQuery.getData(), data.success(),
-                                    1, PAGE_SIZE, listQuery.getData().size(), 1);
-                        }
-                    } else if (data instanceof SingleQuery) {
-                        SingleQuery<T> singleQuery = (SingleQuery<T>) data;
-                        save(singleQuery.getData());
-                        if (null != onSingleRequestListener) {
-                            onSingleRequestListener.query = singleQuery;
-                            onSingleRequestListener.userRelateGroupList = singleQuery.getUserRelateGroupList();
-                            onSingleRequestListener.actInviteStatus = singleQuery.getActInvtStatus();
-                            if (singleQuery.getData() instanceof FullTextQuery) {
-                                onSingleRequestListener.onResponse(singleQuery.getData(), data.success(), response.getRawString());
-                            } else {
-                                onSingleRequestListener.onResponse(singleQuery.getData(), data.success(), data.getMsg());
+                if (null != data) {
+                    if (data.success()) {
+                        if (data instanceof PaginationQuery) {
+                            if (null != onMultipleRequestListener) {
+                                PaginationQuery<T> paginationQuery = (PaginationQuery<T>) data;
+                                Pagination<T> pagination = paginationQuery.getData();
+                                save(pagination.getList());
+                                onMultipleRequestListener.invtNum = paginationQuery.getInvtNum();
+                                onMultipleRequestListener.userInfoNum = paginationQuery.getUserInfoNum();
+                                onMultipleRequestListener.lastHeadPhoto = paginationQuery.getLastHeadPhoto();
+                                onMultipleRequestListener.onResponse(pagination.getList(), data.success(),
+                                        pagination.getTotalPages(), pagination.getPageSize(),
+                                        pagination.getTotal(), pagination.getPageNumber());
+                            }
+                        } else if (data instanceof PageQuery) {
+                            if (null != onMultipleRequestListener) {
+                                PageQuery<T> pageQuery = (PageQuery<T>) data;
+                                onMultipleRequestListener.onResponse(pageQuery.getRows(), pageQuery.success(), pageQuery.getPages(),
+                                        pageQuery.getSize(), pageQuery.getTotal(), pageQuery.getCurrent());
+                            }
+                        } else if (data instanceof ListQuery) {
+                            if (null != onMultipleRequestListener) {
+                                ListQuery<T> listQuery = (ListQuery<T>) data;
+                                save(listQuery.getData());
+                                onMultipleRequestListener.unreadNum = listQuery.getUnreadNum();
+                                onMultipleRequestListener.onResponse(listQuery.getData(), data.success(),
+                                        1, PAGE_SIZE, listQuery.getData().size(), 1);
+                            }
+                        } else if (data instanceof SingleQuery) {
+                            SingleQuery<T> singleQuery = (SingleQuery<T>) data;
+                            save(singleQuery.getData());
+                            if (null != onSingleRequestListener) {
+                                onSingleRequestListener.query = singleQuery;
+                                onSingleRequestListener.userRelateGroupList = singleQuery.getUserRelateGroupList();
+                                onSingleRequestListener.actInviteStatus = singleQuery.getActInvtStatus();
+                                if (singleQuery.getData() instanceof FullTextQuery) {
+                                    onSingleRequestListener.onResponse(singleQuery.getData(), data.success(), response.getRawString());
+                                } else {
+                                    onSingleRequestListener.onResponse(singleQuery.getData(), data.success(), data.getMsg());
+                                }
+                            }
+                        } else if (data instanceof BoolQuery) {
+                            BoolQuery<T> boolQuery = (BoolQuery<T>) data;
+                            boolean hasData = response.getRawString().contains("data");
+                            if (null != onSingleRequestListener) {
+                                onSingleRequestListener.onResponse(null, hasData ? boolQuery.getData() : data.success(), data.getMsg());
+                            }
+                        } else if (data instanceof StringQuery) {
+                            StringQuery<T> stringQuery = (StringQuery<T>) data;
+                            if (null != onSingleRequestListener) {
+                                onSingleRequestListener.onResponse(newInstance(stringQuery.getData()), stringQuery.success(), data.getMsg());
+                            }
+                        } else if (data instanceof NumericQuery) {
+                            NumericQuery<T> query = (NumericQuery<T>) data;
+                            if (null != onSingleRequestListener) {
+                                onSingleRequestListener.onResponse(newInstance(String.valueOf(query.getData())), query.success(), query.getMsg());
+                            }
+                        } else {
+                            if (null != onSingleRequestListener) {
+                                onSingleRequestListener.onResponse(null, data.success(), data.getMsg());
+                            }
+                            if (null != onMultipleRequestListener) {
+                                onMultipleRequestListener.onResponse(null, data.success(), 0, 0, 0, 1);
                             }
                         }
-                    } else if (data instanceof BoolQuery) {
-                        BoolQuery<T> boolQuery = (BoolQuery<T>) data;
-                        boolean hasData = response.getRawString().contains("data");
-                        if (null != onSingleRequestListener) {
-                            onSingleRequestListener.onResponse(null, hasData ? boolQuery.getData() : data.success(), data.getMsg());
-                        }
-                    } else if (data instanceof StringQuery) {
-                        StringQuery<T> stringQuery = (StringQuery<T>) data;
-                        if (null != onSingleRequestListener) {
-                            onSingleRequestListener.onResponse(newInstance(stringQuery.getData()), stringQuery.success(), data.getMsg());
-                        }
-                    } else if (data instanceof NumericQuery) {
-                        NumericQuery<T> query = (NumericQuery<T>) data;
-                        if (null != onSingleRequestListener) {
-                            onSingleRequestListener.onResponse(newInstance(String.valueOf(query.getData())), query.success(), query.getMsg());
-                        }
                     } else {
-                        if (null != onSingleRequestListener) {
-                            onSingleRequestListener.onResponse(null, data.success(), data.getMsg());
+                        if (!data.getCode().equals(BaseApi.SQUAD_NOT_EXIT)) {
+                            // 支部查询不到时，不用提醒
+                            ToastHelper.make().showMsg(data.getMsg());
                         }
-                        if (null != onMultipleRequestListener) {
-                            onMultipleRequestListener.onResponse(null, data.success(), 0, 0, 0, 1);
+                        fireFailedListenerEvents(data.getMsg());
+                        if (data.isNeedLoginAgain()) {
+                            relogin = true;
+                            App.app().logout();
+                            LoginActivity.start(App.app());
                         }
                     }
                 } else {
-                    ToastHelper.make().showMsg(null == data ? "api has response null content" : data.getMsg());
-                    fireFailedListenerEvents(null == data ? "api has response null content" : data.getMsg());
-                    if (null != data && data.relogin()) {
-                        relogin = true;
-                        App.app().logout();
-                        LoginActivity.start(App.app());
-                    }
+                    String empty = StringHelper.getString(R.string.ui_base_text_network_failed_body_empty);
+                    ToastHelper.make().showMsg(empty);
+                    fireFailedListenerEvents(empty);
                 }
             }
 
-            @SuppressWarnings("unchecked")
             private T newInstance(String data) {
                 T obj;
                 try {

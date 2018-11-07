@@ -32,5 +32,9 @@ abstract class BaseApi implements Serializable {
     /**
      * 验证失败，需要重新登录
      */
-    static final String RELOGIN = "110000";
+    static final String TOKEN_TIMEOUT = "110000";
+    /**
+     * 小组未查询到
+     */
+    static final String SQUAD_NOT_EXIT = "40001";
 }
