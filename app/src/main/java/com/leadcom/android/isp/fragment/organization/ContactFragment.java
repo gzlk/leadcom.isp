@@ -318,6 +318,7 @@ public class ContactFragment extends GroupBaseFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new ContactAdapter();
+            mAdapter.setPagerSize(20);
             mAdapter.setOnDataHandingListener(handingListener);
             mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             if (showType != TYPE_ORG) {
@@ -337,11 +338,13 @@ public class ContactFragment extends GroupBaseFragment {
 
         @Override
         public void onProgress(int currentPage, int maxPage, int maxCount) {
-
+            log(format("onDataHandingListener.onProgress(%d, %d, %d)", currentPage + 1, maxPage, maxCount));
         }
 
         @Override
         public void onComplete() {
+            stopRefreshing();
+            displayLoading(false);
             displayNothing(mAdapter.getItemCount() < 1);
         }
     };
@@ -399,12 +402,11 @@ public class ContactFragment extends GroupBaseFragment {
                     for (Member member : list) {
                         member.setId(member.getUserId());
                         members.add(member);
-                        mAdapter.update(member);
+                        //mAdapter.update(member);
                     }
                 }
-                mAdapter.sort();
-                displayNothing(mAdapter.getItemCount() <= 0);
-                displayLoading(false);
+                refreshMemberList();
+                //mAdapter.sort();
                 //isLoadingComplete(true);
                 //stopRefreshing();
             }
@@ -435,14 +437,12 @@ public class ContactFragment extends GroupBaseFragment {
         if (null != list && list.size() > 0) {
             members.clear();
             members.addAll(list);
-            refreshMemberList();
         }
-        displayLoading(false);
-        stopRefreshing();
+        refreshMemberList();
     }
 
     private void refreshMemberList() {
-        clearAdapterNotExists();
+        //clearAdapterNotExists();
         if (showType == TYPE_SQUAD) {
             // 扫描小组管理员
             for (Member member : members) {
@@ -455,12 +455,14 @@ public class ContactFragment extends GroupBaseFragment {
                 }
             }
         }
-        Collections.sort(members, new Comparator<Member>() {
-            @Override
-            public int compare(Member o1, Member o2) {
-                return o1.getSpell().compareTo(o2.getSpell());
-            }
-        });
+        if (showType != TYPE_ORG) {
+            Collections.sort(members, new Comparator<Member>() {
+                @Override
+                public int compare(Member o1, Member o2) {
+                    return o1.getSpell().compareTo(o2.getSpell());
+                }
+            });
+        }
         mAdapter.setData(members);
         //mAdapter.clear();
         //mAdapter.add(members);
