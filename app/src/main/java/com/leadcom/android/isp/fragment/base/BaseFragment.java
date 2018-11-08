@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -11,12 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.gson.reflect.TypeToken;
 import com.hlk.hlklib.etc.Utility;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.ContainerActivity;
 import com.leadcom.android.isp.activity.LoginActivity;
@@ -568,11 +571,13 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     protected boolean INTERNAL_SHAREABLE = true;
     // 分享
     private View shareDialog;
-    private LinearLayout shareItemsLayer;
+    private RelativeLayout shareItemsLayer;
+    private LinearLayout shareDots;
     private RecyclerView shareItemsView;
     private ShareItemsAdapter sAdapter;
     protected ShareInfo mShareInfo;
     private DialogHelper shareDialogHelper;
+    private CustomTextView dot1, dot2;
     /**
      * 是否允许删除档案、转发档案、推荐档案到首页、取消首页档案的推荐
      */
@@ -588,13 +593,20 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
         ShareItem.init();
         if (null == shareDialogHelper) {
             shareDialogHelper = DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+
+                private boolean isScrollEnabled = false;
+
                 @Override
                 public View onInitializeView() {
                     if (null == shareDialog) {
                         shareDialog = View.inflate(Activity(), R.layout.popup_dialog_share_items, null);
+                        shareDots = shareDialog.findViewById(R.id.ui_popup_share_items_dots);
+                        dot1 = shareDialog.findViewById(R.id.ui_popup_share_items_dot_1);
+                        dot2 = shareDialog.findViewById(R.id.ui_popup_share_items_dot_2);
                         shareItemsLayer = shareDialog.findViewById(R.id.ui_popup_share_items);
                         shareItemsView = shareDialog.findViewById(R.id.ui_tool_swipe_refreshable_recycler_view);
                         shareItemsView.setLayoutManager(new FlexboxLayoutManager(shareItemsView.getContext(), FlexDirection.ROW, FlexWrap.WRAP));
+                        shareItemsView.addOnScrollListener(scrollListener);
                     }
                     if (null == sAdapter) {
                         sAdapter = new ShareItemsAdapter();
@@ -602,6 +614,20 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                     }
                     return shareDialog;
                 }
+
+                private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+                        if (isScrollEnabled) {
+                            FlexboxLayoutManager manager = (FlexboxLayoutManager) recyclerView.getLayoutManager();
+                            assert manager != null;
+                            dot1.setTextColor(getColor(manager.findFirstCompletelyVisibleItemPosition() < 4 ? R.color.colorPrimary : R.color.textColorHintLight));
+                            dot2.setTextColor(getColor(manager.findLastCompletelyVisibleItemPosition() < 7 ? R.color.textColorHintLight : R.color.colorPrimary));
+                        }
+                    }
+                };
 
                 @Override
                 public void onBindData(View dialogView, DialogHelper helper) {
@@ -631,11 +657,15 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                         }
                     }
                     if (count / 4 > 1) {
+                        isScrollEnabled = true;
                         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) shareItemsLayer.getLayoutParams();
                         params.height = getDimension(R.dimen.ui_static_dp_220);
                         shareItemsLayer.setLayoutParams(params);
+                        shareDots.setVisibility(View.VISIBLE);
                     } else {
+                        isScrollEnabled = false;
                         shareItemsLayer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                        shareDots.setVisibility(View.INVISIBLE);
                     }
                 }
             }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM);
