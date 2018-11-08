@@ -81,6 +81,8 @@ public class GroupFragment extends GroupBaseFragment {
     private static final String PARAM_PERMISSION = "gf_need_permission";
     private static boolean isFirst = true;
 
+    public static String TITLE = "";
+
     public static GroupFragment newInstance(Bundle bundle) {
         GroupFragment gf = new GroupFragment();
         gf.setArguments(bundle);
@@ -189,6 +191,9 @@ public class GroupFragment extends GroupBaseFragment {
         // 文件上传完毕后的回调处理
         setOnFileUploadingListener(mOnFileUploadingListener);
         currentGroup = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
+        if (isSingle) {
+            titleTextView.setText(TITLE);
+        }
     }
 
     // 相册选择返回了
@@ -459,6 +464,9 @@ public class GroupFragment extends GroupBaseFragment {
         }
         if (null != list) {
             for (Organization group : list) {
+                if (!isEmpty(group.getName()) && group.getName().contains("历康科技")) {
+                    group.setNature(1);
+                }
                 group.setSelectable(true);
                 Cache.cache().updateGroup(group);
             }
@@ -555,7 +563,9 @@ public class GroupFragment extends GroupBaseFragment {
     }
 
     private void onGroupChange(Organization group) {
-        titleTextView.setText(Html.fromHtml(group.getName()));
+        if (!isSingle) {
+            titleTextView.setText(Html.fromHtml(group.getName()));
+        }
         //tagView.setVisibility(group.isNoneNature() || isSingle ? View.GONE : View.VISIBLE);
         //tagView.setText(group.isTZ() ? R.string.ui_group_header_tongzhan_flag : R.string.ui_group_header_minmeng_flag);
         if (isNeedPermission) {
@@ -874,6 +884,16 @@ public class GroupFragment extends GroupBaseFragment {
             case 2:
                 // 组织架构
                 GroupsFragment.NATURE = group.getNature();
+                String title = format("%s(%s)", StringHelper.getString(R.string.ui_group_constructor_fragment_title), group.getName());
+                if (isEmpty(TITLE)) {
+                    TITLE = title;
+                }
+                if (isEmpty(GroupConstructFragment.TITLE)) {
+                    GroupConstructFragment.TITLE = title;
+                }
+                if (isEmpty(GroupsFragment.TITLE)) {
+                    GroupsFragment.TITLE = title;
+                }
                 if (!isSingle) {
                     ActivitiesFragment.HOST_GROUP = group.getId();
                 }

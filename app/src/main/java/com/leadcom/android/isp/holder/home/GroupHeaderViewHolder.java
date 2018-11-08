@@ -71,11 +71,12 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
         if (isEmpty(logo)) {
             logo = "drawable://" + R.drawable.img_default_group_icon;
         }
-        nameView.setText(Html.fromHtml(group.getName()));
+        logoView.displayImage(logo, getDimension(R.dimen.ui_static_dp_60), false, false);
+        logo = group.getName();
+        nameView.setText(Html.fromHtml(isEmpty(logo) ? "" : logo));
         nameView.setVisibility(showEditorIcon ? View.GONE : View.VISIBLE);
         minmentTag.setVisibility(group.isMM() || group.isTZ() ? View.VISIBLE : View.GONE);
         waterMarkView.setText(group.isTZ() ? R.string.ui_group_header_tongzhan_flag : R.string.ui_group_header_minmeng_flag);
-        logoView.displayImage(logo, getDimension(R.dimen.ui_static_dp_60), false, false);
         logo = group.getIntro();
         introView.setText(isEmpty(logo) ? "" : Html.fromHtml(logo.replaceAll("\n", "<br/>")));
         editIcon.setVisibility((showEditorIcon && Role.hasOperation(group.getId(), GRPOperation.GROUP_PROPERTY)) ? View.VISIBLE : View.INVISIBLE);

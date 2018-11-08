@@ -51,6 +51,7 @@ public class GroupsFragment extends GroupBaseFragment {
     private static final String PARAM_GROUPS_TYPE = "gf_param_groups_type";
 
     public static int NATURE = Organization.NatureType.NONE;
+    public static String TITLE = "";
 
     public static GroupsFragment newInstance(Bundle bundle) {
         GroupsFragment gf = new GroupsFragment();
@@ -98,7 +99,7 @@ public class GroupsFragment extends GroupBaseFragment {
             if (mRelateType == RelateGroup.RelationType.ADD) {
                 setCustomTitle(title);
             } else {
-                setCustomTitle(format("%s(%s)", StringHelper.getString(title), mGroupName));
+                setCustomTitle(isEmpty(TITLE) ? format("%s(%s)", StringHelper.getString(title), mGroupName) : TITLE);
             }
         }
         selectAll.setVisibility(mSelectable ? View.VISIBLE : View.GONE);

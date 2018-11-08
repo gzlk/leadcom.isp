@@ -31,6 +31,8 @@ import com.leadcom.android.isp.fragment.main.GroupFragment;
 import com.leadcom.android.isp.fragment.main.HomeFragment;
 import com.leadcom.android.isp.fragment.main.PersonalityFragment;
 import com.leadcom.android.isp.fragment.main.SystemMessageFragment;
+import com.leadcom.android.isp.fragment.organization.GroupConstructFragment;
+import com.leadcom.android.isp.fragment.organization.GroupsFragment;
 import com.leadcom.android.isp.helper.LogcatHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.UpgradeHelper;
@@ -255,6 +257,14 @@ public class MainActivity extends TitleActivity {
 
     private boolean hasPhoneContactPermission() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void onResume() {
+        GroupFragment.TITLE = "";
+        GroupConstructFragment.TITLE = "";
+        GroupsFragment.TITLE = "";
+        super.onResume();
     }
 
     @Override

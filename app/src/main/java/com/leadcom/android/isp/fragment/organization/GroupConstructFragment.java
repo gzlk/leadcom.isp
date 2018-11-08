@@ -34,6 +34,8 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
  */
 public class GroupConstructFragment extends GroupBaseFragment {
 
+    public static String TITLE = "";
+
     public static GroupConstructFragment newInstance(Bundle bundle) {
         GroupConstructFragment gcf = new GroupConstructFragment();
         gcf.setArguments(bundle);
@@ -56,7 +58,11 @@ public class GroupConstructFragment extends GroupBaseFragment {
         super.onActivityCreated(savedInstanceState);
         enableSwipe(false);
         isLoadingComplete(true);
-        setCustomTitle(format("%s(%s)", StringHelper.getString(R.string.ui_group_constructor_fragment_title), mGroupName));
+        if (isEmpty(TITLE)) {
+            setCustomTitle(format("%s(%s)", StringHelper.getString(R.string.ui_group_constructor_fragment_title), mGroupName));
+        } else {
+            setCustomTitle(TITLE);
+        }
     }
 
     @Override
