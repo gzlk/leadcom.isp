@@ -22,7 +22,7 @@ abstract class BaseApi implements Serializable {
     /**
      * 所有网络调用的网址前缀
      */
-    static final String URL = Cache.isReleasable() ? "https://www.py17w.com" : "http://113.108.144.2:8889";
+    static final String URL = StringHelper.getString(R.string.app_api_http_host);
 
     static final String API_VER = StringHelper.getString(Cache.isReleasable() ? R.string.app_api_version_release : R.string.app_api_version);
     /**

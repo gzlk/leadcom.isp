@@ -271,7 +271,7 @@
     <string name="ui_phone_contact_title_number" formatted="false">手机通讯录(%d人)</string>
     <string name="ui_phone_contact_waiting_read_contacts">正在读取联系人，请稍候&#8230;</string>
     <string name="ui_phone_contact_waiting_searching_contacts">正在搜索联系人，请稍候&#8230;</string>
-    <string name="ui_phone_contact_waiting_read_contacts_pagination">正在处理分页%d/%d，请稍候&#8230;</string>
+    <string name="ui_phone_contact_waiting_read_contacts_pagination" formatted="false">正在处理分页%d/%d，请稍候&#8230;</string>
     <string name="ui_phone_contact_random_contacts" formatted="false">随机生成%d个联系人(请放心，本操作仅供测试用，不会真实导入您的设备)</string>
     <string name="ui_phone_contact_waiting_pagination">正在忙，请稍候&#8230;</string>
     <string name="ui_phone_contact_nothing_read">

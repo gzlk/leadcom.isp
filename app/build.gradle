@@ -32,6 +32,7 @@ android {
         resValue "string", "app_internal_version", getInternalVersion()
         resValue "string", "app_api_version", "v2"
         resValue "string", "app_api_version_release", "v2"
+        resValue "string", "app_api_http_host", "https://www.py17w.com"
         resValue "string", "app_name_default", "树脉"
         //resValue "string", "baidu_map_lbsapi_key", "q35ELQ6M9AwVTOkEYFc34sFMe33ItqMT"
         // 正式(leadcom): e0535dd95633dfa23a6aba3a06628a55
@@ -65,6 +66,7 @@ android {
         alpha {
             initWith release
             resValue "bool", "app_allow_full_backup", "true"
+            resValue "string", "app_api_http_host", "http://113.108.144.2:8889"
             signingConfig signingConfigs.release
             debuggable true
             matchingFallbacks = ['debug', 'release']
@@ -80,6 +82,7 @@ android {
         debug {
             initWith release
             resValue "bool", "app_allow_full_backup", "true"
+            resValue "string", "app_api_http_host", "http://113.108.144.2:8889"
             signingConfig signingConfigs.release
             debuggable true
         }
