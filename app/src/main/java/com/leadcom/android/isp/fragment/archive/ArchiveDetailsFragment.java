@@ -28,6 +28,7 @@ import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.activity.MainActivity;
@@ -990,9 +991,10 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     }
 
     private View pushDialog;
-    private TextView pushTitleText, nothingText;
+    private TextView pushTitleText, nothingText, selectAllText;
     private RecyclerView concerned;
-    private View nothingView, confirmButton;
+    private View nothingView, confirmButton, selectAll;
+    private CustomTextView selectAllIcon;
     private ConcernAdapter cAdapter;
 
     private void openPushDialog() {
@@ -1005,6 +1007,10 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     nothingView = pushDialog.findViewById(R.id.ui_tool_nothing_container);
                     nothingText = pushDialog.findViewById(R.id.ui_tool_nothing_text);
                     confirmButton = pushDialog.findViewById(R.id.ui_dialog_button_confirm);
+                    selectAll = pushDialog.findViewById(R.id.ui_tool_view_select_all_root);
+                    selectAllIcon = pushDialog.findViewById(R.id.ui_tool_view_select_all_icon);
+                    selectAllText = pushDialog.findViewById(R.id.ui_tool_view_select_all_title);
+                    selectAllText.setText(Html.fromHtml(StringHelper.getString(R.string.ui_group_activity_editor_participator_select_all_4)));
                     concerned = pushDialog.findViewById(R.id.ui_tool_swipe_refreshable_recycler_view);
                     concerned.setLayoutManager(new CustomLinearLayoutManager(concerned.getContext()));
                     cAdapter = new ConcernAdapter();
@@ -1083,6 +1089,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
                 cAdapter.clear();
+                selectAll.setVisibility(pushingType == PUSH_GROUPS ? View.VISIBLE : View.GONE);
                 switch (pushingType) {
                     case PUSH_GROUPS:
                         pushTitleText.setText(R.string.ui_text_archive_details_push_dialog_title);
@@ -1097,6 +1104,22 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                         showSquadsMember();
                         break;
                 }
+            }
+        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+            @Override
+            public int[] clickEventHandleIds() {
+                return new int[]{R.id.ui_tool_view_select_all_root};
+            }
+
+            @Override
+            public boolean onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.ui_tool_view_select_all_root:
+                        // 全选所有组织的“组织档案”
+                        selectAllConcernedDefaultClassify();
+                        break;
+                }
+                return false;
             }
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
@@ -1249,6 +1272,39 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     }
 
+    /**
+     * 全选所有关联组织的默认类别
+     */
+    private void selectAllConcernedDefaultClassify() {
+        if (cAdapter.getItemCount() <= 0) {
+            return;
+        }
+        Iterator<Model> iterator = cAdapter.iterator();
+        while (iterator.hasNext()) {
+            Model model = iterator.next();
+            if (model instanceof Concern) {
+                Concern concern = (Concern) model;
+                concern.setSelected(true);
+                cAdapter.update(concern);
+                String classifyId = concern.getId() + "classify";
+                for (Classify classify : concern.getDocClassifyList()) {
+                    if (isEmpty(classify.getId())) {
+                        classify.setSelected(true);
+                        classify.setId(classifyId);
+                    } else if (classify.getId().equals(classifyId)) {
+                        classify.setSelected(true);
+                    } else {
+                        classify.setSelected(false);
+                    }
+                    if (cAdapter.exist(classify)) {
+                        cAdapter.update(classify);
+                    }
+                }
+            }
+        }
+        selectAllIcon.setTextColor(getColor(R.color.colorPrimary));
+    }
+
     private OnViewHolderClickListener clickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
@@ -1285,6 +1341,12 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     }
                     concern.setSelected(hasSelected);
                     cAdapter.update(concern);
+                    // 检测当前是否选中的默认分类
+                    if (classify.getId().equals(concern.getId() + "classify")) {
+                        if (!classify.isSelected()) {
+                            selectAllIcon.setTextColor(getColor(R.color.textColorHintLight));
+                        }
+                    }
                 }
                 Iterator<Model> iterator = cAdapter.iterator();
                 while (iterator.hasNext()) {
