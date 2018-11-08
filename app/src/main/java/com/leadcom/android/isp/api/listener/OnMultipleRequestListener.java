@@ -15,9 +15,6 @@ import java.util.List;
 
 public abstract class OnMultipleRequestListener<Data> {
 
-    public int invtNum;
-    public int unreadNum;
-
     // 个人消息
     public int userInfoNum;
     public String lastHeadPhoto;

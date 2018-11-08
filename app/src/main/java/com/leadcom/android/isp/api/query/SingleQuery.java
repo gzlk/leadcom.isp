@@ -20,9 +20,6 @@ import java.util.ArrayList;
 public class SingleQuery<T> extends Api<T> {
 
     protected T data;
-    private ArrayList<SimpleMoment> userMmt;
-    private int actInvtStatus;
-    private int invtNum;
     // 个人消息
     private int userInfoNum;
     private String lastHeadPhoto;
@@ -37,30 +34,6 @@ public class SingleQuery<T> extends Api<T> {
 
     public void setData(T data) {
         this.data = data;
-    }
-
-    public ArrayList<SimpleMoment> getUserMmt() {
-        return userMmt;
-    }
-
-    public void setUserMmt(ArrayList<SimpleMoment> userMmt) {
-        this.userMmt = userMmt;
-    }
-
-    public int getActInvtStatus() {
-        return actInvtStatus;
-    }
-
-    public void setActInvtStatus(int actInvtStatus) {
-        this.actInvtStatus = actInvtStatus;
-    }
-
-    public int getInvtNum() {
-        return invtNum;
-    }
-
-    public void setInvtNum(int invtNum) {
-        this.invtNum = invtNum;
     }
 
     public int getUserInfoNum() {

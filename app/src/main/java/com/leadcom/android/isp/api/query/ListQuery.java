@@ -18,15 +18,6 @@ import java.util.List;
 public class ListQuery<T> extends Api<T> {
 
     private List<T> data;
-    private int unreadNum;
-
-    public int getUnreadNum() {
-        return unreadNum;
-    }
-
-    public void setUnreadNum(int unreadNum) {
-        this.unreadNum = unreadNum;
-    }
 
     public List<T> getData() {
         return data;

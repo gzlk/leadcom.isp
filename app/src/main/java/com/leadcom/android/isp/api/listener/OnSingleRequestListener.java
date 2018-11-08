@@ -24,11 +24,6 @@ public abstract class OnSingleRequestListener<Data> {
     public SingleQuery<Data> query;
 
     /**
-     * 活动邀请状态
-     */
-    public int actInviteStatus;
-
-    /**
      * 用户登录时返回的该用户关联的组织列表
      */
     public ArrayList<RelateGroup> userRelateGroupList;

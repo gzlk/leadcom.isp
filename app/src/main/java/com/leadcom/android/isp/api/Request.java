@@ -22,6 +22,7 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.listener.OnHttpListener;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.query.FullTextQuery;
+import com.leadcom.android.isp.task.AsyncExecutableTask;
 import com.litesuits.http.LiteHttp;
 import com.litesuits.http.log.HttpLog;
 import com.litesuits.http.request.JsonRequest;
@@ -119,7 +120,7 @@ public abstract class Request<T> {
                 .setConnectTimeout(15000)
                 .setSocketTimeout(15000);
         accessToken = Cache.cache().accessToken;
-        initializeDao();
+        //initializeDao();
         relogin = false;
     }
 
@@ -158,7 +159,6 @@ public abstract class Request<T> {
     }
 
     private boolean relogin = false;
-    protected Dao<T> dao;
     /**
      * 是否支持直接保存
      */
@@ -166,11 +166,11 @@ public abstract class Request<T> {
 
     protected abstract Class<T> getType();
 
-    private void initializeDao() {
-        if (null == dao) {
-            dao = new Dao<>(getType());
-        }
-    }
+//    private void initializeDao() {
+//        if (null == dao) {
+//            dao = new Dao<>(getType());
+//        }
+//    }
 
     protected void save(T t) {
         if (!directlySave) {
@@ -178,12 +178,7 @@ public abstract class Request<T> {
             return;
         }
         if (!relogin && null != t) {
-            initializeDao();
-            try {
-                dao.save(t);
-            } catch (Exception ignore) {
-                ignore.printStackTrace();
-            }
+            new SaveTask(t, getType()).start();
         }
     }
 
@@ -193,11 +188,34 @@ public abstract class Request<T> {
             return;
         }
         if (!relogin && null != list && list.size() > 0) {
-            initializeDao();
-            try {
-                dao.save(list);
-            } catch (Exception ignore) {
-                ignore.printStackTrace();
+            new SaveTask(list, getType()).start();
+        }
+    }
+
+    private class SaveTask extends Thread {
+        private T object;
+        private List<T> saveList;
+        private Dao<T> dao;
+        private Class<T> cls;
+
+        SaveTask(T t, Class<T> clazz) {
+            object = t;
+            cls = clazz;
+        }
+
+        SaveTask(List<T> list, Class<T> clazz) {
+            saveList = list;
+            cls = clazz;
+        }
+
+        @Override
+        public void run() {
+            dao = new Dao<>(cls);
+            if (null != object) {
+                //dao.save(object);
+            }
+            if (null != saveList) {
+                //dao.save(saveList);
             }
         }
     }
@@ -224,7 +242,6 @@ public abstract class Request<T> {
                                 PaginationQuery<T> paginationQuery = (PaginationQuery<T>) data;
                                 Pagination<T> pagination = paginationQuery.getData();
                                 save(pagination.getList());
-                                onMultipleRequestListener.invtNum = paginationQuery.getInvtNum();
                                 onMultipleRequestListener.userInfoNum = paginationQuery.getUserInfoNum();
                                 onMultipleRequestListener.lastHeadPhoto = paginationQuery.getLastHeadPhoto();
                                 onMultipleRequestListener.onResponse(pagination.getList(), data.success(),
@@ -241,7 +258,6 @@ public abstract class Request<T> {
                             if (null != onMultipleRequestListener) {
                                 ListQuery<T> listQuery = (ListQuery<T>) data;
                                 save(listQuery.getData());
-                                onMultipleRequestListener.unreadNum = listQuery.getUnreadNum();
                                 onMultipleRequestListener.onResponse(listQuery.getData(), data.success(),
                                         1, PAGE_SIZE, listQuery.getData().size(), 1);
                             }
@@ -251,7 +267,6 @@ public abstract class Request<T> {
                             if (null != onSingleRequestListener) {
                                 onSingleRequestListener.query = singleQuery;
                                 onSingleRequestListener.userRelateGroupList = singleQuery.getUserRelateGroupList();
-                                onSingleRequestListener.actInviteStatus = singleQuery.getActInvtStatus();
                                 if (singleQuery.getData() instanceof FullTextQuery) {
                                     onSingleRequestListener.onResponse(singleQuery.getData(), data.success(), response.getRawString());
                                 } else {

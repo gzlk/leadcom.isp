@@ -86,31 +86,56 @@ public class MemberRequest extends Request<Member> {
         return format("%s%s", api, action);
     }
 
-    private void saveMemberRole(Member member) {
-        if (null != member) {
-            if (null != member.getGroRole()) {
-                Role.save(member.getGroRole());
-                Role role = member.getGroRole();
-                member.setRoleId(role.getId());
-                member.setRoleName(role.getRoleName());
-            }
-        }
-    }
-
     @Override
     protected void save(Member member) {
-        saveMemberRole(member);
+        new SaveTask(member).start();
         super.save(member);
     }
 
     @Override
     protected void save(List<Member> list) {
         if (null != list && list.size() > 0) {
-            for (Member member : list) {
-                saveMemberRole(member);
-            }
+            new SaveTask(list).start();
         }
         super.save(list);
+    }
+
+    private class SaveTask extends Thread {
+        SaveTask(Member member) {
+            this.member = member;
+        }
+
+        SaveTask(List<Member> list) {
+            this.list = list;
+        }
+
+        private Member member;
+        private List<Member> list;
+
+        @Override
+        public void run() {
+            if (null != member) {
+                saveMemberRole(member);
+            }
+            if (null != list) {
+                for (Member member : list) {
+                    saveMemberRole(member);
+                }
+            }
+            super.run();
+        }
+
+        private void saveMemberRole(Member member) {
+            if (null != member) {
+                if (null != member.getGroRole()) {
+                    Role.save(member.getGroRole());
+                    Role role = member.getGroRole();
+                    member.setRoleId(role.getId());
+                    member.setRoleName(role.getRoleName());
+                }
+            }
+        }
+
     }
 
     @Override
