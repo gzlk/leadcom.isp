@@ -41,6 +41,8 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
     private View minmentTag;
     @ViewId(R.id.ui_holder_view_archive_watermark_text)
     private CustomTextView waterMarkView;
+    @ViewId(R.id.ui_holder_view_group_header_name)
+    private TextView nameView;
     @ViewId(R.id.ui_holder_view_group_header_intro)
     private TextView introView;
     @ViewId(R.id.ui_holder_view_group_header_edit_icon)
@@ -69,6 +71,8 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
         if (isEmpty(logo)) {
             logo = "drawable://" + R.drawable.img_default_group_icon;
         }
+        nameView.setText(Html.fromHtml(group.getName()));
+        nameView.setVisibility(showEditorIcon ? View.GONE : View.VISIBLE);
         minmentTag.setVisibility(group.isMM() || group.isTZ() ? View.VISIBLE : View.GONE);
         waterMarkView.setText(group.isTZ() ? R.string.ui_group_header_tongzhan_flag : R.string.ui_group_header_minmeng_flag);
         logoView.displayImage(logo, getDimension(R.dimen.ui_static_dp_60), false, false);
