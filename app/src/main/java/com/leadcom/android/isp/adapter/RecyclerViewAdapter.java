@@ -401,7 +401,14 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
      */
     protected abstract int comparator(T item1, T item2);
 
-    private int lastHandlingPage = 0, maxPage = 0;
+    private int lastHandlingPage = 0, maxPage = 0, pageSize = 0;
+
+    /**
+     * 设置页码大小
+     */
+    public void setPagerSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
 
     private static class DataHandingTask<VH extends RecyclerView.ViewHolder, T> extends AsyncExecutableTask<Void, Integer, Void> {
 
@@ -415,7 +422,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
         private SoftReference<RecyclerViewAdapter<VH, T>> adapterSoftReference;
         private List<T> data;
 
-        private int maxCount;
+        private int maxCount, pageSize;
         private boolean isBreak;
 
         @Override
@@ -423,8 +430,12 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
             if (null != listenerSoftReference.get()) {
                 listenerSoftReference.get().onStart();
             }
+            pageSize = adapterSoftReference.get().pageSize;
+            if (pageSize <= 0) {
+                pageSize = PAGER_SIZE;
+            }
             maxCount = data.size();
-            adapterSoftReference.get().maxPage = maxCount / PAGER_SIZE + (maxCount % PAGER_SIZE > 0 ? 1 : 0);
+            adapterSoftReference.get().maxPage = maxCount / pageSize + (maxCount % pageSize > 0 ? 1 : 0);
             //adapterSoftReference.get().clear();
             super.doBeforeExecute();
         }
@@ -473,8 +484,8 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
         @Override
         protected void doProgress(Integer... values) {
             adapterSoftReference.get().lastHandlingPage = values[0];
-            int start = values[0] * PAGER_SIZE;
-            int end = start + PAGER_SIZE;
+            int start = values[0] * pageSize;
+            int end = start + pageSize;
             if (end >= maxCount) {
                 end = maxCount - 1;
             }
