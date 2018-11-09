@@ -370,18 +370,19 @@ public class ArchiveRequest extends Request<Archive> {
         }
     }
 
-    public void push(String archiveId, ArrayList<ArchivePushTarget> targets) {
-        if (null == targets || targets.size() < 1) {
-            ToastHelper.make().showMsg(R.string.ui_text_archive_details_push_no_group);
-        } else {
-            JSONObject object = getDocId(archiveId);
-            try {
+    public void push(String archiveId, ArrayList<ArchivePushTarget> targets, ArrayList<String> groups) {
+        JSONObject object = getDocId(archiveId);
+        try {
+            if (targets.size() > 0) {
                 object.put("targetGroups", new JSONArray(ArchivePushTarget.toJson(targets)));
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-            executeHttpRequest(getRequest(BoolArchive.class, group(PUSH), object.toString(), HttpMethods.Post));
+            if (groups.size() > 0) {
+                object.put("groupIds", new JSONArray(groups));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        executeHttpRequest(getRequest(BoolArchive.class, group(PUSH), object.toString(), HttpMethods.Post));
     }
 
     /**

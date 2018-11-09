@@ -1149,6 +1149,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
             private void preparePushGroups() {
                 ArrayList<ArchivePushTarget> targets = new ArrayList<>();
+                ArrayList<String> groups = new ArrayList<>();
                 Iterator<Model> iterator = cAdapter.iterator();
                 while (iterator.hasNext()) {
                     Model model = iterator.next();
@@ -1162,15 +1163,17 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                                     if (classify.isSelected()) {
                                         if (!classify.getId().contains("classify")) {
                                             target.setDocClassifyId(classify.getId());
+                                            targets.add(target);
+                                        } else {
+                                            groups.add(concern.getGroupId());
                                         }
                                     }
                                 }
                             }
-                            targets.add(target);
                         }
                     }
                 }
-                pushArchive(targets);
+                pushArchive(targets, groups);
             }
 
             private void prepareClassify() {
@@ -1238,7 +1241,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         }).push(groupIds, mQueryId);
     }
 
-    private void pushArchive(ArrayList<ArchivePushTarget> targets) {
+    private void pushArchive(ArrayList<ArchivePushTarget> targets, ArrayList<String> groups) {
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
@@ -1247,7 +1250,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     ToastHelper.make().showMsg(message);
                 }
             }
-        }).push(mQueryId, targets);
+        }).push(mQueryId, targets, groups);
     }
 
     private void classifyArchive(String classifyId, final String classifyName) {
@@ -1633,7 +1636,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     @Override
     protected void shareToReply() {
-        ArchiveReplyFragment.open(this, mQueryId, mArchive.getTitle(), mArchive.getGroupName(), mArchive.getCreateDate(), mArchive.getContent());
+        ArchiveReplyFragment.open(this, mArchive);
     }
 
     @Override
