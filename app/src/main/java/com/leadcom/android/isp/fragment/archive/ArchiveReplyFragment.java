@@ -86,14 +86,15 @@ public class ArchiveReplyFragment extends BaseTransparentSupportFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         mArchive = (Archive) bundle.getSerializable(PARAM_JSON);
-        if (isEmpty(mArchive.getFromGroupName())) {
-            loadingArchiveDetails();
-        }
     }
 
     @Override
     public void doingInResume() {
-        initializeHolders();
+        if (isEmpty(mArchive.getFromGroupName())) {
+            loadingArchiveDetails();
+        } else {
+            initializeHolders();
+        }
     }
 
     @Override
@@ -148,6 +149,8 @@ public class ArchiveReplyFragment extends BaseTransparentSupportFragment {
         String content = mArchive.getContent();
         if (!isEmpty(content)) {
             content = content.replaceAll("<img.*?>", "");
+        } else {
+            content = "";
         }
         sourceContent.setText(EmojiUtility.getEmojiString(sourceContent.getContext(), content, true));
     }
