@@ -100,6 +100,7 @@
     <string name="ui_base_text_quite">退出</string>
     <string name="ui_base_text_confirm">确定</string>
     <string name="ui_base_text_continue">继续</string>
+    <string name="ui_base_text_continue_edit">继续编辑</string>
     <string name="ui_base_text_commit">提交</string>
     <string name="ui_base_text_agree">同意</string>
     <string name="ui_base_text_disagree">不同意</string>
