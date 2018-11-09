@@ -203,7 +203,7 @@ public class ArchiveSearchFragment extends GroupBaseFragment {
         if (!isEmpty(mSquadName)) {
             title = format("支部%s(%s)", title, mSquadName);
         } else if (!isEmpty(mGroupName)) {
-            title = format("%s%s(%s)", (searchingFunction == SEARCH_DUTY_SQUAD ? "支部" : "组织"), title, mGroupName);
+            title = format("%s%s(%s)", (searchingFunction == SEARCH_DUTY_SQUAD ? "支部" : (title.contains("组织") ? "" : "组织")), title, mGroupName);
         }
         setCustomTitle(title);
 
@@ -1154,12 +1154,12 @@ public class ArchiveSearchFragment extends GroupBaseFragment {
                     //if (duty.getDocNum() <= 0) {
                     //    ToastHelper.make().showMsg(isSquad ? R.string.ui_group_member_duty_count_no_archive_squad : R.string.ui_group_member_duty_count_no_archive);
                     //} else {
-                        if (isSquad) {
-                            open(ArchiveSearchFragment.this, SEARCH_DUTY, mQueryId, duty.getSquadId(), "", mGroupName, duty.getSquadName());
-                        } else {
-                            MemberDutyDetailsFragment.open(ArchiveSearchFragment.this, mQueryId, mSquadId, duty.getUserId(), duty.getUserName(), MemberDutyRequest.OPE_ARCHIVE,
-                                    duty.getDocNum(), Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
-                        }
+                    if (isSquad) {
+                        open(ArchiveSearchFragment.this, SEARCH_DUTY, mQueryId, duty.getSquadId(), "", mGroupName, duty.getSquadName());
+                    } else {
+                        MemberDutyDetailsFragment.open(ArchiveSearchFragment.this, mQueryId, mSquadId, duty.getUserId(), duty.getUserName(), MemberDutyRequest.OPE_ARCHIVE,
+                                duty.getDocNum(), Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
+                    }
                     //}
                     break;
                 case R.id.ui_holder_view_group_member_duty_count_activity:
@@ -1167,12 +1167,12 @@ public class ArchiveSearchFragment extends GroupBaseFragment {
                     //if (duty.getActivityNum() <= 0) {
                     //    ToastHelper.make().showMsg(isSquad ? R.string.ui_group_member_duty_count_no_activity_squad : R.string.ui_group_member_duty_count_no_activity);
                     //} else {
-                        if (isSquad) {
-                            open(ArchiveSearchFragment.this, SEARCH_DUTY, mQueryId, duty.getSquadId(), "", mGroupName, duty.getSquadName());
-                        } else {
-                            MemberDutyDetailsFragment.open(ArchiveSearchFragment.this, mQueryId, mSquadId, duty.getUserId(), duty.getUserName(), MemberDutyRequest.OPE_ACTIVITY,
-                                    duty.getActivityNum(), Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
-                        }
+                    if (isSquad) {
+                        open(ArchiveSearchFragment.this, SEARCH_DUTY, mQueryId, duty.getSquadId(), "", mGroupName, duty.getSquadName());
+                    } else {
+                        MemberDutyDetailsFragment.open(ArchiveSearchFragment.this, mQueryId, mSquadId, duty.getUserId(), duty.getUserName(), MemberDutyRequest.OPE_ACTIVITY,
+                                duty.getActivityNum(), Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
+                    }
                     //}
                     break;
             }

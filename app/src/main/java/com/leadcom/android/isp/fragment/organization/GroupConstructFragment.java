@@ -52,6 +52,7 @@ public class GroupConstructFragment extends GroupBaseFragment {
     private ItemAdapter mAdapter;
     private String[] items;
     private String mGroupName;
+    private boolean isOpenedTopest = false;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -59,10 +60,11 @@ public class GroupConstructFragment extends GroupBaseFragment {
         enableSwipe(false);
         isLoadingComplete(true);
         if (isEmpty(TITLE)) {
-            setCustomTitle(format("%s(%s)", StringHelper.getString(R.string.ui_group_constructor_fragment_title), mGroupName));
-        } else {
-            setCustomTitle(TITLE);
+            TITLE = format("%s(%s)", StringHelper.getString(R.string.ui_group_constructor_fragment_title), mGroupName);
+            // 标记是打开的顶层组织架构
+            isOpenedTopest = true;
         }
+        setCustomTitle(TITLE);
     }
 
     @Override
@@ -102,7 +104,7 @@ public class GroupConstructFragment extends GroupBaseFragment {
         public void onClick(View view, int index) {
             SimpleClickableItem item = mAdapter.get(index);
             if (item.isDisabled()) {
-                showToast(item.getIndex());
+                //showToast(item.getIndex());
                 return;
             }
             switch (item.getIndex()) {
@@ -154,9 +156,9 @@ public class GroupConstructFragment extends GroupBaseFragment {
             @Override
             public void onResponse(List<RelateGroup> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-
                 SimpleClickableItem item = new SimpleClickableItem(items[type == RelateGroup.RelationType.SUPERIOR ? 0 : 1]);
-                item.setDisabled(!success || null == list || list.size() <= 0);
+                // 上级不再允许查看下级组织的上级组织列表
+                item.setDisabled((!isOpenedTopest && type == RelateGroup.RelationType.SUPERIOR) || !success || null == list || list.size() <= 0);
                 if (mAdapter.exist(item)) {
                     mAdapter.update(item);
                 }

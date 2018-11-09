@@ -888,9 +888,6 @@ public class GroupFragment extends GroupBaseFragment {
                 if (isEmpty(TITLE)) {
                     TITLE = title;
                 }
-                if (isEmpty(GroupConstructFragment.TITLE)) {
-                    GroupConstructFragment.TITLE = title;
-                }
                 if (isEmpty(GroupsFragment.TITLE)) {
                     GroupsFragment.TITLE = title;
                 }
