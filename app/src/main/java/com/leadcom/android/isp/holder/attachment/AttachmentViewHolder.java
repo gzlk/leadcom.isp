@@ -52,6 +52,8 @@ public class AttachmentViewHolder extends BaseViewHolder {
     private TextView sizeTextView;
     @ViewId(R.id.ui_holder_view_attachment_uploading)
     private View loadingView;
+    @ViewId(R.id.ui_holder_view_attachment_uploaded)
+    private View uploadedView;
     @ViewId(R.id.ui_holder_view_attachment_delete)
     private CustomTextView deleteView;
 
@@ -108,6 +110,7 @@ public class AttachmentViewHolder extends BaseViewHolder {
         }
         loadingView.setVisibility(attachment.isSelected() ? View.VISIBLE : View.GONE);
         deleteView.setVisibility(attachment.isSelected() ? View.GONE : View.VISIBLE);
+        uploadedView.setVisibility(!isEmpty(attachment.getFullPath()) && Utils.isUrl(attachment.getFullPath()) ? View.VISIBLE : View.GONE);
     }
 
     public static int getFileExtension(String ext) {

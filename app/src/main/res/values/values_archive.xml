@@ -80,6 +80,7 @@
     <string name="ui_text_archive_creator_editor_attachment_dialog_desc">选择您要添加的附件</string>
     <string name="ui_text_archive_creator_editor_attachment_dialog_desc1">选择类型添加附件</string>
     <string name="ui_text_archive_creator_editor_attachment_dialog_confirm_text">上传附件</string>
+    <string name="ui_text_archive_creator_editor_attachment_dialog_attachment_has_uploaded">已上传</string>
     <dimen name="ui_dimen_archive_creator_editor_attachment_dialog_button_size">@dimen/ui_static_dp_70</dimen>
 
     <string name="ui_text_archive_creator_editor_title_blank">[无标题]</string>

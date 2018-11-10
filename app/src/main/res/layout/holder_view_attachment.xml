@@ -3,105 +3,144 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/ui_base_border_size_normal"
-    android:background="@android:color/white"
-    android:gravity="center_vertical"
-    android:minHeight="@dimen/ui_base_dimen_button_height"
-    android:orientation="horizontal">
-
-    <com.hlk.hlklib.lib.view.CorneredView
-        android:id="@+id/ui_holder_view_attachment_icon_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/ui_static_dp_5"
-        android:gravity="center"
-        android:padding="@dimen/ui_static_dp_8"
-        app:cv_background="@color/colorPrimary"
-        app:cv_background_type="fill"
-        app:cv_border_size="@dimen/ui_static_dp_zero"
-        app:cv_corner_size="@dimen/ui_base_dimen_button_corner_size">
-
-        <com.hlk.hlklib.lib.view.CustomTextView
-            android:id="@+id/ui_holder_view_attachment_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ui_icon_camera"
-            android:textColor="@color/textColorLight" />
-    </com.hlk.hlklib.lib.view.CorneredView>
-
-    <com.leadcom.android.isp.lib.view.ImageDisplayer
-        android:id="@+id/ui_holder_view_attachment_image"
-        android:layout_width="@dimen/ui_static_dp_30"
-        android:layout_height="@dimen/ui_static_dp_30"
-        android:layout_marginStart="@dimen/ui_static_dp_5"
-        android:layout_marginEnd="@dimen/ui_static_dp_5"
-        android:visibility="gone"
-        app:id_image_scale_type="centerCrop"
-        app:id_image_src="@mipmap/img_image_default"
-        app:id_image_type="rounded" />
+    android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/ui_holder_view_attachment_content"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_marginBottom="@dimen/ui_base_border_size_normal"
+        android:background="@android:color/white"
         android:gravity="center_vertical"
-        android:orientation="vertical">
+        android:minHeight="@dimen/ui_base_dimen_button_height"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/ui_holder_view_attachment_name"
-            android:layout_width="match_parent"
+        <com.hlk.hlklib.lib.view.CorneredView
+            android:id="@+id/ui_holder_view_attachment_icon_container"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="middle"
-            android:singleLine="true"
-            android:text="@string/app_name" />
+            android:layout_margin="@dimen/ui_static_dp_5"
+            android:gravity="center"
+            android:padding="@dimen/ui_static_dp_8"
+            app:cv_background="@color/colorPrimary"
+            app:cv_background_type="fill"
+            app:cv_border_size="@dimen/ui_static_dp_zero"
+            app:cv_corner_size="@dimen/ui_base_dimen_button_corner_size">
 
-        <LinearLayout
-            android:id="@+id/ui_holder_view_attachment_additional"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/ui_holder_view_attachment_path"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ellipsize="middle"
-                android:singleLine="true"
-                android:textColor="@color/textColorHint"
-                android:textSize="@dimen/ui_base_text_size_little" />
-
-            <TextView
-                android:id="@+id/ui_holder_view_attachment_size"
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/ui_holder_view_attachment_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/textColorHint"
-                android:textSize="@dimen/ui_base_text_size_little" />
+                android:text="@string/ui_icon_camera"
+                android:textColor="@color/textColorLight" />
+        </com.hlk.hlklib.lib.view.CorneredView>
+
+        <com.leadcom.android.isp.lib.view.ImageDisplayer
+            android:id="@+id/ui_holder_view_attachment_image"
+            android:layout_width="@dimen/ui_static_dp_30"
+            android:layout_height="@dimen/ui_static_dp_30"
+            android:layout_marginStart="@dimen/ui_static_dp_5"
+            android:layout_marginEnd="@dimen/ui_static_dp_5"
+            android:visibility="gone"
+            app:id_image_scale_type="centerCrop"
+            app:id_image_src="@mipmap/img_image_default"
+            app:id_image_type="rounded" />
+
+        <LinearLayout
+            android:id="@+id/ui_holder_view_attachment_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/ui_holder_view_attachment_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:text="@string/app_name" />
+
+            <LinearLayout
+                android:id="@+id/ui_holder_view_attachment_additional"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/ui_holder_view_attachment_path"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:textColor="@color/textColorHint"
+                    android:textSize="@dimen/ui_base_text_size_little" />
+
+                <TextView
+                    android:id="@+id/ui_holder_view_attachment_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textColorHint"
+                    android:textSize="@dimen/ui_base_text_size_little" />
+            </LinearLayout>
+
         </LinearLayout>
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+                android:id="@+id/ui_holder_view_attachment_uploading"
+                android:layout_width="@dimen/ui_static_dp_40"
+                android:layout_height="@dimen/ui_static_dp_40"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:mlpb_enable_circle_background="false"
+                app:mlpb_progress_color="@color/colorProgressing"
+                app:mlpb_progress_stoke_width="@dimen/ui_static_dp_2"
+                app:mlpb_progress_text_visibility="invisible" />
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/ui_holder_view_attachment_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:minHeight="@dimen/ui_base_dimen_button_height"
+                android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+                android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+                android:text="@string/ui_icon_delete"
+                app:ctv_active_color="@color/colorPrimary"
+                app:ctv_normal_color="@color/textColor" />
+
+            <LinearLayout
+                android:id="@+id/ui_holder_view_attachment_uploaded"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/ui_holder_view_attachment_delete"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ui_static_dp_2"
+                    android:text="@string/ui_text_archive_creator_editor_attachment_dialog_attachment_has_uploaded"
+                    android:textColor="@color/colorCaution"
+                    android:textSize="@dimen/ui_base_text_size_micro" />
+
+                <com.hlk.hlklib.lib.view.CustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ui_static_dp_5"
+                    android:text="@string/ui_icon_upload"
+                    android:textColor="@color/colorCaution"
+                    android:textSize="@dimen/ui_base_text_size_micro" />
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
-    <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
-        android:id="@+id/ui_holder_view_attachment_uploading"
-        android:layout_width="@dimen/ui_static_dp_40"
-        android:layout_height="@dimen/ui_static_dp_40"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        app:mlpb_enable_circle_background="false"
-        app:mlpb_progress_color="@color/colorProgressing"
-        app:mlpb_progress_stoke_width="@dimen/ui_static_dp_2"
-        app:mlpb_progress_text_visibility="invisible" />
-
-    <com.hlk.hlklib.lib.view.CustomTextView
-        android:id="@+id/ui_holder_view_attachment_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:minHeight="@dimen/ui_base_dimen_button_height"
-        android:paddingStart="@dimen/ui_base_dimen_margin_padding"
-        android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-        android:text="@string/ui_icon_delete"
-        app:ctv_active_color="@color/colorPrimary"
-        app:ctv_normal_color="@color/textColor" />
+    <include layout="@layout/tool_view_half_line_horizontal" />
 </LinearLayout>
