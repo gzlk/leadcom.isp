@@ -16,6 +16,7 @@ import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -453,6 +454,12 @@ public class Attachment extends Model {
     }
 
     public long getSize() {
+        if (size <= 0 && isLocalFile()) {
+            File file = new File(fullPath);
+            if (file.exists()) {
+                size = file.length();
+            }
+        }
         return size;
     }
 

@@ -75,14 +75,15 @@
                     android:ellipsize="middle"
                     android:singleLine="true"
                     android:textColor="@color/textColorHint"
-                    android:textSize="@dimen/ui_base_text_size_little" />
+                    android:textSize="@dimen/ui_base_text_size_tiny" />
 
                 <TextView
                     android:id="@+id/ui_holder_view_attachment_size"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/textColorHint"
-                    android:textSize="@dimen/ui_base_text_size_little" />
+                    android:layout_marginStart="@dimen/ui_static_dp_3"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/ui_base_text_size_tiny" />
             </LinearLayout>
 
         </LinearLayout>
@@ -129,7 +130,8 @@
                     android:layout_marginEnd="@dimen/ui_static_dp_2"
                     android:text="@string/ui_text_archive_creator_editor_attachment_dialog_attachment_has_uploaded"
                     android:textColor="@color/colorCaution"
-                    android:textSize="@dimen/ui_base_text_size_micro" />
+                    android:textSize="@dimen/ui_base_text_size_micro"
+                    android:visibility="gone" />
 
                 <com.hlk.hlklib.lib.view.CustomTextView
                     android:layout_width="wrap_content"

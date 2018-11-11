@@ -98,6 +98,7 @@
     <string name="ui_icon_email">&#xe6b4;</string>
     <string name="ui_icon_sex">&#xe6b0;</string>
     <string name="ui_icon_upload">&#xe6bc;</string>
+    <string name="ui_icon_alarm">&#xe6bd;</string>
 
     <!--系统消息界面的icon-->
     <string name="ui_icon_system_msg">&#xe614;</string>

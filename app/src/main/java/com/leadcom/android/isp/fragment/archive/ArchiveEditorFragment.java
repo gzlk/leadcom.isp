@@ -77,8 +77,10 @@ import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Squad;
 import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.service.DraftService;
+import com.leadcom.android.isp.task.AsyncExecutableTask;
 
 import java.io.File;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -264,6 +266,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private View participantView1;
     @ViewId(R.id.ui_tool_attachment_button_upload)
     private View attachmentUploadView;
+    @ViewId(R.id.ui_tool_attachment_upload_used_times)
+    private View attachmentUploadUsedTimes;
+    @ViewId(R.id.ui_tool_attachment_upload_used_times_text)
+    private TextView attachmentUploadUsedTimer;
     @ViewId(R.id.ui_archive_creator_rich_editor_template)
     private View templateView;
     @ViewId(R.id.ui_tool_swipe_refreshable_recycler_view)
@@ -635,7 +641,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 if (null != data) {
                     mediaFiles.clear();
                     mediaFiles.addAll(data.<MediaFile>getParcelableArrayListExtra(FilePickerActivity.MEDIA_FILES));
-                    aAdapter.clear();
+                    //aAdapter.clear();
                     for (MediaFile file : mediaFiles) {
                         Attachment attachment = new Attachment(file.getPath());
                         attachment.setUrl(file.getPath());
@@ -1552,6 +1558,44 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     protected void onUploadingFailed() {
         showUploading(false);
         ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_attachment_uploading_failed);
+        stopUploadTimer();
+        resetWaitingUploadFiles();
+    }
+
+    private void stopUploadTimer() {
+        if (null != uploadTimer) {
+            uploadTimer.isStopped = true;
+        }
+    }
+
+    private void resetWaitingUploadFiles() {
+        if (aAdapter.getItemCount() > 0) {
+            Iterator<Attachment> iterator = aAdapter.iterator();
+            while (iterator.hasNext()) {
+                Attachment attachment = iterator.next();
+                if (attachment.isLocalFile()) {
+                    attachment.setSelected(false);
+                    aAdapter.update(attachment);
+                }
+            }
+        }
+    }
+
+    /**
+     * 上传完毕之后清理列表中的本地文件
+     */
+    private void clearUploadedFiles() {
+        if (aAdapter.getItemCount() > 0) {
+            Iterator<Attachment> iterator = aAdapter.iterator();
+            while (iterator.hasNext()) {
+                Attachment attachment = iterator.next();
+                if (attachment.isLocalFile()) {
+                    // 清理所有本地文件
+                    iterator.remove();
+                    aAdapter.remove(attachment);
+                }
+            }
+        }
     }
 
     private OnFileUploadingListener uploadingListener = new OnFileUploadingListener() {
@@ -1563,6 +1607,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onUploadingComplete(ArrayList<Attachment> uploaded) {
             showUploading(false);
+            stopUploadTimer();
             switch (uploadType) {
                 case UP_IMAGE:
                     // 图片上传完毕，插入图片
@@ -1595,7 +1640,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     // 上传了多个附件（一次最多9个）
                     //mEditor.insertHtml("");
                     if (null != uploaded) {
-                        aAdapter.clear();
+                        // 上传成功之后本地已选中的记录清空
+                        mediaFiles.clear();
+                        clearUploadedFiles();
+                        //aAdapter.clear();
                         for (Attachment attachment : uploaded) {
                             if (attachment.isImage()) {
                                 mArchive.getImage().add(attachment);
@@ -1957,7 +2005,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private ArrayList<MediaFile> mediaFiles = new ArrayList<>();
 
     private Intent getIntent(int type) {
-        maxSelectable = 9;
+        if (maxSelectable != 9) {
+            maxSelectable = 9;
+        }
         Intent intent = new Intent(Activity(), FilePickerActivity.class);
         Configurations configurations = new Configurations.Builder()
                 .setCheckPermission(true)
@@ -1969,7 +2019,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 .setShowImages(type == UP_IMAGE)
                 .setShowFiles(type == UP_ATTACH)
                 .setSkipZeroSizeFiles(true)
-                .setMaxSelection(getMaxSelectable())
+                .setMaxVideoFileSize(20 * 1024 * 1024)
+                .setMaxSelection(getMaxSelectable() - aAdapter.getItemCount() + mediaFiles.size())
                 .setSuffixes("txt", "pdf", "zip", "rar", "doc", "docx", "ppt", "pptx", "xls", "xlsx")
                 .build();
         intent.putExtra(FilePickerActivity.CONFIGS, configurations);
@@ -1977,6 +2028,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void chooseAttachment(Intent intent) {
+        if (aAdapter.getItemCount() >= getMaxSelectable()) {
+            ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_archive_label_picker_picked_max, getMaxSelectable(), "附件"));
+            return;
+        }
         startActivityForResult(intent, REQUEST_ATTACHMENT);
     }
 
@@ -1984,20 +2039,82 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         if (aAdapter.getItemCount() > 0) {
             Iterator<Attachment> iterator = aAdapter.iterator();
             getWaitingForUploadFiles().clear();
+            long maxLength = 0;
             while (iterator.hasNext()) {
                 Attachment attachment = iterator.next();
-                if (attachment.getFullPath().charAt(0) == '/') {
+                if (attachment.isLocalFile()) {
                     // 是本地文件时，放入待上传列表
                     getWaitingForUploadFiles().add(attachment.getFullPath());
                     attachment.setSelected(true);
+                    maxLength += attachment.getSize();
                     aAdapter.update(attachment);
                 }
             }
             if (getWaitingForUploadFiles().size() > 0) {
                 uploadType = UP_ATTACH;
+                uploadTimer = new UploadTimer(attachmentUploadUsedTimes, attachmentUploadUsedTimer);
+                uploadTimer.totalLength = maxLength;
+                uploadTimer.exec();
                 showUploading(true);
                 uploadFiles();
             }
+        }
+    }
+
+    private UploadTimer uploadTimer;
+
+    private static class UploadTimer extends AsyncExecutableTask<Void, Integer, Void> {
+
+        UploadTimer(View view, TextView textView) {
+            viewSoftReference = new SoftReference<>(view);
+            textViewSoftReference = new SoftReference<>(textView);
+        }
+
+        private long startTicker, totalLength;
+        private boolean isStopped = false;
+        private SoftReference<View> viewSoftReference;
+        private SoftReference<TextView> textViewSoftReference;
+
+        @Override
+        protected void doBeforeExecute() {
+            super.doBeforeExecute();
+            viewSoftReference.get().setVisibility(View.VISIBLE);
+            startTicker = System.currentTimeMillis();
+            showTimer();
+        }
+
+        @Override
+        protected void doProgress(Integer... values) {
+            showTimer();
+            super.doProgress(values);
+        }
+
+        @Override
+        protected Void doInTask(Void... voids) {
+            try {
+                while (!isStopped) {
+                    Thread.sleep(200);
+                    publishProgress(50);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        private void showTimer() {
+            long nowTicker = System.currentTimeMillis();
+            TextView textView = textViewSoftReference.get();
+            if (null != textView) {
+                String text = format("共%s，已用时 ", Utils.formatSize(totalLength)) + Utils.format("mm:ss", nowTicker - startTicker);
+                textView.setText(text);
+            }
+        }
+
+        @Override
+        protected void doAfterExecute() {
+            showTimer();
+            super.doAfterExecute();
         }
     }
 

@@ -97,18 +97,18 @@ public class AttachmentViewHolder extends BaseViewHolder {
         }
         nameTextView.setText(attachment.getName());
         pathTextView.setText(attachment.getFullPath());
-        additionalView.setVisibility(attachment.isLocalFile() ? View.VISIBLE : View.GONE);
+        //additionalView.setVisibility(attachment.isLocalFile() ? View.VISIBLE : View.GONE);
         if (attachment.isLocalFile()) {
-            File file = new File(attachment.getFullPath());
-            if (file.exists() && file.length() > 0) {
-                sizeTextView.setText(Utils.formatSize(file.length()));
+            if (attachment.getSize() > 0) {
+                sizeTextView.setText(Utils.formatSize(attachment.getSize()));
             } else {
                 sizeTextView.setText(null);
             }
         } else {
             sizeTextView.setText(attachment.getSize() > 0 ? Utils.formatSize(attachment.getSize()) : null);
         }
-        loadingView.setVisibility(attachment.isSelected() ? View.VISIBLE : View.GONE);
+        // 本地文件在上传时才显示进度条，网络文件不需要
+        loadingView.setVisibility(attachment.isLocalFile() && attachment.isSelected() ? View.VISIBLE : View.GONE);
         deleteView.setVisibility(attachment.isSelected() ? View.GONE : View.VISIBLE);
         uploadedView.setVisibility(!isEmpty(attachment.getFullPath()) && Utils.isUrl(attachment.getFullPath()) ? View.VISIBLE : View.GONE);
     }
