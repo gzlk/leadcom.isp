@@ -696,8 +696,13 @@ public class GroupFragment extends GroupBaseFragment {
                     if (list.size() > 0) {
                         dAdapter.add(line);
                     }
+                    int index = dAdapter.indexOf(line);
                     for (Classify classify : list) {
-                        dAdapter.add(classify);
+                        if (classify.getName().contains("意见箱")) {
+                            dAdapter.add(classify, index);
+                        } else {
+                            dAdapter.add(classify);
+                        }
                     }
                 }
             }

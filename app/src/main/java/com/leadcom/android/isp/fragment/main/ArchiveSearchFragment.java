@@ -210,16 +210,16 @@ public class ArchiveSearchFragment extends GroupBaseFragment {
         selectedFunction = FUNC_NONE;
 
         if (searchingFunction < SEARCH_DUTY) {
-            if (isMember(mQueryId)) {
-                setRightIcon(R.string.ui_icon_comment);
-                setRightTitleClickListener(new OnTitleButtonClickListener() {
-                    @Override
-                    public void onClick() {
-                        // 用户动态相关的消息
-                        UserMessageFragment.open(ArchiveSearchFragment.this, UserMsgRequest.TYPE_GROUP_ARCHIVE);
-                    }
-                });
-            }
+//            if (isMember(mQueryId)) {
+//                setRightIcon(R.string.ui_icon_comment);
+//                setRightTitleClickListener(new OnTitleButtonClickListener() {
+//                    @Override
+//                    public void onClick() {
+//                        // 用户动态相关的消息
+//                        UserMessageFragment.open(ArchiveSearchFragment.this, UserMsgRequest.TYPE_GROUP_ARCHIVE);
+//                    }
+//                });
+//            }
             //enableSwipe(false);
             //if (selectedFunction != SEARCH_GROUP) {
             //    isLoadingComplete(true);
