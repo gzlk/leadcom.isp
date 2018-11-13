@@ -910,6 +910,16 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         if (mArchive.isDefaultHappenDate()) {
             ToastHelper.make().showMsg(R.string.ui_group_activity_editor_happen_date_is_blank);
             return false;
+        } else {
+            Date date = Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), mArchive.getHappenDate());
+            if (isDateLessThanNow(date, 0)) {
+                ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit);
+                return false;
+            }
+            if (isDateLessThanNow(date, 24)) {
+                ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_24h_after_now);
+                return false;
+            }
         }
         mArchive.setSite(addressHolder.getValue());
         if (isEmpty(mArchive.getSite())) {
@@ -1400,19 +1410,23 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         GroupAllPickerFragment.open(this, mArchive.getGroupId(), "参与人", null, null);
     }
 
+    private boolean isDateLessThanNow(Date date, int addHours) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR, addHours);
+        return date.getTime() < calendar.getTime().getTime();
+    }
+
     private void openDateTimePicker() {
         // 发生时间
         DateTimeHelper.helper().setOnDateTimePickListener(new DateTimeHelper.OnDateTimePickListener() {
             @Override
             public void onPicked(Date date) {
                 if (mArchive.isActivity()) {
-                    Calendar calendar = Calendar.getInstance();
-                    if (date.getTime() < calendar.getTime().getTime()) {
+                    if (isDateLessThanNow(date, 0)) {
                         ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_now);
                         return;
                     }
-                    calendar.add(Calendar.HOUR, 24);
-                    if (date.getTime() < calendar.getTime().getTime()) {
+                    if (isDateLessThanNow(date, 24)) {
                         ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_24h_after_now);
                         return;
                     }

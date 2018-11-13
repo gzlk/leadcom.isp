@@ -132,6 +132,7 @@
     <string name="ui_group_activity_nothing">目前没有可参与的活动</string>
     <string name="ui_group_activity_open_reply">您在查看活动的回复</string>
     <string name="ui_group_activity_item_time" formatted="false">时间：%s</string>
+    <string name="ui_group_activity_editor_time_limit">请选择报名截止时间</string>
     <string name="ui_group_activity_editor_time_limit_less_than_now">请选择未来的时间</string>
     <string name="ui_group_activity_editor_time_limit_less_than_24h_after_now">报名时间太短(至少大于24小时)</string>
     <string name="ui_group_activity_item_delete">活动删除会一并删除该活动的所有报名记录且不能恢复，您确定继续吗？</string>
