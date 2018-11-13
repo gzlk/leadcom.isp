@@ -145,6 +145,11 @@ public class GroupCreateFragment extends BaseSwipeRefreshSupportFragment {
             // 上传完毕之后继续未完成的组织创建动作
             createOrganization();
         }
+
+        @Override
+        public void onUploadingFailed(int code, String message) {
+
+        }
     };
 
     private void tryCreateOrganization() {

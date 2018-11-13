@@ -118,14 +118,22 @@ public class UploadRequest extends Request<Upload> {
                 } else {
                     log(format("upload response fail %s", data.getMsg()));
                     ToastHelper.make().showMsg(data.getMsg());
+                    if (null != onMultipleRequestListener) {
+                        onMultipleRequestListener.failedCode = -1;
+                        onMultipleRequestListener.failedMessage = data.getMsg();
+                    }
                     fireFailedListenerEvents(data.getMsg());
                 }
             }
 
             @Override
-            public void onFailed() {
-                super.onFailed();
-                fireFailedListenerEvents("");
+            public void onFailed(int code, String message) {
+                super.onFailed(code, message);
+                if (null != onMultipleRequestListener) {
+                    onMultipleRequestListener.failedCode = code;
+                    onMultipleRequestListener.failedMessage = message;
+                }
+                fireFailedListenerEvents(message);
             }
 
             @Override

@@ -199,6 +199,11 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
             }
             addMoment(temp, Attachment.getFieldIds(uploaded));
         }
+
+        @Override
+        public void onUploadingFailed(int code, String message) {
+
+        }
     };
 
     private void addMoment(ArrayList<String> images, String fileIds) {

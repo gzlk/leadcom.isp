@@ -184,6 +184,23 @@ public final class ImageCompress {
     }
 
     /**
+     * 是否需要压缩，默认mp4、bmp、jpg、jpeg可以压缩
+     */
+    public static boolean isNeedCompress(String extension) {
+        if (StringHelper.isEmpty(extension)) return false;
+        if (extension.length() > 10) return false;
+        switch (extension.toLowerCase(Locale.getDefault())) {
+            case "bmp":
+            case "jpg":
+            case "jpeg":
+            case "mp4":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * 指定的文件扩展名是否为视频文件
      */
     public static boolean isVideo(String extension) {

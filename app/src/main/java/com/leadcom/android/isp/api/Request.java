@@ -330,8 +330,8 @@ public abstract class Request<T> {
             }
 
             @Override
-            public void onFailed() {
-                super.onFailed();
+            public void onFailed(int code, String message) {
+                super.onFailed(code, message);
                 long end = Utils.timestamp();
                 log(format("url(%s): %s\naccessToken: %s, terminalType: android%s\nsuccess: failed(time used: %dms)", methods, url, accessToken,
                         (isEmpty(body) ? "" : format("\nbody: %s\n", body)), (end - start)));

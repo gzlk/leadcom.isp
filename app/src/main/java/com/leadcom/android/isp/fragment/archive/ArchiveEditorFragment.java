@@ -1554,14 +1554,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         updatingIndicator.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
-    @Override
-    protected void onUploadingFailed() {
-        showUploading(false);
-        ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_attachment_uploading_failed);
-        stopUploadTimer();
-        resetWaitingUploadFiles();
-    }
-
     private void stopUploadTimer() {
         if (null != uploadTimer) {
             uploadTimer.isStopped = true;
@@ -1599,6 +1591,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private OnFileUploadingListener uploadingListener = new OnFileUploadingListener() {
+
         @Override
         public void onUploading(int all, int current, String file, long size, long uploaded) {
 
@@ -1679,6 +1672,26 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             uploadType = UP_NOTHING;
             // 插入完毕之后清空已上传的文件列表
             getUploadedFiles().clear();
+        }
+
+        @Override
+        public void onUploadingFailed(int code, String message) {
+            showUploading(false);
+            ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_text_archive_creator_editor_attachment_uploading_failed, code, message));
+            if (null != uploadTimer) {
+                final String text = format("失败(%d)，用时 ", code) + Utils.format("mm:ss", System.currentTimeMillis() - uploadTimer.startTicker);
+                stopUploadTimer();
+                Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        attachmentUploadUsedTimer.setText(text);
+                    }
+                }, 300);
+            }
+            resetWaitingUploadFiles();
+
+            // 还原成什么都未上传的状态
+            uploadType = UP_NOTHING;
         }
     };
 
@@ -2019,7 +2032,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 .setShowImages(type == UP_IMAGE)
                 .setShowFiles(type == UP_ATTACH)
                 .setSkipZeroSizeFiles(true)
-                .setMaxVideoFileSize(20 * 1024 * 1024)
+                .setMaxVideoFileSize(30 * 1024 * 1024)
                 .setMaxSelection(getMaxSelectable() - aAdapter.getItemCount() + mediaFiles.size())
                 .setSuffixes("txt", "pdf", "zip", "rar", "doc", "docx", "ppt", "pptx", "xls", "xlsx")
                 .build();
@@ -2036,27 +2049,35 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void prepareUploadAttachment() {
+        if (uploadType == UP_ATTACH) {
+            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_attachment_dialog_uploading);
+            return;
+        }
         if (aAdapter.getItemCount() > 0) {
             Iterator<Attachment> iterator = aAdapter.iterator();
-            getWaitingForUploadFiles().clear();
+            //getWaitingForUploadFiles().clear();
+            waitingFroCompressImages.clear();
             long maxLength = 0;
             while (iterator.hasNext()) {
                 Attachment attachment = iterator.next();
                 if (attachment.isLocalFile()) {
                     // 是本地文件时，放入待上传列表
-                    getWaitingForUploadFiles().add(attachment.getFullPath());
+                    waitingFroCompressImages.add(attachment.getFullPath());
+                    //getWaitingForUploadFiles().add(attachment.getFullPath());
                     attachment.setSelected(true);
                     maxLength += attachment.getSize();
                     aAdapter.update(attachment);
                 }
             }
-            if (getWaitingForUploadFiles().size() > 0) {
+            if (waitingFroCompressImages.size() > 0) {
                 uploadType = UP_ATTACH;
-                uploadTimer = new UploadTimer(attachmentUploadUsedTimes, attachmentUploadUsedTimer);
-                uploadTimer.totalLength = maxLength;
-                uploadTimer.exec();
+                if (null == uploadTimer) {
+                    uploadTimer = new UploadTimer(attachmentUploadUsedTimes, attachmentUploadUsedTimer);
+                    uploadTimer.totalLength = maxLength;
+                    uploadTimer.exec();
+                }
                 showUploading(true);
-                uploadFiles();
+                compressImage();
             }
         }
     }
@@ -2113,7 +2134,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         protected void doAfterExecute() {
-            showTimer();
+            //showTimer();
             super.doAfterExecute();
         }
     }

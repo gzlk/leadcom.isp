@@ -212,8 +212,8 @@ public class HttpHelper {
         }
 
         @Override
-        public void onFailed() {
-            super.onFailed();
+        public void onFailed(int code, String message) {
+            super.onFailed(code, message);
             notifyFailure();
             if (stopWhenFailure) {
                 // 失败时退出并清空任务

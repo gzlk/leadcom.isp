@@ -229,6 +229,11 @@ public class GroupFragment extends GroupBaseFragment {
                 }).update(groupId, "", url, "");
             }
         }
+
+        @Override
+        public void onUploadingFailed(int code, String message) {
+
+        }
     };
 
     @Override

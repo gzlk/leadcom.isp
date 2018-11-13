@@ -19,6 +19,9 @@ public abstract class OnMultipleRequestListener<Data> {
     public int userInfoNum;
     public String lastHeadPhoto;
 
+    public int failedCode;
+    public String failedMessage;
+
     /**
      * 网络调用成功
      */

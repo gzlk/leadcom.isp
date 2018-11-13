@@ -55,7 +55,7 @@ public abstract class OnHttpListener<T> extends HttpListener<T> {
     /**
      * 网络调用失败后的处理
      */
-    public void onFailed() {
+    public void onFailed(int code, String message) {
     }
 
     @Override
@@ -67,7 +67,7 @@ public abstract class OnHttpListener<T> extends HttpListener<T> {
         } else {
             ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_base_text_network_failed, (null == status ? -1 : status.getCode())));
         }
-        onFailed();
+        onFailed(null == status ? -1 : status.getCode(), e.getMessage());
         LogHelper.log("OnHttpListener", e.getMessage());
         if (caughtThrowableCause(e).contains("java.io.EOFException: \\n not found: size=0")) {
             App.app().increaseOkHttpFailedTimes();
@@ -100,6 +100,6 @@ public abstract class OnHttpListener<T> extends HttpListener<T> {
         super.onCancel(t, response);
         HttpStatus status = response.getHttpStatus();
         ToastHelper.make(null).showMsg(StringHelper.getString(R.string.ui_base_text_network_canceled, (null == status ? -1 : status.getCode())));
-        onFailed();
+        onFailed(null == status ? -1 : status.getCode(), "网络操作已取消");
     }
 }

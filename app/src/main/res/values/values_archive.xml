@@ -44,7 +44,7 @@
     <string name="ui_text_archive_creator_still_edit">档案内容尚未保存，确定要放弃已输入的内容吗？</string>
     <string name="ui_text_archive_creator_save_draft">存为草稿</string>
     <string name="ui_text_archive_creator_editor_attachment_uploading">上传中&#8230;</string>
-    <string name="ui_text_archive_creator_editor_attachment_uploading_failed">上传失败，条件允许的话请更换其他上传方式</string>
+    <string name="ui_text_archive_creator_editor_attachment_uploading_failed" formatted="false">上传失败(%d): %s</string>
     <string name="ui_text_archive_creator_editor_image_select_dialog_title">插入图片</string>
     <string name="ui_text_archive_creator_editor_image_select_image_alt">图片名称(选填)</string>
     <string name="ui_text_archive_creator_editor_image_select_image_url">地址(选择图片或粘贴网络地址，必填)</string>
@@ -81,7 +81,10 @@
     <string name="ui_text_archive_creator_editor_attachment_dialog_desc1">选择类型添加附件</string>
     <string name="ui_text_archive_creator_editor_attachment_dialog_confirm_text">上传附件</string>
     <string name="ui_text_archive_creator_editor_attachment_dialog_attachment_has_uploaded">已上传</string>
-    <dimen name="ui_dimen_archive_creator_editor_attachment_dialog_button_size">@dimen/ui_static_dp_70</dimen>
+    <dimen name="ui_dimen_archive_creator_editor_attachment_dialog_button_size">
+        @dimen/ui_static_dp_70
+    </dimen>
+    <string name="ui_text_archive_creator_editor_attachment_dialog_uploading">正在上传请稍候&#8230;</string>
 
     <string name="ui_text_archive_creator_editor_title_blank">[无标题]</string>
     <string name="ui_text_archive_creator_editor_title_invalid">档案题名不能为空</string>

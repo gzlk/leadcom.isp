@@ -23,7 +23,7 @@
         android:visibility="gone"
         app:cv_active_border="@color/colorAccent"
         app:cv_background="@color/colorPrimary"
-        app:cv_background_active="@color/colorAccent"
+        app:cv_background_active="@color/colorWord"
         app:cv_background_type="fill"
         app:cv_corner_size="@dimen/ui_static_dp_5"
         app:cv_normal_border="@color/colorPrimary">

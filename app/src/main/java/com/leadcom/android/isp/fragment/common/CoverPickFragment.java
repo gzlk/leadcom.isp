@@ -155,6 +155,11 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
         public void onUploadingComplete(ArrayList<Attachment> uploaded) {
             resultData(uploaded.get(uploaded.size() - 1).getUrl());
         }
+
+        @Override
+        public void onUploadingFailed(int code, String message) {
+
+        }
     };
 
     private OnImageSelectedListener imageSelectedListener = new OnImageSelectedListener() {

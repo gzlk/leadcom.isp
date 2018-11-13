@@ -222,6 +222,11 @@ public class PersonalityFragment extends GroupBaseFragment {
             int size = uploaded.size();
             tryEditUserInfo(UserRequest.UPDATE_PHOTO, uploaded.get(size - 1).getUrl());
         }
+
+        @Override
+        public void onUploadingFailed(int code, String message) {
+
+        }
     };
 
     private void tryEditUserInfo(final int type, final String value) {

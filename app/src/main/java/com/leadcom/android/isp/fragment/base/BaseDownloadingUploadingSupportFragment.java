@@ -127,11 +127,14 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
             uploading();
         } else {
             log("no file(s) waiting for upload.");
-            onUploadingFailed();
+            onUploadingFailed(-2, "no file(s) waiting for upload");
         }
     }
 
-    protected void onUploadingFailed() {
+    private void onUploadingFailed(int code, String message) {
+        if (null != mOnFileUploadingListener) {
+            mOnFileUploadingListener.onUploadingFailed(code, message);
+        }
     }
 
     private void uploading() {
@@ -158,7 +161,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
             } else {
                 // 上传失败
                 hideImageHandlingDialog();
-                onUploadingFailed();
+                onUploadingFailed(failedCode, failedMessage);
             }
         }
     };
@@ -388,5 +391,10 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
          * 上传完成
          */
         void onUploadingComplete(ArrayList<Attachment> uploaded);
+
+        /**
+         * 上传失败
+         */
+        void onUploadingFailed(int code, String message);
     }
 }
