@@ -1297,7 +1297,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     } else if (classify.getId().equals(classifyId)) {
                         classify.setSelected(true);
                     } else {
-                        classify.setSelected(false);
+                        //classify.setSelected(false);
                     }
                     if (cAdapter.exist(classify)) {
                         cAdapter.update(classify);
@@ -1351,20 +1351,20 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                         }
                     }
                 }
-                Iterator<Model> iterator = cAdapter.iterator();
-                while (iterator.hasNext()) {
-                    Model m = iterator.next();
-                    if (m instanceof Classify) {
-                        Classify clazz = (Classify) m;
-                        if (clazz.getGroupId().equals(classify.getGroupId())) {
-                            // 同一个组织里的
-                            if (!clazz.getId().equals(classify.getId()) && clazz.isSelected()) {
-                                clazz.setSelected(false);
-                                cAdapter.update(clazz);
-                            }
-                        }
-                    }
-                }
+//                Iterator<Model> iterator = cAdapter.iterator();
+//                while (iterator.hasNext()) {
+//                    Model m = iterator.next();
+//                    if (m instanceof Classify) {
+//                        Classify clazz = (Classify) m;
+//                        if (clazz.getGroupId().equals(classify.getGroupId())) {
+//                            // 同一个组织里的
+//                            if (!clazz.getId().equals(classify.getId()) && clazz.isSelected()) {
+//                                clazz.setSelected(false);
+//                                cAdapter.update(clazz);
+//                            }
+//                        }
+//                    }
+//                }
             } else if (model instanceof Squad) {
                 // 显示或隐藏小组的成员列表
                 if (hasSquadMembers(model.getId())) {
