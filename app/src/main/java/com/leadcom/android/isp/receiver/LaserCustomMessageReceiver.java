@@ -72,6 +72,7 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
                     archive.setGroActivityId(activityId);
                     archive.setGroupId(groupId);
                     archive.setH5(extra.getH5());
+                    ArchiveDetailsFragment.isOnlyDetails = true;
                     ArchiveDetailsFragment.open(context, archive, isAppForeground);
                 } else {
                     final Archive archive = App.app().getActivity(activityId);
@@ -105,10 +106,12 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
             case PushMessage.MsgCode.GROUP_DOC_TRANSPORT:
             case PushMessage.MsgCode.GROUP_DOC_LIKE:
             case PushMessage.MsgCode.GROUP_DOC_REPLY:
+                ArchiveDetailsFragment.isOnlyDetails = true;
                 ArchiveDetailsFragment.open(context, extra.getGroupId(), extra.getDocId(), false, isAppForeground, extra.getDocUserId());
                 break;
             case PushMessage.MsgCode.USER_DOC_COMMENT:
             case PushMessage.MsgCode.USER_DOC_LIKE:
+                ArchiveDetailsFragment.isOnlyDetails = true;
                 ArchiveDetailsFragment.open(context, extra.getGroupId(), extra.getDocId(), false, isAppForeground, extra.getDocUserId());
                 break;
             case PushMessage.MsgCode.GROUP_DOC_SHARE:

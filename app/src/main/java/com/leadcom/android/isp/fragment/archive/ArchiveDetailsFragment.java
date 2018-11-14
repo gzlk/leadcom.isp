@@ -683,6 +683,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             if (segments.contains(fileName)) {
                 WebResourceResponse response;
                 try {
+                    assert fileName != null;
                     if (fileName.endsWith(".js")) {
                         response = new WebResourceResponse("application/javascript", "UTF-8", App.app().getAssets().open("js/" + fileName));
                     } else {
@@ -780,6 +781,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 if (success) {
                     if (mArchive.isStopped()) {
                         limitedText.setVisibility(View.VISIBLE);
+                        resetRightIconEvent(0, 0);
                     } else {
                         signButton.setVisibility(null == member ? View.GONE : View.VISIBLE);
                         leaveButton.setVisibility(null == member ? View.GONE : View.VISIBLE);
@@ -996,6 +998,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private View nothingView, confirmButton, selectAll;
     private CustomTextView selectAllIcon;
     private ConcernAdapter cAdapter;
+    private ArrayList<Concern> transferGroups = new ArrayList<>();
 
     private void openPushDialog() {
         DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
@@ -1022,21 +1025,41 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             private void showConcernedGroups() {
                 // 查询关注我的组织列表并推送
                 nothingText.setText(R.string.ui_text_archive_details_push_dialog_nothing);
-                ConcernRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Concern>() {
-                    @Override
-                    public void onResponse(List<Concern> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                        super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                        if (success && null != list) {
-                            for (Concern concern : list) {
-                                concern.setId(concern.getGroupId());
-                                cAdapter.add(concern);
+                if (transferGroups.size() <= 0) {
+                    ConcernRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Concern>() {
+                        @Override
+                        public void onResponse(List<Concern> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                            super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                            if (success && null != list) {
+                                for (Concern concern : list) {
+                                    concern.setId(concern.getGroupId());
+                                    if (!transferGroups.contains(concern)) {
+                                        transferGroups.add(concern);
+                                    }
+                                }
+                            }
+                            showTransferGroups();
+                        }
+                    }).listTransfer(mArchive.getGroupId());
+                } else {
+                    showTransferGroups();
+                }
+            }
+
+            private void showTransferGroups() {
+                for (Concern concern : transferGroups) {
+                    cAdapter.add(concern);
+                    if (concern.isSelectable()) {
+                        for (Classify classify : concern.getDocClassifyList()) {
+                            if (!isEmpty(classify.getId())) {
+                                cAdapter.add(classify);
                             }
                         }
-                        boolean nothing = null == list || list.size() <= 0;
-                        nothingView.setVisibility(nothing ? View.VISIBLE : View.GONE);
-                        confirmButton.setVisibility(nothing ? View.GONE : View.VISIBLE);
                     }
-                }).listTransfer(mArchive.getGroupId());
+                }
+                boolean nothing = null == transferGroups || transferGroups.size() <= 0;
+                nothingView.setVisibility(nothing ? View.VISIBLE : View.GONE);
+                confirmButton.setVisibility(nothing ? View.GONE : View.VISIBLE);
             }
 
             private void showSelfDefined() {
@@ -1156,11 +1179,11 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     if (model.isSelected()) {
                         if (model instanceof Concern) {
                             Concern concern = (Concern) model;
-                            ArchivePushTarget target = new ArchivePushTarget();
-                            target.setTargertGroupId(concern.getGroupId());
                             if (concern.getDocClassifyList().size() > 0) {
                                 for (Classify classify : concern.getDocClassifyList()) {
                                     if (classify.isSelected()) {
+                                        ArchivePushTarget target = new ArchivePushTarget();
+                                        target.setTargertGroupId(concern.getGroupId());
                                         target.setDocClassifyId(classify.getId());
                                         targets.add(target);
                                     }
