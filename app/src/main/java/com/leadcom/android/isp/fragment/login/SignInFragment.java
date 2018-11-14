@@ -1,11 +1,26 @@
 package com.leadcom.android.isp.fragment.login;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.TextView;
 
+import com.google.gson.reflect.TypeToken;
+import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CleanableEditText;
+import com.hlk.hlklib.lib.view.ClearEditText;
+import com.hlk.hlklib.lib.view.CorneredButton;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.common.SystemRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.UserRequest;
@@ -13,20 +28,26 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
+import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
+import com.leadcom.android.isp.holder.common.AccountItemViewHolder;
+import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.lib.permission.MPermission;
 import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionDenied;
 import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionGranted;
 import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionNeverAskAgain;
+import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
+import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.user.User;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.CleanableEditText;
-import com.hlk.hlklib.lib.view.ClearEditText;
-import com.hlk.hlklib.lib.view.CorneredButton;
+import com.leadcom.android.isp.view.SwipeItemLayout;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 
 /**
  * <b>功能描述：</b>登录页面<br />
@@ -44,12 +65,21 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     private static final String PARAM_STILL_SIGN_IN = "sif_still_in_sign_in";
     @ViewId(R.id.ui_sign_in_account)
     private ClearEditText accountText;
+    @ViewId(R.id.ui_sign_in_account_input_inputted)
+    private TextView inputtedText;
+    @ViewId(R.id.ui_sign_in_account_input_rest_stub)
+    private TextView restText;
+    @ViewId(R.id.ui_sign_in_accounts_layout)
+    private View accountsView;
+    @ViewId(R.id.ui_tool_swipe_refreshable_recycler_view)
+    private RecyclerView recyclerView;
     @ViewId(R.id.ui_sign_in_password)
     private CleanableEditText passwordText;
     @ViewId(R.id.ui_sign_in_to_sign_in)
     private CorneredButton signInButton;
 
-    private boolean stillInSignIn = false;
+    private boolean stillInSignIn = false, isEditable = false;
+    private ArrayList<String> loginedAccounts;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -61,6 +91,192 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putBoolean(PARAM_STILL_SIGN_IN, stillInSignIn);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        String json = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_accounts, R.string.pf_last_login_user_accounts_beta), "[]");
+        loginedAccounts = Json.gson().fromJson(json, new TypeToken<ArrayList<String>>() {
+        }.getType());
+        if (loginedAccounts.size() > 0) {
+            Collections.sort(loginedAccounts, new Comparator<String>() {
+                @Override
+                public int compare(String o1, String o2) {
+                    return o1.compareTo(o2);
+                }
+            });
+        }
+        CustomLinearLayoutManager layoutManager = new CustomLinearLayoutManager(recyclerView.getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(recyclerView.getContext()));
+        mAdapter = new AccountAdapter();
+        recyclerView.setAdapter(mAdapter);
+        accountText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                inputtedAccount = "";
+                String saved = "";
+                if (s.length() >= 4) {
+                    inputtedAccount = s.toString();
+                    saved = getSameAs(inputtedAccount);
+                }
+                if (!isEmpty(saved)) {
+                    inputtedText.setText(inputtedAccount);
+                    restText.setText(saved.replace(inputtedAccount, ""));
+                    if (isEditable) {
+                        if (inputtedAccount.equals(saved)) {
+                            showPopupListAccounts(false, duration());
+                        } else {
+                            showPopupListAccounts(true, duration());
+                        }
+                    }
+                } else {
+                    inputtedText.setText("");
+                    restText.setText("");
+                    if (accountsView.getAlpha() >= 0) {
+                        showPopupListAccounts(false, duration());
+                    }
+                }
+            }
+        });
+        showPopupListAccounts(false, 0);
+    }
+
+    private String getSameAs(String text) {
+        if (loginedAccounts.size() > 0) {
+            for (String string : loginedAccounts) {
+                if (string.contains(text)) return string;
+            }
+        }
+        return "";
+    }
+
+    private String inputtedAccount = "";
+    private AccountAdapter mAdapter;
+    private boolean isAnimating = false, isShowing = false;
+
+    private void showPopupListAccounts(final boolean shown, long duration) {
+        if (isAnimating) {
+            return;
+        }
+        if (shown && isShowing) {
+            // 已处于显示状态时，不需要再次进行动画显示，直接显示结果变化
+            filterInputted();
+            return;
+        }
+        if (!shown && !isShowing) {
+            // 已处于隐藏状态时，不需要再次进行动画隐藏
+            return;
+        }
+        accountsView.animate().alpha(shown ? 1.0f : 0.0f)
+                .translationY(shown ? 0 : -accountsView.getMeasuredHeight() * 1.1f)
+                .setDuration(duration).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (!shown) {
+                    accountsView.setVisibility(View.GONE);
+                } else {
+                    filterInputted();
+                }
+                isAnimating = false;
+                isShowing = accountsView.getVisibility() == View.VISIBLE;
+            }
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                isAnimating = true;
+                super.onAnimationStart(animation);
+                if (shown) {
+                    accountsView.setVisibility(View.VISIBLE);
+                }
+            }
+        }).start();
+    }
+
+    private void filterInputted() {
+        ArrayList<String> temp = new ArrayList<>();
+        for (String string : loginedAccounts) {
+            if (string.contains(inputtedAccount)) {
+                temp.add(string);
+            }
+        }
+        Iterator<Model> iterator = mAdapter.iterator();
+        int index = 0;
+        while (iterator.hasNext()) {
+            Model model = iterator.next();
+            if (!temp.contains(model.getId())) {
+                iterator.remove();
+                mAdapter.notifyItemRemoved(index);
+            }
+            index++;
+        }
+        for (String string : temp) {
+            Model model = new Model();
+            model.setId(string);
+            mAdapter.update(model);
+        }
+        if (mAdapter.getItemCount() <= 0) {
+            showPopupListAccounts(false, duration());
+        }
+    }
+
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
+        @Override
+        public void onClick(View view, int index) {
+            Model model = mAdapter.get(index);
+            switch (view.getId()) {
+                case R.id.ui_holder_view_account_item_layout:
+                    // 选择
+                    accountText.setValue(model.getId());
+                    showPopupListAccounts(false, duration());
+                    accountText.focusEnd();
+                    break;
+                case R.id.ui_tool_view_contact_button2:
+                    // 删除
+                    loginedAccounts.remove(model.getId());
+                    mAdapter.remove(model);
+                    saveLoginedAccounts();
+                    break;
+            }
+        }
+    };
+
+    private class AccountAdapter extends RecyclerViewAdapter<AccountItemViewHolder, Model> {
+
+        @Override
+        public AccountItemViewHolder onCreateViewHolder(View itemView, int viewType) {
+            AccountItemViewHolder aivh = new AccountItemViewHolder(itemView, SignInFragment.this);
+            aivh.setOnViewHolderElementClickListener(elementClickListener);
+            return aivh;
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            return R.layout.holder_view_account_item_deletable;
+        }
+
+        @Override
+        public void onBindHolderOfView(AccountItemViewHolder holder, int position, @Nullable Model item) {
+            assert item != null;
+            holder.showContent(item.getId(), inputtedAccount);
+        }
+
+        @Override
+        protected int comparator(Model item1, Model item2) {
+            return item1.getId().compareTo(item2.getId());
+        }
     }
 
     @Override
@@ -115,6 +331,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     @Override
     public void doingInResume() {
         if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            isEditable = false;
             if (null != Cache.cache().me && isAdded()) {
                 accountText.setValue(Cache.cache().me.getPhone());
                 accountText.focusEnd();
@@ -128,6 +345,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                     passwordText.requestFocus();
                 }
             }
+            isEditable = true;
         } else {
             // 尝试获取相关基本的运行时权限
             //signInButton.setEnabled(false);
@@ -231,7 +449,11 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
         App.app().setJPushAlias();
     }
 
-    private void signIn(String account, String password) {
+    private void saveLoginedAccounts() {
+        PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_accounts, R.string.pf_last_login_user_accounts_beta), Json.gson().toJson(loginedAccounts));
+    }
+
+    private void signIn(final String account, String password) {
         SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
 
             @SuppressWarnings("ConstantConditions")
@@ -240,6 +462,10 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 super.onResponse(user, success, message);
                 // 检测服务器返回的状态
                 if (success) {
+                    if (!loginedAccounts.contains(account)) {
+                        loginedAccounts.add(account);
+                        saveLoginedAccounts();
+                    }
                     // 这里尝试访问一下全局me以便及时更新已登录的用户的信息
                     cacheUser(user);
                     // 保存用户关联的所有组织列表

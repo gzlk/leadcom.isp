@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_account_item_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ui_background_clickable"
+    android:orientation="vertical"
+    app:layout_itemType="main">
+
+    <TextView
+        android:id="@+id/ui_holder_view_account_item_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/ui_static_dp_8"
+        android:text="@string/app_name_default" />
+
+    <include layout="@layout/tool_view_half_line_horizontal" />
+</LinearLayout>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,45 +7,46 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/ui_sign_in_app_logo"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/ui_static_dp_20">
+
+        <include layout="@layout/tool_view_app_icon" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ui_sign_in_account_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ui_sign_in_app_logo"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:padding="@dimen/ui_static_dp_20">
+            android:layout_margin="@dimen/ui_base_dimen_margin_padding"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <include layout="@layout/tool_view_app_icon" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/ui_base_dimen_margin_padding"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:text="@string/ui_icon_phone"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_static_sp_24" />
 
-                <com.hlk.hlklib.lib.view.CustomTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ui_icon_phone"
-                    android:textColor="@color/textColorHint"
-                    android:textSize="@dimen/ui_static_sp_24" />
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                android:layout_weight="1">
 
                 <com.hlk.hlklib.lib.view.ClearEditText
                     android:id="@+id/ui_sign_in_account"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
-                    android:layout_weight="1"
                     app:cet_border_size="@dimen/ui_base_border_size_normal"
                     app:cet_edit_active_border="@color/colorBorderActive"
                     app:cet_edit_corner_size="@dimen/ui_base_dimen_button_corner_size"
@@ -58,70 +59,105 @@
                     app:cet_edit_value_max_length="@integer/integer_phone_number_length"
                     app:cet_edit_value_verify_regex="@string/regex_phone_number_verify" />
 
-            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/ui_base_border_size_normal"
-                android:layout_marginEnd="@dimen/ui_static_dp_12"
-                android:layout_marginStart="@dimen/ui_static_dp_12"
-                android:background="@color/textColorHintLight" />
+                    <TextView
+                        android:id="@+id/ui_sign_in_account_input_inputted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/ui_static_dp_8"
+                        android:paddingTop="@dimen/ui_static_dp_8"
+                        android:paddingEnd="@dimen/ui_static_dp_zero"
+                        android:paddingBottom="@dimen/ui_static_dp_8"
+                        android:visibility="invisible" />
 
+                    <TextView
+                        android:id="@+id/ui_sign_in_account_input_rest_stub"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/ui_static_dp_zero"
+                        android:paddingTop="@dimen/ui_static_dp_8"
+                        android:paddingEnd="@dimen/ui_static_dp_8"
+                        android:paddingBottom="@dimen/ui_static_dp_8"
+                        android:textColor="@color/textColorHint" />
+                </LinearLayout>
+
+            </RelativeLayout>
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ui_base_border_size_normal"
+            android:layout_marginStart="@dimen/ui_static_dp_12"
+            android:layout_marginEnd="@dimen/ui_static_dp_12"
+            android:background="@color/textColorHintLight" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ui_sign_in_password_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ui_sign_in_account_layout"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_margin="@dimen/ui_base_dimen_margin_padding"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/ui_base_dimen_margin_padding"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:text="@string/ui_icon_password"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_static_sp_24" />
 
-                <com.hlk.hlklib.lib.view.CustomTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ui_icon_password"
-                    android:textColor="@color/textColorHint"
-                    android:textSize="@dimen/ui_static_sp_24" />
-
-                <com.hlk.hlklib.lib.view.CleanableEditText
-                    android:id="@+id/ui_sign_in_password"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
-                    android:layout_weight="1"
-                    android:digits="@string/regex_password_digits"
-                    android:hint="@string/ui_text_sing_in_password_hint"
-                    android:inputType="textPassword"
-                    android:padding="@dimen/ui_static_dp_8"
-                    app:cet_active_border="@color/colorBorderActive"
-                    app:cet_border_size="@dimen/ui_static_dp_1"
-                    app:cet_corner_size="@dimen/ui_base_dimen_button_corner_size"
-                    app:cet_max_length="@integer/integer_password_max_length"
-                    app:cet_normal_border="@color/colorBorderNormal"
-                    app:cet_value_extract_regex="@string/regex_password_filter"
-                    app:cet_value_verify_regex="@string/regex_password_verify" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/ui_base_border_size_normal"
-                android:layout_marginEnd="@dimen/ui_static_dp_12"
-                android:layout_marginStart="@dimen/ui_static_dp_12"
-                android:background="@color/textColorHintLight" />
+            <com.hlk.hlklib.lib.view.CleanableEditText
+                android:id="@+id/ui_sign_in_password"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                android:layout_weight="1"
+                android:digits="@string/regex_password_digits"
+                android:hint="@string/ui_text_sing_in_password_hint"
+                android:inputType="textPassword"
+                android:padding="@dimen/ui_static_dp_8"
+                app:cet_active_border="@color/colorBorderActive"
+                app:cet_border_size="@dimen/ui_static_dp_1"
+                app:cet_corner_size="@dimen/ui_base_dimen_button_corner_size"
+                app:cet_max_length="@integer/integer_password_max_length"
+                app:cet_normal_border="@color/colorBorderNormal"
+                app:cet_value_extract_regex="@string/regex_password_filter"
+                app:cet_value_verify_regex="@string/regex_password_verify" />
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ui_base_border_size_normal"
+            android:layout_marginStart="@dimen/ui_static_dp_12"
+            android:layout_marginEnd="@dimen/ui_static_dp_12"
+            android:background="@color/textColorHintLight" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ui_sign_in_password_layout"
+        android:orientation="vertical">
 
         <com.hlk.hlklib.lib.view.CorneredButton
             android:id="@+id/ui_sign_in_to_sign_in"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/ui_static_dp_12"
             android:layout_marginStart="@dimen/ui_static_dp_12"
             android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+            android:layout_marginEnd="@dimen/ui_static_dp_12"
             android:clickable="true"
             android:gravity="center"
             android:minHeight="@dimen/ui_base_dimen_button_height"
@@ -172,8 +208,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="@dimen/ui_static_dp_30"
-            android:paddingEnd="@dimen/ui_static_dp_12"
-            android:paddingStart="@dimen/ui_static_dp_12">
+            android:paddingStart="@dimen/ui_static_dp_12"
+            android:paddingEnd="@dimen/ui_static_dp_12">
 
             <include layout="@layout/tool_view_half_line_horizontal" />
 
@@ -219,4 +255,25 @@
                 android:textSize="@dimen/ui_static_sp_50" />
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+
+    <com.hlk.hlklib.lib.view.CorneredView
+        android:id="@+id/ui_sign_in_accounts_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ui_sign_in_account_layout"
+        android:layout_marginStart="@dimen/ui_static_dp_45"
+        android:layout_marginTop="-8dp"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:alpha="0"
+        android:animateLayoutChanges="true"
+        android:elevation="@dimen/ui_base_translationZ_small"
+        android:padding="@dimen/ui_static_dp_8"
+        app:cv_active_border="@color/textColorHintLight"
+        app:cv_background_type="border"
+        app:cv_corner_size="@dimen/ui_static_dp_5"
+        app:cv_normal_border="@color/textColorHintLight">
+
+        <include layout="@layout/tool_view_recycler_view_none_swipe_refreshable" />
+    </com.hlk.hlklib.lib.view.CorneredView>
+
+</RelativeLayout>
