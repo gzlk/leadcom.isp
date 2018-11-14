@@ -43,7 +43,7 @@ public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
     }
 
     public void showContent(Classify classify) {
-        valueIcon.setText(classify.getName().contains("意见箱") ? R.string.ui_icon_suggestion_box : R.string.ui_icon_favorite_oval);
+        valueIcon.setText(classify.isDefault() ? R.string.ui_icon_suggestion_box : R.string.ui_icon_favorite_oval);
         valueIcon.setVisibility(View.VISIBLE);
         titleTextView.setText(classify.getName());
         valueTextView.setText("");

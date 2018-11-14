@@ -180,7 +180,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
             return;
         }
         accountsView.animate().alpha(shown ? 1.0f : 0.0f)
-                .translationY(shown ? 0 : -accountsView.getMeasuredHeight() * 1.1f)
+                //.translationY(shown ? 0 : -accountsView.getMeasuredHeight() * 1.1f)
                 .setDuration(duration).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {

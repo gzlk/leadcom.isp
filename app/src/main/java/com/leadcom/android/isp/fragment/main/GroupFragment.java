@@ -698,7 +698,8 @@ public class GroupFragment extends GroupBaseFragment {
                     }
                     int index = dAdapter.indexOf(line);
                     for (Classify classify : list) {
-                        if (classify.getName().contains("意见箱")) {
+                        if (classify.isDefault()) {
+                            classify.setSelectable(true);
                             dAdapter.add(classify, index);
                         } else {
                             dAdapter.add(classify);
@@ -1000,7 +1001,7 @@ public class GroupFragment extends GroupBaseFragment {
             if (!isEmpty(model.getId()) && model.getId().contains("line")) {
                 return VT_BIG_LINE;
             }
-            return model instanceof Organization ? VT_HEAD : (model instanceof Classify ? VT_CLASSIFY : VT_DETAILS);
+            return model instanceof Organization ? VT_HEAD : (model instanceof Classify && !model.isSelectable() ? VT_CLASSIFY : VT_DETAILS);
         }
 
         @Override

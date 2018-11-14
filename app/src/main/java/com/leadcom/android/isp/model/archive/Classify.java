@@ -27,6 +27,10 @@ public class Classify extends Model {
      * 分类
      */
     private String name;
+    /**
+     * 是否可删除
+     */
+    private int canDelete;
 
     /**
      * 下级分类
@@ -55,6 +59,21 @@ public class Classify extends Model {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * 是否默认栏目不可删除
+     */
+    public boolean isDefault() {
+        return canDelete == 1;
+    }
+
+    public int getCanDelete() {
+        return canDelete;
+    }
+
+    public void setCanDelete(int canDelete) {
+        this.canDelete = canDelete;
     }
 
     public ArrayList<Classify> getDocClassifyList() {

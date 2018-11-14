@@ -1161,12 +1161,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                             if (concern.getDocClassifyList().size() > 0) {
                                 for (Classify classify : concern.getDocClassifyList()) {
                                     if (classify.isSelected()) {
-                                        if (!classify.getId().contains("classify")) {
-                                            target.setDocClassifyId(classify.getId());
-                                            targets.add(target);
-                                        } else {
-                                            groups.add(concern.getGroupId());
-                                        }
+                                        target.setDocClassifyId(classify.getId());
+                                        targets.add(target);
                                     }
                                 }
                             }
@@ -1289,15 +1285,11 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 Concern concern = (Concern) model;
                 concern.setSelected(true);
                 cAdapter.update(concern);
-                String classifyId = concern.getId() + "classify";
                 for (Classify classify : concern.getDocClassifyList()) {
-                    if (isEmpty(classify.getId())) {
-                        classify.setSelected(true);
-                        classify.setId(classifyId);
-                    } else if (classify.getId().equals(classifyId)) {
-                        classify.setSelected(true);
-                    } else {
-                        //classify.setSelected(false);
+                    if (!isEmpty(classify.getId())) {
+                        if (classify.isDefault()) {
+                            classify.setSelected(true);
+                        }
                     }
                     if (cAdapter.exist(classify)) {
                         cAdapter.update(classify);
@@ -1319,12 +1311,10 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 boolean selected = concern.isSelectable();
                 for (Classify classify : concern.getDocClassifyList()) {
                     if (selected) {
-                        cnt++;
-                        if (isEmpty(classify.getId())) {
-                            classify.setId(concern.getId() + "classify");
-                            //classify.setSelected(true);
+                        if (!isEmpty(classify.getId())) {
+                            cnt++;
+                            cAdapter.add(classify, cnt + index);
                         }
-                        cAdapter.add(classify, cnt + index);
                     } else {
                         cAdapter.remove(classify);
                     }
@@ -1345,7 +1335,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     concern.setSelected(hasSelected);
                     cAdapter.update(concern);
                     // 检测当前是否选中的默认分类
-                    if (classify.getId().equals(concern.getId() + "classify")) {
+                    if (classify.isDefault()) {
                         if (!classify.isSelected()) {
                             selectAllIcon.setTextColor(getColor(R.color.textColorHintLight));
                         }
