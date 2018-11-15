@@ -48,9 +48,10 @@ public class LogcatHelper {
     }
 
     public void start() {
-        if (mLogDumper == null)
+        if (mLogDumper == null) {
             mLogDumper = new LogDumper(String.valueOf(mPId), PATH_LOGCAT);
-        mLogDumper.start();
+            mLogDumper.start();
+        }
     }
 
     public void stop() {

@@ -1,20 +1,26 @@
 package com.leadcom.android.isp.fragment.archive;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.View;
+import android.webkit.JsResult;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.TextView;
+import android.webkit.WebViewClient;
 
-import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.chorme.ChromeWebViewClient;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -23,6 +29,8 @@ import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.holder.common.SimpleInputableViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.model.archive.Archive;
+
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>回复流转档案<br />
@@ -54,15 +62,7 @@ public class ArchiveReplyFragment extends BaseTransparentSupportFragment {
     private View recipientView;
     @ViewId(R.id.ui_archive_reply_content)
     private CorneredEditText contentView;
-    @ViewId(R.id.ui_archive_reply_source_origin)
-    private TextView sourceSender;
-    @ViewId(R.id.ui_archive_reply_source_title)
-    private TextView sourceTitle;
-    @ViewId(R.id.ui_archive_reply_source_time)
-    private TextView sourceTime;
-    @ViewId(R.id.ui_archive_reply_source_content)
-    private TextView sourceContent;
-    @ViewId(R.id.ui_archive_reply_content)
+    @ViewId(R.id.ui_archive_reply_details)
     private WebView webView;
     private SimpleInputableViewHolder titleHolder;
     private SimpleClickableViewHolder recipientHolder;
@@ -82,6 +82,14 @@ public class ArchiveReplyFragment extends BaseTransparentSupportFragment {
         if (Build.VERSION.SDK_INT >= 21) {
             webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+                result.confirm();
+                return true;
+            }
+        });
+        webView.setWebViewClient(new ChromeWebViewClient().setWebEventListener(eventListener));
         setCustomTitle(R.string.ui_base_text_reply);
         setRightText(R.string.ui_base_text_finish);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
@@ -92,6 +100,27 @@ public class ArchiveReplyFragment extends BaseTransparentSupportFragment {
             }
         });
     }
+
+    private ChromeWebViewClient.WebEventListener eventListener = new ChromeWebViewClient.WebEventListener() {
+        @Override
+        public void onPageStarted() {
+            displayLoading(true);
+        }
+
+        @Override
+        public void onPageFinished() {
+            displayLoading(false);
+        }
+
+        @Override
+        public boolean onOverrideUrlLoading(WebView view, String url) {
+            if (url.startsWith("leadcom://")) {
+                return true;
+            }
+            view.loadUrl(url);
+            return true;
+        }
+    };
 
     @Override
     public int getLayout() {
@@ -159,17 +188,7 @@ public class ArchiveReplyFragment extends BaseTransparentSupportFragment {
             titleHolder = new SimpleInputableViewHolder(titleView, this);
             titleHolder.showContent(format(items[1], mArchive.getTitle()));
         }
-        webView.loadUrl(ArchiveDetailsFragment.getUrl(mArchive.getId(), mArchive.getOwnType(), false, mArchive.getH5(), true));
-//        sourceSender.setText(Html.fromHtml(getString(R.string.ui_text_archive_reply_source_sender, mArchive.getFromGroupName())));
-//        sourceTitle.setText(Html.fromHtml(getString(R.string.ui_text_archive_reply_source_title, mArchive.getTitle())));
-//        sourceTime.setText(getString(R.string.ui_text_archive_reply_source_time, formatDate(mArchive.getCreateDate(), R.string.ui_base_text_date_time_format_hhmm)));
-//        String content = mArchive.getContent();
-//        if (!isEmpty(content)) {
-//            content = content.replaceAll("<img.*?>", "");
-//        } else {
-//            content = "";
-//        }
-//        sourceContent.setText(EmojiUtility.getEmojiString(sourceContent.getContext(), content, true));
+        webView.loadUrl(ArchiveDetailsFragment.getUrl(mArchive.getId(), mArchive.getOwnType(), false, mArchive.getH5(), false));
     }
 
     private void tryReplyArchive() {

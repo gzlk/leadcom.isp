@@ -82,6 +82,9 @@ public class Additional extends Model {
     }
 
     public Additional getAddition() {
+        if (null == addition) {
+            addition = new Additional();
+        }
         return addition;
     }
 

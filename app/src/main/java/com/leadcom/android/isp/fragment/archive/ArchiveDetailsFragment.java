@@ -5,8 +5,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,11 +15,8 @@ import android.view.View;
 import android.webkit.DownloadListener;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.TextView;
 
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
@@ -45,6 +40,7 @@ import com.leadcom.android.isp.api.org.MemberRequest;
 import com.leadcom.android.isp.api.org.SquadRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.chorme.ChromeWebViewClient;
 import com.leadcom.android.isp.etc.NetworkUtil;
 import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.etc.Utils;
@@ -176,7 +172,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         return bundle;
     }
 
-    static String getUrl(String archiveId, int archiveType, boolean isDraft, String h5, boolean control) {
+    static String getUrl(String archiveId, int archiveType, boolean isDraft, String h5, boolean showControl) {
         if (isH5(h5)) {
             // http://113.108.144.2:8038/quesinfo.html              ??
             // http://113.108.144.2:8038/quesinfo.html?id=xxxa      ??
@@ -184,9 +180,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         }
         // http://113.108.144.2:8038/html/h5file.html?docid=&doctype=&accesstoken=
         // https://www.chacx.cn/html/h5file.html?docid=&doctype=&accesstoken=
-        return StringHelper.format("%s/html/h5file.html?docid=%s&owntype=%d&isdraft=%s&show=%d&&accesstoken=%s",
+        return StringHelper.format("%s/html/h5file.html?docid=%s&owntype=%d&isdraft=%s&show=%d&t=%d&accesstoken=%s",
                 (Cache.isReleasable() ? "https://www.chacx.cn" : "http://113.108.144.2:8038"),
-                archiveId, (archiveType > 0 ? archiveType : Archive.Type.GROUP), isDraft, (control ? 1 : 0), Cache.cache().accessToken);
+                archiveId, (archiveType > 0 ? archiveType : Archive.Type.GROUP), isDraft, (showControl ? 1 : 0), System.currentTimeMillis(), Cache.cache().accessToken);
     }
 
     private static boolean isH5(String h5) {
@@ -233,7 +229,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
         webView.setWebChromeClient(new DetailsChromeClient());
-        webView.setWebViewClient(new DetailsWebViewClient());
+        webView.setWebViewClient(new ChromeWebViewClient().setWebEventListener(eventListener));
         webView.setDownloadListener(new DetailsDownloadListener());
         setLeftText(R.string.ui_base_text_back);
         setLeftTitleClickListener(new OnTitleButtonClickListener() {
@@ -249,6 +245,68 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         });
         initializeActivityControlPosition();
     }
+
+    private class DetailsChromeClient extends WebChromeClient {
+        @Override
+        public void onReceivedTitle(WebView view, String title) {
+            setCustomTitle(title);
+            super.onReceivedTitle(view, title);
+        }
+
+        @Override
+        public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+            if (message.contains("未找到") || message.contains("删除")) {
+                ToastHelper.make().showMsg(message);
+                finish();
+                result.confirm();
+                return true;
+            } else if (Utils.isUrl(message)) {
+                if (!message.contains("images/dz1.png") && !message.contains("images/dz6.png")
+                        && !message.contains("images/sc1.png") && !message.contains("images/sc4.png")
+                        && !message.contains("images/xx3.png")
+                        && !message.contains("images/fj.png")) {
+                    // 打开图片浏览器
+                    ImageViewerFragment.open(ArchiveDetailsFragment.this, message);
+                }
+                result.confirm();
+                return true;
+            } else if (message.startsWith("href=")) {
+                String msg = message.replace("href=", "");
+                startingDownload(msg);
+                result.confirm();
+                return true;
+            }
+            return super.onJsAlert(view, url, message, result);
+        }
+    }
+
+    private ChromeWebViewClient.WebEventListener eventListener = new ChromeWebViewClient.WebEventListener() {
+        @Override
+        public void onPageStarted() {
+            displayLoading(true);
+        }
+
+        @Override
+        public void onPageFinished() {
+            displayLoading(false);
+            // 活动时显示报名按钮
+            if (mArchive.isActivity()) {
+                displayActivityControl(true);
+                // 拉取当前用户是否已报名
+                checkActivityReported();
+            }
+        }
+
+        @Override
+        public boolean onOverrideUrlLoading(WebView view, String url) {
+            if (url.startsWith("leadcom://")) {
+                WelcomeActivity.open(Activity(), url);
+            } else {
+                view.loadUrl(url);
+            }
+            return true;
+        }
+    };
 
     @Override
     public int getLayout() {
@@ -527,7 +585,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             Collectable.resetArchiveCollectionParams(archive);
         }
 
-        String url = getUrl(mQueryId, mArchive.getOwnType(), isDraft, archive.getH5(), false);
+        String url = getUrl(mQueryId, mArchive.getOwnType(), isDraft, archive.getH5(), true);
         log(url);
         webView.loadUrl(url);
     }
@@ -608,166 +666,6 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
                     }
                 }).start();
-    }
-
-    private class DetailsChromeClient extends WebChromeClient {
-        @Override
-        public void onReceivedTitle(WebView view, String title) {
-            setCustomTitle(title);
-            super.onReceivedTitle(view, title);
-        }
-
-        @Override
-        public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-            if (message.contains("未找到") || message.contains("删除")) {
-                ToastHelper.make().showMsg(message);
-                finish();
-                result.confirm();
-                return true;
-            } else if (Utils.isUrl(message)) {
-                if (!message.contains("images/dz1.png") && !message.contains("images/dz6.png")
-                        && !message.contains("images/sc1.png") && !message.contains("images/sc4.png")
-                        && !message.contains("images/xx3.png")
-                        && !message.contains("images/fj.png")) {
-                    // 打开图片浏览器
-                    ImageViewerFragment.open(ArchiveDetailsFragment.this, message);
-                }
-                result.confirm();
-                return true;
-            } else if (message.startsWith("href=")) {
-                String msg = message.replace("href=", "");
-                startingDownload(msg);
-                result.confirm();
-                return true;
-            }
-            return super.onJsAlert(view, url, message, result);
-        }
-    }
-
-    private class DetailsWebViewClient extends WebViewClient {
-
-        //private final String[] segments = new String[]{"bootstrap.min.css", "bootstrap.min.js", "jquery.cookie.js", "jquery.min.js", "template-web.js"};
-
-        private ArrayList<String> segments = new ArrayList<String>() {{
-            add("bootstrap.min.css");
-            add("bootstrap.min.js");
-            add("jquery.cookie.js");
-            add("jquery.min.js");
-            add("template-web.js");
-        }};
-
-        private void checkSchema(WebView view, String url) {
-            if (url.startsWith("leadcom://")) {
-                WelcomeActivity.open(Activity(), url);
-            } else {
-                view.loadUrl(url);
-            }
-        }
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            checkSchema(view, url);
-            return true;
-        }
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-            if (Build.VERSION.SDK_INT >= 21) {
-                checkSchema(view, request.getUrl().toString());
-            }
-            return true;
-        }
-
-        private WebResourceResponse checkRequest(Uri uri) {
-            String fileName = uri.getLastPathSegment();
-            if (segments.contains(fileName)) {
-                WebResourceResponse response;
-                try {
-                    assert fileName != null;
-                    if (fileName.endsWith(".js")) {
-                        response = new WebResourceResponse("application/javascript", "UTF-8", App.app().getAssets().open("js/" + fileName));
-                    } else {
-                        response = new WebResourceResponse("text/css", "UTF-8", App.app().getAssets().open("css/" + fileName));
-                    }
-                    log(format("create local resource: %s", fileName));
-                } catch (Exception e) {
-                    response = null;
-                }
-                return response;
-            } else {
-                return null;
-            }
-        }
-
-        @Override
-        public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-            if (Build.VERSION.SDK_INT < 21) {
-                log(format("request url: %s", url));
-                WebResourceResponse response = checkRequest(Uri.parse(url));
-                return null != response ? response : super.shouldInterceptRequest(view, url);
-            } else {
-                return super.shouldInterceptRequest(view, url);
-            }
-        }
-
-        @Override
-        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-            if (Build.VERSION.SDK_INT >= 21) {
-                log(format("request request: %s", request.getUrl().toString()));
-                WebResourceResponse response = checkRequest(request.getUrl());
-                return null != response ? response : super.shouldInterceptRequest(view, request);
-            } else {
-                return super.shouldInterceptRequest(view, request);
-            }
-        }
-
-        @Override
-        public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            super.onPageStarted(view, url, favicon);
-            archiveLoadingStart = System.currentTimeMillis();
-            displayLoading(true);
-        }
-
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            displayLoading(false);
-            super.onPageFinished(view, url);
-            log(format("loading archive content used: %dms", System.currentTimeMillis() - archiveLoadingStart));
-            // 活动时显示报名按钮
-            if (mArchive.isActivity()) {
-                displayActivityControl(true);
-                // 拉取当前用户是否已报名
-                checkActivityReported();
-            }
-            setJsEvents(view);
-        }
-
-        private void setJsEvents(WebView view) {
-            String jsCode = "javascript:(function() {" +
-                    "   $(\".cont img[src^='http']\").on(\"click\", function() {" +
-                    "       alert($(this).attr(\"src\"));" +
-                    "   });" +
-                    "   $(\".cont1 img[src^='http']\").on(\"click\", function() {" +
-                    "       alert($(this).attr(\"src\"));" +
-                    "   });" +
-                    "   $(\".fjlist a\").on(\"click\", function(evt) {" +
-                    "       var href = $(this).attr(\"href\").toLowerCase();" +
-                    "       if((href.indexOf(\".gif\") >=0) || (href.indexOf(\".jpg\") >=0) || " +
-                    "           (href.indexOf(\".jpeg\") >=0) || (href.indexOf(\".png\") >= 0) || " +
-                    "           (href.indexOf(\".txt\") >= 0) || (href.indexOf(\".mp4\") >= 0) || " +
-                    "           (href.indexOf(\".mp3\") >= 0)) {" +
-                    "           evt.preventDefault();" +
-                    "           alert(\"href=\" + $(this).attr(\"href\"));" +
-                    "       }" +
-                    "   }).each(function(){" +
-                    "       $(this).removeAttr(\"download\");" +
-                    "   });" +
-                    "   $(\"video\").each(function() {" +
-                    "       $(this).css(\"width\", \"100%\");" +
-                    "   });" +
-                    "})()";
-            view.loadUrl(jsCode);
-        }
     }
 
     /**

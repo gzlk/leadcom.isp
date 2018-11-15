@@ -675,6 +675,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 if (null != members && members.size() > 0) {
                     for (SubMember member : members) {
+                        if (isEmpty(member.getUserName())) {
+                            member.setUserName(StringHelper.getString(R.string.ui_base_text_no_name));
+                        }
                         if (null == oNames || !oNames.contains(member.getUserName())) {
                             if (!names.contains(member.getUserName())) {
                                 names += (isEmpty(names) ? "" : "、") + member.getUserName();
