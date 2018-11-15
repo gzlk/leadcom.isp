@@ -1,8 +1,12 @@
 package com.leadcom.android.isp.fragment.archive;
 
+import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
@@ -58,14 +62,26 @@ public class ArchiveReplyFragment extends BaseTransparentSupportFragment {
     private TextView sourceTime;
     @ViewId(R.id.ui_archive_reply_source_content)
     private TextView sourceContent;
+    @ViewId(R.id.ui_archive_reply_content)
+    private WebView webView;
     private SimpleInputableViewHolder titleHolder;
     private SimpleClickableViewHolder recipientHolder;
     private String[] items;
     private Archive mArchive;
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        WebSettings settings = webView.getSettings();
+        settings.setDefaultTextEncodingName("UTF-8");
+        settings.setJavaScriptEnabled(true);
+        settings.setUseWideViewPort(true);
+        settings.setLoadWithOverviewMode(true);
+        settings.setDomStorageEnabled(true);
+        if (Build.VERSION.SDK_INT >= 21) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         setCustomTitle(R.string.ui_base_text_reply);
         setRightText(R.string.ui_base_text_finish);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
@@ -90,11 +106,11 @@ public class ArchiveReplyFragment extends BaseTransparentSupportFragment {
 
     @Override
     public void doingInResume() {
-        if (isEmpty(mArchive.getFromGroupName())) {
-            loadingArchiveDetails();
-        } else {
-            initializeHolders();
-        }
+        //if (isEmpty(mArchive.getFromGroupName())) {
+        //    loadingArchiveDetails();
+        //} else {
+        initializeHolders();
+        //}
     }
 
     @Override
@@ -143,16 +159,17 @@ public class ArchiveReplyFragment extends BaseTransparentSupportFragment {
             titleHolder = new SimpleInputableViewHolder(titleView, this);
             titleHolder.showContent(format(items[1], mArchive.getTitle()));
         }
-        sourceSender.setText(Html.fromHtml(getString(R.string.ui_text_archive_reply_source_sender, mArchive.getFromGroupName())));
-        sourceTitle.setText(Html.fromHtml(getString(R.string.ui_text_archive_reply_source_title, mArchive.getTitle())));
-        sourceTime.setText(getString(R.string.ui_text_archive_reply_source_time, formatDate(mArchive.getCreateDate(), R.string.ui_base_text_date_time_format_hhmm)));
-        String content = mArchive.getContent();
-        if (!isEmpty(content)) {
-            content = content.replaceAll("<img.*?>", "");
-        } else {
-            content = "";
-        }
-        sourceContent.setText(EmojiUtility.getEmojiString(sourceContent.getContext(), content, true));
+        webView.loadUrl(ArchiveDetailsFragment.getUrl(mArchive.getId(), mArchive.getOwnType(), false, mArchive.getH5(), true));
+//        sourceSender.setText(Html.fromHtml(getString(R.string.ui_text_archive_reply_source_sender, mArchive.getFromGroupName())));
+//        sourceTitle.setText(Html.fromHtml(getString(R.string.ui_text_archive_reply_source_title, mArchive.getTitle())));
+//        sourceTime.setText(getString(R.string.ui_text_archive_reply_source_time, formatDate(mArchive.getCreateDate(), R.string.ui_base_text_date_time_format_hhmm)));
+//        String content = mArchive.getContent();
+//        if (!isEmpty(content)) {
+//            content = content.replaceAll("<img.*?>", "");
+//        } else {
+//            content = "";
+//        }
+//        sourceContent.setText(EmojiUtility.getEmojiString(sourceContent.getContext(), content, true));
     }
 
     private void tryReplyArchive() {

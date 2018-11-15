@@ -176,7 +176,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         return bundle;
     }
 
-    private static String getUrl(String archiveId, int archiveType, boolean isDraft, String h5) {
+    static String getUrl(String archiveId, int archiveType, boolean isDraft, String h5, boolean control) {
         if (isH5(h5)) {
             // http://113.108.144.2:8038/quesinfo.html              ??
             // http://113.108.144.2:8038/quesinfo.html?id=xxxa      ??
@@ -184,9 +184,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         }
         // http://113.108.144.2:8038/html/h5file.html?docid=&doctype=&accesstoken=
         // https://www.chacx.cn/html/h5file.html?docid=&doctype=&accesstoken=
-        return StringHelper.format("%s/html/h5file.html?docid=%s&owntype=%d&isdraft=%s&accesstoken=%s",
+        return StringHelper.format("%s/html/h5file.html?docid=%s&owntype=%d&isdraft=%s&show=%d&&accesstoken=%s",
                 (Cache.isReleasable() ? "https://www.chacx.cn" : "http://113.108.144.2:8038"),
-                archiveId, (archiveType > 0 ? archiveType : Archive.Type.GROUP), isDraft, Cache.cache().accessToken);
+                archiveId, (archiveType > 0 ? archiveType : Archive.Type.GROUP), isDraft, (control ? 1 : 0), Cache.cache().accessToken);
     }
 
     private static boolean isH5(String h5) {
@@ -527,7 +527,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             Collectable.resetArchiveCollectionParams(archive);
         }
 
-        String url = getUrl(mQueryId, mArchive.getOwnType(), isDraft, archive.getH5());
+        String url = getUrl(mQueryId, mArchive.getOwnType(), isDraft, archive.getH5(), false);
         log(url);
         webView.loadUrl(url);
     }
