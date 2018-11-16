@@ -193,8 +193,9 @@ public class ActivityReplyFragment extends GroupBaseFragment {
                             break;
                         }
                     }
-                    resetRightEvent(replied ? 0 : R.string.ui_base_text_complete);
-                    if (!replied) {
+                    resetRightEvent(replied ? (isActivityNotAtTime() ? R.string.ui_base_text_complete : 0) : R.string.ui_base_text_complete);
+                    if (!replied || isActivityNotAtTime()) {
+                        // 没有回复或者活动还未结束，则可以继续回复
                         loadingDefaultReplyContent();
                     } else {
                         mQueryId = replyId;
@@ -287,6 +288,12 @@ public class ActivityReplyFragment extends GroupBaseFragment {
                 contentTextView.setText(content);
                 contentView.setVisibility(View.GONE);
             }
+        }
+        if (!isActivityNotAtTime()) {
+            resetRightEvent(0);
+        } else {
+            contentTextView.setText(content);
+            contentView.setVisibility(View.GONE);
         }
     }
 
