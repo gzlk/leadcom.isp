@@ -72,6 +72,7 @@ public class ArchivesFragment extends BaseSwipeRefreshSupportFragment {
     private ArchiveAdapter mAdapter;
     @ViewId(R.id.ui_holder_view_searchable_container)
     private View searchView;
+    private boolean isLoadingData = false;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -177,6 +178,7 @@ public class ArchivesFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void fetchingRemoteArchives() {
+        isLoadingData = true;
         displayLoading(true);
         displayNothing(false);
         ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
@@ -191,13 +193,17 @@ public class ArchivesFragment extends BaseSwipeRefreshSupportFragment {
                 remotePageNumber += size >= pageSize ? 1 : 0;
                 if (success && null != list) {
                     // 覆盖方式重置list
-                    mAdapter.update(list, remotePageNumber <= 1);
+                    for (Archive archive : list) {
+                        mAdapter.update(archive);
+                    }
+                    //mAdapter.update(list, remotePageNumber <= 1);
                 }
-                displayLoading(false);
                 stopRefreshing();
                 if (null != mAdapter) {
                     displayNothing(mAdapter.getItemCount() < 1);
                 }
+                isLoadingData = false;
+                displayLoading(false);
             }
         }).list(mQueryId, remotePageNumber, "", mClassifyId);
     }
@@ -226,6 +232,7 @@ public class ArchivesFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
+            if (isLoadingData) return;
             switch (view.getId()) {
                 case R.id.ui_tool_view_document_user_header_image:
                     // 点击头像，打开个人属性页

@@ -39,8 +39,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
             android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+            android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
             android:text="@string/ui_base_text_loading"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/ui_base_text_size_small" />

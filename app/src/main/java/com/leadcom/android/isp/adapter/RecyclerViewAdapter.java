@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.leadcom.android.isp.etc.ReflectionUtil;
+import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.listener.RecycleAdapter;
@@ -47,7 +48,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
     }
 
     private void log(String string) {
-        //LogHelper.log(name, string);
+        LogHelper.log(name, string);
     }
 
     private static String format(String fmt, Object... args) {
@@ -128,7 +129,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
 
     private RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
             isIdle = newState == RecyclerView.SCROLL_STATE_IDLE;
         }
@@ -155,7 +156,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
         onBindHolderOfView(holder, position, innerList.get(position));
         // 是否占满屏幕宽度的设定
         ViewGroup.LayoutParams params = holder.itemView.getLayoutParams();
-        if (params != null && params instanceof StaggeredGridLayoutManager.LayoutParams) {
+        if (params instanceof StaggeredGridLayoutManager.LayoutParams) {
             StaggeredGridLayoutManager.LayoutParams p = (StaggeredGridLayoutManager.LayoutParams) params;
             p.setFullSpan(isItemNeedFullLine(position));
             //int size = getItemSpanSize(position);
@@ -179,11 +180,8 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
 
     @Override
     public void clear() {
-        int size = innerList.size();
-        while (size > 0) {
-            remove(size - 1);
-            size = innerList.size();
-        }
+        innerList.clear();
+        notifyDataSetChanged();
     }
 
     @Override
@@ -212,6 +210,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
      */
     private boolean isModelComparable() {
         ParameterizedType pt = (ParameterizedType) this.getClass().getGenericSuperclass();
+        assert pt != null;
         Class clazz = (Class) pt.getActualTypeArguments()[1];
         return (ReflectionUtil.hasMethod(clazz.getName(), "setId", new Class[]{String.class}));
     }

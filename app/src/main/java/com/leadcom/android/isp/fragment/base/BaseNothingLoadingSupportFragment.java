@@ -36,7 +36,16 @@ public abstract class BaseNothingLoadingSupportFragment extends BaseLayoutSuppor
      */
     public void displayLoading(boolean show) {
         if (null != loadingLayout) {
-            loadingLayout.setVisibility(show ? View.VISIBLE : View.GONE);
+            if (!show) {
+                Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadingLayout.setVisibility(View.GONE);
+                    }
+                }, 200);
+            } else {
+                loadingLayout.setVisibility(View.VISIBLE);
+            }
         }
     }
 
