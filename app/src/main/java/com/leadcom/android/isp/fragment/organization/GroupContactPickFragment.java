@@ -270,9 +270,10 @@ public class GroupContactPickFragment extends GroupBaseFragment {
                     // 如果不在初始选中的列表里，则根据全选状态来设置选中与否
                     member.setSelected(isSelectAll);
                 }
+                mAdapter.update(member);
             }
-            mAdapter.update(list, false);
-            mAdapter.sort();
+            //mAdapter.update(list, false);
+            //mAdapter.sort();
         }
         displayLoading(false);
         stopRefreshing();
