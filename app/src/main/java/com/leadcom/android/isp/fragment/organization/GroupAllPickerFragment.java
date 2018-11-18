@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
@@ -167,13 +168,18 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
 
     @Override
     protected void viewPagerSelectionChanged(int position) {
-        int color1 = getColor(R.color.textColor);
-        int color2 = getColor(R.color.textColorHint);
-        int color3 = getColor(R.color.colorPrimary);
-        int color4 = getColor(R.color.textColorHintLightLight);
+
+        int color1 = getColor(Cache.sdk >= 23 ? R.color.textColor : R.color.textColorLight);
+        int color2 = getColor(Cache.sdk >= 23 ? R.color.textColorHint : R.color.transparent_40_white);
+        int color3 = getColor(Cache.sdk >= 23 ? R.color.colorPrimary : R.color.textColorLight);
+        int color4 = getColor(Cache.sdk >= 23 ? R.color.textColorHintLightLight : R.color.transparent_40_white);
+        int color5 = getColor(Cache.sdk >= 23 ? R.color.colorCaution : R.color.textColorLight);
 
         squadMember.setTextColor(position == 0 ? color1 : color2);
         groupMember.setTextColor(position == 1 ? color1 : color2);
+
+        squadLine.setBackgroundColor(color5);
+        memberLine.setBackgroundColor(color5);
 
         if (!IS_FOR_DELIVER) {
             squadLine.setVisibility(position == 0 ? View.VISIBLE : View.INVISIBLE);

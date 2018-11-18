@@ -9,6 +9,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -106,8 +107,13 @@ public class ActivityCollectionFragment extends BaseViewPagerSupportFragment {
 
     @Override
     protected void viewPagerSelectionChanged(int position) {
-        int color1 = getColor(R.color.textColor);
-        int color2 = getColor(R.color.textColorHint);
+        int color1 = getColor(Cache.sdk >= 23 ? R.color.textColor : R.color.textColorLight);
+        int color2 = getColor(Cache.sdk >= 23 ? R.color.textColorHint : R.color.transparent_40_white);
+        int color3 = getColor(Cache.sdk >= 23 ? R.color.colorPrimary : R.color.textColorLight);
+
+        topLine1.setBackgroundColor(color3);
+        topLine2.setBackgroundColor(color3);
+
         topLine1.setVisibility(position == 0 ? View.VISIBLE : View.INVISIBLE);
         topText1.setTextColor(position == 0 ? color1 : color2);
 
