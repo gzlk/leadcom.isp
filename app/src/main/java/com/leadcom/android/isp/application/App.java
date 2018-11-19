@@ -281,6 +281,7 @@ public class App extends BaseActivityManagedApplication {
         Cache.cache().clear();
         // 同时退出网易云
         //NIMClient.getService(AuthService.class).logout();
+        JPushInterface.deleteAlias(this, 0);
         JPushInterface.stopPush(this);
         super.logout();
     }
