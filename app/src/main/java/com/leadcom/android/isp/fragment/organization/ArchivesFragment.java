@@ -236,7 +236,7 @@ public class ArchivesFragment extends BaseSwipeRefreshSupportFragment {
             switch (view.getId()) {
                 case R.id.ui_tool_view_document_user_header_image:
                     Archive archive = mAdapter.get(index);
-                    if (!archive.isDeliveredArchive()) {
+                    if (archive.getReplyState() <= Archive.ReplyState.DELIVERED) {
                         // 点击头像，打开个人属性页
                         App.openUserInfo(ArchivesFragment.this, mAdapter.get(index).getUserId());
                     } else {
