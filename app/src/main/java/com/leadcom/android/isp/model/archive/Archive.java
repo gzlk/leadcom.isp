@@ -164,6 +164,7 @@ public class Archive extends Additional {
         String Awardable = "awardable";
         String Reply = "reply";
         String State = "state";
+        String ReplyState = "replyState";
     }
 
     /**
@@ -322,6 +323,24 @@ public class Archive extends Additional {
          * 草稿档案
          */
         int DRAFT = 2;
+    }
+
+    /**
+     * 档案回复状态
+     */
+    public interface ReplyState {
+        /**
+         * 普通档案
+         */
+        int NORMAL = 0;
+        /**
+         * 转发的档案
+         */
+        int DELIVERED = 1;
+        /**
+         * 已回复的档案
+         */
+        int REPLIED = 2;
     }
 
     /**
@@ -541,6 +560,8 @@ public class Archive extends Additional {
     // 档案类型
     @Column(Field.Category)
     private String category;
+    @Column(Field.ReplyState)
+    private int replyState;
 
     // 是否获奖档案
     @Column(Field.Awardable)
@@ -1019,6 +1040,28 @@ public class Archive extends Additional {
 
     public void setState(int state) {
         this.state = state;
+    }
+
+    public int getReplyState() {
+        return replyState;
+    }
+
+    public void setReplyState(int replyState) {
+        this.replyState = replyState;
+    }
+
+    /**
+     * 是否可以回复(只有上级转发下来的档案才可以回复)
+     */
+    public boolean isReplyable() {
+        return replyState == ReplyState.DELIVERED;
+    }
+
+    /**
+     * 是否是转发的档案
+     */
+    public boolean isDeliveredArchive() {
+        return replyState > ReplyState.NORMAL;
     }
 
     /**

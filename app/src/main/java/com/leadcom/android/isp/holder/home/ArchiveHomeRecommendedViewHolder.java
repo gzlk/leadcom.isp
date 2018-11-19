@@ -135,7 +135,7 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         if (showHeader) {
             String header = archive.getHeadPhoto();
             if (isEmpty(header) || header.length() < 20) {
-                header = "drawable://" + R.drawable.img_default_user_header;
+                header = "drawable://" + (archive.isDeliveredArchive() ? R.drawable.img_default_group_icon : R.drawable.img_default_user_header);
             }
             authorHeader1.displayImage(header, headerSize, false, false);
             authorName.setText(archive.getUserName());

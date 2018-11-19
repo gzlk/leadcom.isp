@@ -552,7 +552,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     mArchive.setAwardable(data.isAwarded() ? Archive.AwardType.AWARDED : Archive.AwardType.NONE);
                     enableAward = data.isAwardable() && !data.isAwarded();
                     enableAwarded = data.isAwardable() && data.isAwarded();
-                    enableReplay = data.isRepliable();
+                    enableReplay = data.isRepliable() && mArchive.isReplyable();
                     enableClassify = data.isClassifiable();
                     enableProperty = data.isDeletable();
                     fetchingShareInfo();
@@ -805,7 +805,10 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        if (!isChooseGroup && requestCode == REQUEST_SELECT) {
+        if (requestCode == REQUEST_REPLY) {
+            // 档案回复成功，此时更新档案的回复状态为已回复
+            mArchive.setReplyState(Archive.ReplyState.REPLIED);
+        } else if (!isChooseGroup && requestCode == REQUEST_SELECT) {
             // 选择了下发的成员
             String result = getResultedData(data);
             if (isEmpty(result)) {

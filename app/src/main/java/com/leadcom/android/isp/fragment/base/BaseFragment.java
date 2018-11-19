@@ -401,6 +401,10 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public static final int REQUEST_CATEGORY = ACTIVITY_BASE_REQUEST + 27;
     /**
+     * 档案、活动的回复
+     */
+    public static final int REQUEST_REPLY = ACTIVITY_BASE_REQUEST + 28;
+    /**
      * 感兴趣
      */
     protected static final int REQUEST_INTEREST = ACTIVITY_BASE_REQUEST + 100;

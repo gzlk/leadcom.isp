@@ -1,25 +1,19 @@
 package com.leadcom.android.isp.fragment.archive;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.chorme.ChromeWebViewClient;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
@@ -29,8 +23,6 @@ import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.holder.common.SimpleInputableViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.model.archive.Archive;
-
-import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>回复流转档案<br />
@@ -53,7 +45,7 @@ public class ArchiveReplyFragment extends BaseTransparentSupportFragment {
     public static void open(BaseFragment fragment, Archive archive) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(PARAM_JSON, archive);
-        fragment.openActivity(ArchiveReplyFragment.class.getName(), bundle, true, true);
+        fragment.openActivity(ArchiveReplyFragment.class.getName(), bundle, REQUEST_REPLY, true, true);
     }
 
     @ViewId(R.id.ui_archive_reply_subject)
@@ -212,7 +204,8 @@ public class ArchiveReplyFragment extends BaseTransparentSupportFragment {
                 super.onResponse(archive, success, message);
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_text_archive_reply_success);
-                    finish();
+                    resultData(mArchive.getId());
+                    //finish();
                 }
             }
         }).reply(mArchive.getId(), title, content);

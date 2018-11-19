@@ -235,8 +235,13 @@ public class ArchivesFragment extends BaseSwipeRefreshSupportFragment {
             if (isLoadingData) return;
             switch (view.getId()) {
                 case R.id.ui_tool_view_document_user_header_image:
-                    // 点击头像，打开个人属性页
-                    App.openUserInfo(ArchivesFragment.this, mAdapter.get(index).getUserId());
+                    Archive archive = mAdapter.get(index);
+                    if (!archive.isDeliveredArchive()) {
+                        // 点击头像，打开个人属性页
+                        App.openUserInfo(ArchivesFragment.this, mAdapter.get(index).getUserId());
+                    } else {
+                        ArchiveDetailsFragment.open(ArchivesFragment.this, archive);
+                    }
                     break;
                 case R.id.ui_tool_view_archive_additional_comment_layout:
                 case R.id.ui_tool_view_archive_additional_like_layout:
