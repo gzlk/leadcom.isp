@@ -291,7 +291,6 @@ public class ActivityReplyFragment extends GroupBaseFragment {
         }
         if (!isActivityNotAtTime()) {
             resetRightEvent(0);
-        } else {
             contentTextView.setText(content);
             contentView.setVisibility(View.GONE);
         }
