@@ -150,12 +150,25 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     @Override
     protected void initializeFragments() {
         if (mFragments.size() <= 0) {
+            ArrayList<SubMember> members = new ArrayList<>();
+            // 支部成员列表
+            for (SubMember member : selectedMembers) {
+                if (!isEmpty(member.getSquadId())) {
+                    members.add(member);
+                }
+            }
             // 本组织支部以及成员
-            Bundle bundle = SquadsFragment.getBundle(mQueryId, mGroupName, true, selectedMembers);
+            Bundle bundle = SquadsFragment.getBundle(mQueryId, mGroupName, true, members);
             SquadsFragment squads = SquadsFragment.newInstance(bundle);
             mFragments.add(squads);
             // 本组织成员
-            bundle = GroupContactPickFragment.getBundle(mQueryId, false, false, false, "[]");
+            members = new ArrayList<>();
+            for (SubMember member : selectedMembers) {
+                if (isEmpty(member.getSquadId())) {
+                    members.add(member);
+                }
+            }
+            bundle = GroupContactPickFragment.getBundle(mQueryId, false, false, false, members);
             mFragments.add(GroupContactPickFragment.newInstance(bundle));
             if (!IS_FOR_DELIVER) {
                 // 下级组织

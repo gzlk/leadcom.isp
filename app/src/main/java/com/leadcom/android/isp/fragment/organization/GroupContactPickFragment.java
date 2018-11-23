@@ -6,7 +6,9 @@ import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.gson.reflect.TypeToken;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
@@ -20,9 +22,6 @@ import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.SubMember;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.CustomTextView;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,7 +51,7 @@ public class GroupContactPickFragment extends GroupBaseFragment {
         return ocp;
     }
 
-    public static Bundle getBundle(String groupId, boolean lockExist, boolean singlePick, boolean isSingle, String jsonExitMembers) {
+    public static Bundle getBundle(String groupId, boolean lockExist, boolean singlePick, boolean isSingle, ArrayList<SubMember> jsonExitMembers) {
         Bundle bundle = new Bundle();
         // 组织的id
         bundle.putString(PARAM_QUERY_ID, groupId);
@@ -61,17 +60,17 @@ public class GroupContactPickFragment extends GroupBaseFragment {
         // 是否单选
         bundle.putBoolean(PARAM_SINGLE_PICK, singlePick);
         // 已选中的成员列表
-        bundle.putString(PARAM_JSON, jsonExitMembers);
+        bundle.putSerializable(PARAM_JSON, jsonExitMembers);
         // 是否独立打开的页面
         bundle.putBoolean(PARAM_IS_SINGLE_UI, isSingle);
         return bundle;
     }
 
-    public static void open(BaseFragment fragment, String groupId, boolean lockExist, boolean singlePick, String jsonExitMembers) {
+    public static void open(BaseFragment fragment, String groupId, boolean lockExist, boolean singlePick, ArrayList<SubMember> jsonExitMembers) {
         open(fragment, REQUEST_MEMBER, groupId, lockExist, singlePick, jsonExitMembers);
     }
 
-    public static void open(BaseFragment fragment, int request, String groupId, boolean lockExist, boolean singlePick, String jsonExitMembers) {
+    public static void open(BaseFragment fragment, int request, String groupId, boolean lockExist, boolean singlePick, ArrayList<SubMember> jsonExitMembers) {
         Bundle bundle = getBundle(groupId, lockExist, singlePick, true, jsonExitMembers);
         fragment.openActivity(GroupContactPickFragment.class.getName(), bundle, request, true, false);
     }
@@ -83,9 +82,8 @@ public class GroupContactPickFragment extends GroupBaseFragment {
         isLockable = bundle.getBoolean(PARAM_FORCE_LOCK, false);
         isSinglePick = bundle.getBoolean(PARAM_SINGLE_PICK, false);
         isSingleUI = bundle.getBoolean(PARAM_IS_SINGLE_UI, true);
-        String json = bundle.getString(PARAM_JSON, "[]");
-        existsUsers = Json.gson().fromJson(StringHelper.replaceJson(json, true), new TypeToken<ArrayList<SubMember>>() {
-        }.getType());
+        //String json = bundle.getString(PARAM_JSON, "[]");
+        existsUsers = (ArrayList<SubMember>) bundle.getSerializable(PARAM_JSON);
         if (null == existsUsers) {
             existsUsers = new ArrayList<>();
         }

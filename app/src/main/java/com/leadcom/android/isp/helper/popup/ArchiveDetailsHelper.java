@@ -438,6 +438,10 @@ public class ArchiveDetailsHelper {
                         names += (isEmpty(names) ? "" : "、") + name;
                     }
                 }
+                if (mArchive.isActivity()) {
+                    oNames = null;
+                    names = "";
+                }
                 if (null != members && members.size() > 0) {
                     for (SubMember member : members) {
                         if (null == oNames || !oNames.contains(member.getUserName())) {

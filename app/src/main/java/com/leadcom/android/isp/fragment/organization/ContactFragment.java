@@ -195,8 +195,8 @@ public class ContactFragment extends GroupBaseFragment {
                         public void onClick() {
                             // + 号点击之后直接打开组织通讯录(2017/08/02 10:00)
                             // 打开组织通讯录并尝试将里面的用户邀请到小组
-                            String json = SubMember.toJson(getSubMembers());
-                            GroupContactPickFragment.open(ContactFragment.this, mOrganizationId, true, false, json);
+                            //String json = SubMember.toJson(getSubMembers());
+                            GroupContactPickFragment.open(ContactFragment.this, mOrganizationId, true, false, getSubMembers());
                         }
                     });
                 }

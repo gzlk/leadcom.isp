@@ -97,6 +97,7 @@ public class SquadsFragment extends GroupBaseFragment {
     private boolean selectable, allSelected = false;
     private String mGroupName;
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);

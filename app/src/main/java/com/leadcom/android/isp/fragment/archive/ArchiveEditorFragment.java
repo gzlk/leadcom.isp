@@ -14,12 +14,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.gson.reflect.TypeToken;
 import com.hlk.hlklib.layoutmanager.CustomGridLayoutManager;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
@@ -37,7 +35,6 @@ import com.leadcom.android.isp.api.archive.ArchiveQueryRequest;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.api.org.SquadRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.ImageCompress;
@@ -45,10 +42,7 @@ import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
-import com.leadcom.android.isp.fragment.common.LabelPickFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAllPickerFragment;
-import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
-import com.leadcom.android.isp.fragment.organization.SquadPickerFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -61,7 +55,6 @@ import com.leadcom.android.isp.holder.attachment.AttachmentViewHolder;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.holder.common.SimpleInputableViewHolder;
 import com.leadcom.android.isp.holder.individual.ImageViewHolder;
-import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
@@ -69,11 +62,8 @@ import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.ArchiveQuery;
-import com.leadcom.android.isp.model.archive.Label;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
-import com.leadcom.android.isp.model.organization.Organization;
-import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Squad;
 import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.service.DraftService;
@@ -289,7 +279,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     /**
      * 是否是组织档案，默认个人档案
      */
-    private boolean isGroupArchive = false, isUserArchive = true;
+    private boolean isGroupArchive = false;
     private boolean isLongClickEditor = false, isOpenOther = false;
     /**
      * 是否是粘贴了内容
@@ -494,7 +484,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         templateView.setVisibility(mArchive.isTemplateArchive() || mArchive.isActivity() ? View.VISIBLE : View.GONE);
         if (mArchive.isTemplateArchive() || mArchive.isActivity()) {
             isGroupArchive = true;
-            isUserArchive = false;
         }
     }
 
@@ -522,17 +511,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         resetEditorLayout();
         isGroupArchive = !isEmpty(mArchive.getGroupId());
-        isUserArchive = !isGroupArchive;
-        if (mArchive.isAttachmentArchive() || mArchive.isTemplateArchive()) {
-            isUserArchive = false;
-        }
         titleView.setValue(mArchive.getTitle());
         if (mArchive.isMultimediaArchive()) {
             mArchive.resetImageStyle();
             mEditor.setHtml(mArchive.getContent());
         } else if (mArchive.isTemplateArchive()) {
             isGroupArchive = true;
-            isUserArchive = false;
             maxSelectable = 8;
             initializeTemplate();
             timeHolder.showContent(format(templateItems[0], (mArchive.isDefaultHappenDate() ? "选择时间(必填)" : formatDate(mArchive.getHappenDate()))));
@@ -614,29 +598,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 musicUrl.setValue(musicPath);
                 showFileSize(false, musicPath, musicSize);
                 break;
-            case REQUEST_LABEL:
-                String labelJson = getResultedData(data);
-                ArrayList<String> list = Json.gson().fromJson(labelJson, new TypeToken<ArrayList<String>>() {
-                }.getType());
-                if (null != list) {
-                    mArchive.getLabel().clear();
-                    mArchive.getLabel().addAll(list);
-                }
-                if (null != labelText) {
-                    labelText.setText(Label.getLabelDesc(mArchive.getLabel()));
-                }
-                break;
-            case REQUEST_CATEGORY:
-                mArchive.setCategory(getResultedData(data));
-                resetCategory();
-                break;
-            case REQUEST_PROPERTY:
-                String res = getResultedData(data);
-                String[] properties = res.split(",");
-                mArchive.setDocClassifyId(properties[0]);
-                mArchive.setProperty(properties[1]);
-                resetProperty();
-                break;
             case REQUEST_ATTACHMENT:
                 if (null != data) {
                     mediaFiles.clear();
@@ -672,6 +633,13 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     for (String name : oNames) {
                         names += (isEmpty(names) ? "" : "、") + name;
                     }
+                }
+                if (mArchive.isActivity() || mArchive.isTemplateArchive() || mArchive.isAttachmentArchive()) {
+                    // 活动、记录、附件档案，参与人选择之后直接覆盖原有的选择记录
+                    mArchive.getGroupIdList().clear();
+                    mArchive.getGroSquMemberList().clear();
+                    names = "";
+                    oNames = null;
                 }
                 if (null != members && members.size() > 0) {
                     for (SubMember member : members) {
@@ -713,30 +681,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 ArrayList<SubMember> subMembers = SubMember.fromJson(getResultedData(data));
                 warningShareDraftTo(SubMember.getMemberNames(subMembers), SubMember.getUserIds(subMembers));
                 break;
-            case REQUEST_GROUP:
-                ArrayList<RelateGroup> groups = RelateGroup.from(getResultedData(data));
-                if (null != groups && groups.size() > 0) {
-                    // 设置组织id
-                    mArchive.setGroupId(groups.get(0).getGroupId());
-                    // 设置类别为组织档案
-                    //mArchive.setType(Archive.Type.GROUP);
-                    if (null != groupNameText) {
-                        groupNameText.setText(Html.fromHtml(groups.get(0).getGroupName()));
-                    }
-                }
-                break;
-            case REQUEST_SQUAD:
-                // 选择了小组
-                String string = getResultedData(data);
-                if (!isEmpty(string)) {
-                    Squad squad = Squad.fromJson(string);
-                    if (null != squad && !isEmpty(squad.getId())) {
-                        mArchive.setBranch(squad.getName());
-                        mArchive.setSquadId(squad.getId());
-                        branchText.setText(squad.getName());
-                    }
-                }
-                break;
         }
         isOpenOther = false;
         super.onActivityResult(requestCode, data);
@@ -767,12 +711,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 mArchive.setDocType(editorType);
             }
         }
-        if (null != siteText) {
-            mArchive.setSite(siteText.getValue());
-            //mArchive.setSource(creatorText.getValue());
-            // 保存可能手动输入添加的参与人
-            mArchive.setParticipant(participantText.getValue());
-        }
+//        if (null != siteText) {
+//            mArchive.setSite(siteText.getValue());
+//            //mArchive.setSource(creatorText.getValue());
+//            // 保存可能手动输入添加的参与人
+//            mArchive.setParticipant(participantText.getValue());
+//        }
         if (mArchive.isTemplateArchive()) {
             resetTemplateArchive(false);
             // 保留用户选择了的图片
@@ -1107,312 +1051,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     }
 
-    private View settingDialogView;
-    private TextView titleText, publicText, labelText, createTime, happenDate, propertyText, categoryText, groupNameText,
-            branchText;
-    private CustomTextView userIcon, groupIcon, publicIcon, privateIcon;
-    private ClearEditText participantText, siteText;
-    private ClearEditText creatorText;
-    private View archiveTypeUser, shareDraftButton;
-
-
-    private void openSettingDialog() {
-        mArchive.setTitle(titleView.getValue());
-        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
-            @Override
-            public View onInitializeView() {
-                if (null == settingDialogView) {
-                    settingDialogView = View.inflate(Activity(), R.layout.popup_dialog_rich_editor_archive_setting, null);
-                    titleText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_title);
-                    publicText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_public_text);
-                    labelText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label_text);
-                    creatorText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_creator);
-                    createTime = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_create_time);
-                    propertyText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_property_text);
-                    categoryText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_category_text);
-                    participantText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_participant_text);
-                    siteText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_site_text);
-                    happenDate = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_time_text);
-                    userIcon = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type_user_icon);
-                    groupIcon = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type_group_icon);
-                    groupNameText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_group_picker_text);
-                    archiveTypeUser = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type_user);
-                    publicIcon = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_public_public_icon);
-                    privateIcon = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_public_private_icon);
-                    shareDraftButton = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft);
-                    branchText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker_text);
-                }
-                return settingDialogView;
-            }
-
-            @Override
-            public void onBindData(View dialogView, DialogHelper helper) {
-                if (isEmpty(mArchive.getTitle())) {
-                    titleText.setText(Html.fromHtml(getString(R.string.ui_text_archive_creator_editor_title_empty)));
-                } else {
-                    titleText.setText(mArchive.getTitle());
-                }
-                String source = mArchive.getSource();
-                creatorText.setValue(isEmpty(source) ? mArchive.getUserName() : source);
-                creatorText.focusEnd();
-                String text = mArchive.getCreateDate();
-                if (!isEmpty(text) && !text.equals(Model.DFT_DATE)) {
-                    text = formatDate(mArchive.getCreateDate(), "yyyy.MM.dd");
-                } else {
-                    text = Utils.formatDateOfNow("yyyy.MM.dd");
-                }
-                createTime.setText(text);
-                labelText.setText(Label.getLabelDesc(mArchive.getLabel()));
-                Seclusion seclusion = new Seclusion();
-                //seclusion.setGroupIds(mArchive.getAuthGro());
-                //seclusion.setUserIds(mArchive.getAuthUser());
-                //seclusion.setUserNames(mArchive.getAuthUserName());
-                // 这一步一定要在最后设置，否则状态会被重置
-                seclusion.setStatus(mArchive.getAuthPublic());
-                publicText.setText(Seclusion.getPrivacy(seclusion));
-
-                siteText.setValue(mArchive.getSite());
-                siteText.focusEnd();
-
-                resetProperty();
-                resetCategory();
-
-                if (isEmpty(mArchive.getParticipant())) {
-                    participantText.setValue("");
-                } else {
-                    participantText.setValue(mArchive.getParticipant());
-                }
-                participantText.focusEnd();
-                if (mArchive.isDefaultHappenDate()) {
-                    happenDate.setText(R.string.ui_text_archive_details_editor_setting_time_title);
-                } else {
-                    happenDate.setText(mArchive.getHappenDate().substring(0, 10));
-                }
-
-                if (mArchive.isAttachmentArchive()) {
-                    isGroupArchive = true;
-                    isUserArchive = false;
-                }
-
-                if (isEmpty(mArchive.getGroupId())) {
-                    // 如果用户只有一个组织则直接填入组织id和名字
-                    if (isGroupArchive && Cache.cache().getGroups().size() == 1) {
-                        mArchive.setGroupId(Cache.cache().getGroups().get(0).getGroupId());
-                        resetGroupInfo(mArchive.getGroupId());
-                    } else {
-                        groupNameText.setText(R.string.ui_text_archive_details_editor_setting_group_desc);
-                    }
-                } else {
-                    resetGroupInfo(mArchive.getGroupId());
-                }
-
-                archiveTypeUser.setVisibility(mArchive.isAttachmentArchive() ? View.GONE : View.VISIBLE);
-                if (mArchive.isAttachmentArchive()) {
-                    shareDraftButton.setVisibility(View.GONE);
-                }
-                resetGroupArchiveOrUser();
-            }
-
-            private void resetGroupInfo(String groupId) {
-                Organization group = Organization.get(groupId);
-                if (null != group) {
-                    groupNameText.setText(Html.fromHtml(group.getName()));
-                    mArchive.setGroupName(group.getName());
-                } else {
-                    fetchingGroup(mArchive.getGroupId());
-                }
-            }
-
-            private void fetchingGroup(String groupId) {
-                OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {
-                    @Override
-                    public void onResponse(Organization organization, boolean success, String message) {
-                        super.onResponse(organization, success, message);
-                        if (success && null != organization) {
-                            groupNameText.setText(Html.fromHtml(organization.getName()));
-                            mArchive.setGroupName(organization.getName());
-                        }
-                    }
-                }).find(groupId);
-            }
-        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
-            @Override
-            public int[] clickEventHandleIds() {
-                return new int[]{
-                        R.id.ui_popup_rich_editor_setting_type_user,
-                        R.id.ui_popup_rich_editor_setting_type_group,
-                        R.id.ui_popup_rich_editor_setting_group_picker,
-                        R.id.ui_popup_rich_editor_setting_branch_picker,
-                        R.id.ui_popup_rich_editor_setting_time,
-                        R.id.ui_popup_rich_editor_setting_property,
-                        R.id.ui_popup_rich_editor_setting_category,
-                        R.id.ui_popup_rich_editor_setting_participant,
-                        //R.id.ui_popup_rich_editor_setting_public,
-                        R.id.ui_popup_rich_editor_setting_public_public,
-                        R.id.ui_popup_rich_editor_setting_public_private,
-                        R.id.ui_popup_rich_editor_setting_label,
-                        R.id.ui_popup_rich_editor_setting_share,
-                        R.id.ui_popup_rich_editor_setting_share_draft,
-                        R.id.ui_popup_rich_editor_setting_commit};
-            }
-
-            @Override
-            public boolean onClick(View view) {
-                switch (view.getId()) {
-                    case R.id.ui_popup_rich_editor_setting_type_user:
-                        // 是否选中个人档案标签
-                        isUserArchive = !isUserArchive;
-                        if (!isUserArchive && !isGroupArchive) {
-                            // 如果不是选择用户文档，且也不是组织文档，则默认选中组织文档
-                            isGroupArchive = true;
-                        }
-                        //mArchive.setType(Archive.Type.USER);
-                        resetGroupArchiveOrUser();
-                        break;
-                    case R.id.ui_popup_rich_editor_setting_type_group:
-                        // 选择新建组织档案，只有图文模式下才可以组织、个人之间互相转换，附件模式下不可以
-                        if (mArchive.isMultimediaArchive()) {
-                            isGroupArchive = !isGroupArchive;
-                            if (!isGroupArchive && !isUserArchive) {
-                                // 如果不是选择组织文档，且也不是个人文档，则默认选中个人文档
-                                isUserArchive = true;
-                            }
-                            //mArchive.setType(Archive.Type.GROUP);
-                            resetGroupArchiveOrUser();
-                        }
-                        break;
-                    case R.id.ui_popup_rich_editor_setting_group_picker:
-                        isOpenOther = true;
-                        GroupPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false);
-                        break;
-                    case R.id.ui_popup_rich_editor_setting_branch_picker:
-                        if (isEmpty(mArchive.getGroupId())) {
-                            ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
-                        } else {
-                            isOpenOther = true;
-                            SquadPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), mArchive.getBranch());
-                        }
-                        break;
-                    case R.id.ui_popup_rich_editor_setting_time:
-                        openDateTimePicker();
-                        break;
-                    case R.id.ui_popup_rich_editor_setting_property:
-                        // 档案性质
-                        if (isEmpty(mArchive.getGroupId())) {
-                            ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
-                        } else {
-                            isOpenOther = true;
-                            LabelPickFragment.open(ArchiveEditorFragment.this, LabelPickFragment.TYPE_PROPERTY, mArchive.getGroupId(), mArchive.getDocClassifyId());
-                        }
-                        break;
-                    case R.id.ui_popup_rich_editor_setting_category:
-                        // 档案类型
-                        isOpenOther = true;
-                        LabelPickFragment.open(ArchiveEditorFragment.this, LabelPickFragment.TYPE_CATEGORY, mArchive.getGroupId(), mArchive.getCategory());
-                        break;
-                    case R.id.ui_popup_rich_editor_setting_participant:
-                        openMemberPicker();
-                        break;
-                    case R.id.ui_popup_rich_editor_setting_public:
-                        break;
-                    case R.id.ui_popup_rich_editor_setting_public_public:
-                        mArchive.setAuthPublic(Seclusion.Type.Public);
-                        resetPublicStatus();
-                        break;
-                    case R.id.ui_popup_rich_editor_setting_public_private:
-                        mArchive.setAuthPublic(isEmpty(mArchive.getGroupId()) ? Seclusion.Type.Private : Seclusion.Type.Group);
-                        resetPublicStatus();
-                        break;
-                    case R.id.ui_popup_rich_editor_setting_label:
-                        openLabelPicker();
-                        break;
-                    case R.id.ui_popup_rich_editor_setting_share:
-                    case R.id.ui_popup_rich_editor_setting_share_draft:
-//                        if (!isEmpty(mArchive.getGroupId())) {
-//                            // 组织档案才能分享草稿
-//                            if (mArchive.isMultimediaArchive()) {
-//                                mArchive.setTitle(titleView.getValue());
-//                                if (isEmpty(mArchive.getTitle())) {
-//                                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_title_invalid);
-//                                } else if (isEmpty(mArchive.getContent())) {
-//                                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
-//                                } else {
-//                                    isShareDraft = true;
-//                                    isOpenOther = true;
-//                                    GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
-//                                }
-//                            } else if (mArchive.isTemplateArchive()) {
-//                                if (resetTemplateArchive(true)) {
-//                                    // 分享活动草稿
-//                                    isShareDraft = true;
-//                                    // 如果选择了图片，则压缩图片然后上传
-//                                    tryUploadingTemplateImages();
-//                                    isOpenOther = true;
-//                                    // 活动档案分享时选择要分享的人
-//                                    GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
-//                                }
-//                            }
-//                            //getDraftShareInfo();
-//                        } else {
-//                            ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
-//                        }
-                        break;
-                    case R.id.ui_popup_rich_editor_setting_commit:
-                        if (isUserArchive && isGroupArchive) {
-                            warningSaveUserAndGroupArchive();
-                        } else {
-                            tryCreateArchive();
-                        }
-                        break;
-                }
-                return false;
-            }
-
-            private void warningSaveUserAndGroupArchive() {
-                DeleteDialogHelper.helper().init(ArchiveEditorFragment.this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
-                    @Override
-                    public boolean onConfirm() {
-                        tryCreateArchive();
-                        return true;
-                    }
-                }).setTitleText(R.string.ui_text_archive_creator_editor_create_both).setConfirmText(R.string.ui_base_text_confirm).show();
-            }
-
-            private void resetPublicStatus() {
-                boolean isPublic = mArchive.getAuthPublic() == Seclusion.Type.Public;
-                publicIcon.setTextColor(getColor(isPublic ? R.color.colorPrimary : R.color.textColorHintLight));
-                privateIcon.setTextColor(getColor(!isPublic ? R.color.colorPrimary : R.color.textColorHintLight));
-            }
-
-            private void openLabelPicker() {
-                isOpenOther = true;
-                LabelPickFragment.open(ArchiveEditorFragment.this, LabelPickFragment.TYPE_LABEL, mArchive.getGroupId(), mArchive.getLabel());
-            }
-        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
-    }
-
-    private void resetProperty() {
-        if (isEmpty(mArchive.getProperty())) {
-            propertyText.setText(R.string.ui_text_archive_details_editor_setting_property_title);
-        } else {
-            propertyText.setText(mArchive.getProperty());
-        }
-    }
-
-    private void resetCategory() {
-        if (isEmpty(mArchive.getCategory())) {
-            categoryText.setText(R.string.ui_text_archive_details_editor_setting_category_title);
-        } else {
-            categoryText.setText(mArchive.getCategory());
-        }
-    }
-
-    private void openMemberPicker() {
-        isOpenOther = true;
-        GroupAllPickerFragment.IS_FOR_DELIVER = true;
-        GroupAllPickerFragment.open(this, mArchive.getGroupId(), "参与人", null, null);
-    }
-
     private boolean isDateLessThanNow(Date date, int addHours) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR, addHours);
@@ -1437,113 +1075,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 String fullTime = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date);
                 mArchive.setHappenDate(fullTime);
                 String time = mArchive.isActivity() ? formatDateTime(fullTime) : formatDate(fullTime);
-                if (null != happenDate) {
-                    happenDate.setText(time);
-                }
                 if (null != timeHolder) {
                     timeHolder.showContent(format(templateItems[0], time));
                 }
             }
         }).show(ArchiveEditorFragment.this, true, true, true, mArchive.isActivity(), mArchive.isActivity(), false, !mArchive.isTemplateArchive(), mArchive.getHappenDate());
     }
-
-    /**
-     * 重置当前选择是组织档案还是个人档案
-     */
-    private void resetGroupArchiveOrUser() {
-        userIcon.setTextColor(getColor(isUserArchive ? R.color.colorPrimary : R.color.textColorHintLight));
-        groupIcon.setTextColor(getColor(isGroupArchive ? R.color.colorPrimary : R.color.textColorHintLight));
-        int groupVisibility = isGroupArchive ? View.VISIBLE : View.GONE;
-        // 组织档案需要发生时间
-        if (!mArchive.isTemplateArchive()) {
-            settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_time).setVisibility(groupVisibility);
-        }
-        // 组织档案需要选择组织
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_group_picker).setVisibility(groupVisibility);
-        // 组织档案需要设置档案的性质
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_property).setVisibility(groupVisibility);
-        // 组织档案需要设置档案的类型
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_category).setVisibility(groupVisibility);
-        // 个人档案需要选择标签
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label).setVisibility(isUserArchive ? View.VISIBLE : View.GONE);
-        // 模板档案不需要组织、个人选择
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type).setVisibility(mArchive.isTemplateArchive() || mArchive.isAttachmentArchive() ? View.GONE : View.VISIBLE);
-        // 模板档案不需要有封面
-        //settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_cover).setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
-        // 模板档案不需要来源
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_source).setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
-        // 模板档案需要显示支部选择器
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker).setVisibility(isGroupArchive ? View.VISIBLE : View.GONE);
-        // 个人档案不需要分享草稿
-        if (!mArchive.isAttachmentArchive()) {
-            settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft).setVisibility(isGroupArchive ? View.VISIBLE : View.GONE);
-        }
-    }
-
-    // 插入图片的对话框
-//    private View imageDialogView;
-//    private ClearEditText imageAlt, imageUrl;
-//
-//    private void openImageDialog() {
-//        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
-//            @Override
-//            public View onInitializeView() {
-//                if (null == imageDialogView) {
-//                    imageDialogView = View.inflate(Activity(), R.layout.popup_dialog_rich_editor_image, null);
-//                    imageAlt = imageDialogView.findViewById(R.id.ui_popup_rich_editor_image_alt);
-//                    imageUrl = imageDialogView.findViewById(R.id.ui_popup_rich_editor_image_url);
-//                }
-//                return imageDialogView;
-//            }
-//
-//            @Override
-//            public void onBindData(View dialogView, DialogHelper helper) {
-//
-//            }
-//        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
-//            @Override
-//            public int[] clickEventHandleIds() {
-//                return new int[]{R.id.ui_popup_rich_editor_image_navigate};
-//            }
-//
-//            @Override
-//            public boolean onClick(View view) {
-//                switch (view.getId()) {
-//                    case R.id.ui_popup_rich_editor_image_navigate:
-//                        isOpenOther = true;
-//                        openImageSelector(true);
-//                        // 图片选择时，不需要关闭对话框，返回之后还要上传
-//                        return false;
-//                }
-//                return true;
-//            }
-//        }).addOnDialogDismissListener(new DialogHelper.OnDialogDismissListener() {
-//            @Override
-//            public void onDismiss() {
-//                log("image dialog dismissed");
-//                mImageIcon.setTextColor(getColor(R.color.textColorHint));
-//            }
-//        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
-//            @Override
-//            public boolean onConfirm() {
-//                String url = imageUrl.getValue();
-//                if (!isEmpty(url)) {
-//                    if (Utils.isUrl(url)) {
-//                        // 如果是粘贴的网络地址，则直接插入图片
-//                        insertImage(url, imageAlt.getValue());
-//                    } else {
-//                        // 压缩并上传图片，然后插入
-//                        uploadType = UP_IMAGE;
-//                        showUploading(true);
-//                        compressImage();
-//                    }
-//                } else {
-//                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_image_select_url_error);
-//                }
-//                return true;
-//            }
-//        }).setPopupType(DialogHelper.FADE).show();
-//    }
 
     private void insertImage(String url, String alt) {
         mEditor.insertImage(url, alt);
@@ -2460,7 +1997,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         mArchive.getGroupIdList(), mArchive.getGroSquMemberList());
             } else {
                 // 参与者
-                openMemberPicker();
+                isOpenOther = true;
+                GroupAllPickerFragment.IS_FOR_DELIVER = true;
+                GroupAllPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), "参与人", null, null);
             }
         }
     };
