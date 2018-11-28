@@ -879,7 +879,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             return false;
         }
         mArchive.setRecorder(authorHolder.getValue());
-        mArchive.setTopic(topicContent.getValue());
+        // 去掉活动议题（2018-11-28）
+        //mArchive.setTopic(topicContent.getValue());
         mArchive.setContent(minuteContent.getValue());
         return true;
     }
@@ -1880,12 +1881,18 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private View participantView;
     @ViewId(R.id.ui_archive_creator_rich_editor_author)
     private View authorView;
+    @ViewId(R.id.ui_archive_creator_topic_layout)
+    private View topicView;
     @ViewId(R.id.ui_holder_view_simple_inputable_topic)
     private CorneredEditText topicContent;
+    @ViewId(R.id.ui_archive_creator_topic_layout)
+    private View minuteView;
     @ViewId(R.id.ui_archive_creator_rich_editor_minute_title)
     private TextView minuteTitle;
     @ViewId(R.id.ui_holder_view_simple_inputable_minute)
     private CorneredEditText minuteContent;
+    @ViewId(R.id.ui_archive_creator_additional_layout)
+    private View additionalView;
     @ViewId(R.id.ui_archive_creator_rich_editor_template_images_layout)
     private View templateImages;
     @ViewId(R.id.ui_archive_creator_rich_editor_attachment_title)
@@ -1935,6 +1942,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             authorHolder.showContent(format(templateItems[3], Cache.cache().userName));
         }
         if (mArchive.isActivity()) {
+            // 去掉活动议题一栏(2018-11-28)
+            topicView.setVisibility(View.GONE);
+            // 增加附加选项
+            additionalView.setVisibility(View.VISIBLE);
             //templateImages.setVisibility(View.GONE);
             titleView.setMaxLength(20);
             minuteTitle.setText(StringHelper.getString(R.string.ui_group_activity_editor_minute_title));

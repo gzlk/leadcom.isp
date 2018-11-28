@@ -297,7 +297,7 @@
         android:id="@+id/ui_archive_creator_rich_editor_template"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -320,19 +320,17 @@
                 android:id="@+id/ui_archive_creator_rich_editor_author"
                 layout="@layout/holder_view_simple_inputable" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/ui_static_dp_10"
-                android:background="@color/windowBackground" />
-
             <LinearLayout
+                android:id="@+id/ui_archive_creator_topic_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ui_static_dp_5"
                 android:background="@android:color/white"
                 android:gravity="top|start"
                 android:orientation="horizontal"
                 android:paddingTop="@dimen/ui_static_dp_5"
-                android:paddingBottom="@dimen/ui_static_dp_5">
+                android:paddingBottom="@dimen/ui_static_dp_5"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -360,14 +358,11 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/ui_static_dp_10"
-                android:background="@color/windowBackground" />
-
             <LinearLayout
+                android:id="@+id/ui_archive_creator_minute_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ui_static_dp_5"
                 android:background="@android:color/white"
                 android:gravity="top|start"
                 android:orientation="horizontal"
@@ -402,21 +397,46 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ui_archive_creator_rich_editor_template_images_layout"
+                android:id="@+id/ui_archive_creator_additional_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ui_static_dp_5"
                 android:background="@android:color/white"
-                android:orientation="vertical">
+                android:gravity="top|start"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:paddingTop="@dimen/ui_static_dp_5"
+                android:paddingBottom="@dimen/ui_static_dp_5">
 
-                <View
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/ui_static_dp_10"
-                    android:background="@color/windowBackground" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                    android:text="@string/ui_group_activity_editor_additional_title" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                    android:layout_marginTop="@dimen/ui_static_dp_5"
+                    android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding">
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ui_archive_creator_rich_editor_template_images_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ui_static_dp_5"
+                android:background="@android:color/white"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                    android:layout_marginTop="@dimen/ui_static_dp_5"
                     android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
                     android:layout_marginBottom="@dimen/ui_static_dp_5"
                     android:orientation="horizontal">
