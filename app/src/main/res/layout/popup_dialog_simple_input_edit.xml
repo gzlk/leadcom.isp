@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingStart="@dimen/ui_static_dp_20"
-    android:paddingEnd="@dimen/ui_static_dp_20"
-    android:orientation="vertical">
+    android:paddingEnd="@dimen/ui_static_dp_20">
 
     <View
         android:layout_width="match_parent"
@@ -33,16 +33,16 @@
             android:text="@string/app_name_default"
             android:textSize="@dimen/ui_base_text_size_big" />
 
-        <com.hlk.hlklib.lib.view.ClearEditText
+        <com.hlk.hlklib.lib.view.CleanableEditText
             android:id="@+id/ui_custom_dialog_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
-            app:cet_edit_active_border="@color/colorBorderActive"
-            app:cet_edit_corner_size="@dimen/ui_static_dp_5"
-            app:cet_edit_hint="@string/app_name_default"
-            app:cet_edit_normal_border="@color/textColorHintLight"
-            app:cet_edit_padding="@dimen/ui_static_dp_8" />
+            android:hint="@string/app_name_default"
+            android:padding="@dimen/ui_static_dp_8"
+            app:cet_active_border="@color/colorBorderActive"
+            app:cet_corner_size="@dimen/ui_static_dp_5"
+            app:cet_normal_border="@color/textColorHintLight" />
     </com.hlk.hlklib.lib.view.CorneredView>
 
     <include layout="@layout/popup_dialog_default_buttons" />

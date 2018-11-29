@@ -15,6 +15,7 @@ import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.ArchivePushTarget;
 import com.leadcom.android.isp.model.common.Attachment;
+import com.leadcom.android.isp.model.organization.ActivityOption;
 import com.leadcom.android.isp.model.organization.SubMember;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -584,7 +585,8 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("content", checkNull(archive.getContent()))
                     .put("groupIdList", new JSONArray(archive.getGroupIdList()))
                     .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
-                    .put("groSquMemberList", new JSONArray(SubMember.toJson(archive.getGroSquMemberList(), new String[]{"userName", "type"})));
+                    .put("groSquMemberList", new JSONArray(SubMember.toJson(archive.getGroSquMemberList(), new String[]{"userName", "type"})))
+                    .put("groActivityAdditionalOptionList", new JSONArray(ActivityOption.toJSON(archive.getAdditionalOptions(), new String[]{"additionalOptionName"})));
         } catch (JSONException e) {
             e.printStackTrace();
         }

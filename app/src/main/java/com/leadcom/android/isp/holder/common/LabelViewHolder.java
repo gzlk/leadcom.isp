@@ -2,20 +2,23 @@ package com.leadcom.android.isp.holder.common;
 
 import android.graphics.Color;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.holder.BaseViewHolder;
-import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.archive.Label;
+import com.google.android.flexbox.FlexboxLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CornerTagView;
 import com.hlk.hlklib.lib.view.CorneredView;
+import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.holder.BaseViewHolder;
+import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.archive.Dictionary;
+import com.leadcom.android.isp.model.archive.Label;
+import com.leadcom.android.isp.model.organization.ActivityOption;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.MemberNature;
 
@@ -34,10 +37,14 @@ public class LabelViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_activity_label_container)
     private CorneredView containerView;
+    @ViewId(R.id.ui_holder_view_activity_label_layout)
+    private RelativeLayout layoutView;
     @ViewId(R.id.ui_holder_view_activity_label_text)
     private TextView textView;
     @ViewId(R.id.ui_holder_view_activity_label_selected)
     private CornerTagView tagView;
+    @ViewId(R.id.ui_holder_view_activity_label_edit)
+    private View editView;
     @ViewId(R.id.ui_holder_view_activity_label_self)
     private View selfDefined;
 
@@ -95,8 +102,23 @@ public class LabelViewHolder extends BaseViewHolder {
         tagView.setVisibility(classify.isSelected() ? View.VISIBLE : View.GONE);
     }
 
-    @Click({R.id.ui_holder_view_activity_label_container})
+    public void showContent(ActivityOption option) {
+        FlexboxLayoutManager.LayoutParams params = (FlexboxLayoutManager.LayoutParams) itemView.getLayoutParams();
+        params.rightMargin = getDimension(R.dimen.ui_static_dp_10);
+        itemView.setLayoutParams(params);
+        boolean isAdd = option.getAdditionalOptionName().equals("+");
+        editView.setVisibility(isAdd ? View.GONE : (option.isSelectable() ? View.VISIBLE : View.GONE));
+        textView.setText(option.getAdditionalOptionName());
+        containerView.setNormalColor(getColor(option.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
+        tagView.setVisibility(option.isSelected() ? View.VISIBLE : View.GONE);
+    }
+
+    @Click({R.id.ui_holder_view_activity_label_container, R.id.ui_holder_view_activity_label_edit})
     private void viewClick(View view) {
+        if (null != mOnViewHolderElementClickListener) {
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
+            return;
+        }
         if (null != mOnViewHolderClickListener) {
             mOnViewHolderClickListener.onClick(getAdapterPosition());
         }

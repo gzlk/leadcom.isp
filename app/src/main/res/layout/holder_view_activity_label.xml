@@ -15,6 +15,7 @@
     app:cv_normal_border="@color/colorPrimary">
 
     <RelativeLayout
+        android:id="@+id/ui_holder_view_activity_label_layout"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/ui_base_dimen_button_height">
 
@@ -26,8 +27,8 @@
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="2"
-            android:paddingEnd="@dimen/ui_static_dp_15"
             android:paddingStart="@dimen/ui_static_dp_15"
+            android:paddingEnd="@dimen/ui_static_dp_15"
             android:text="@string/app_sms_stuff_header"
             android:textSize="@dimen/ui_base_text_size_small" />
 
@@ -35,8 +36,8 @@
             android:id="@+id/ui_holder_view_activity_label_selected"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/ui_holder_view_activity_label_text"
             android:layout_alignEnd="@+id/ui_holder_view_activity_label_text"
+            android:layout_alignBottom="@+id/ui_holder_view_activity_label_text"
             android:layout_margin="@dimen/ui_base_border_size_normal"
             app:ctvBackground="@color/colorPrimary"
             app:ctvCornerSide="rightBottom"
@@ -45,13 +46,26 @@
         <com.hlk.hlklib.lib.view.CustomTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/ui_holder_view_activity_label_text"
             android:layout_alignEnd="@+id/ui_holder_view_activity_label_text"
+            android:layout_alignBottom="@+id/ui_holder_view_activity_label_text"
             android:layout_margin="@dimen/ui_base_border_size_normal"
             android:rotation="-25"
             android:text="@string/ui_icon_select_line"
             android:textColor="@color/textColorLight"
             android:textSize="@dimen/ui_base_text_size_little" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_holder_view_activity_label_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignEnd="@+id/ui_holder_view_activity_label_text"
+            android:paddingStart="@dimen/ui_static_dp_5"
+            android:paddingTop="@dimen/ui_static_dp_3"
+            android:paddingEnd="@dimen/ui_static_dp_3"
+            android:text="@string/ui_icon_edit_pen_solid"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/ui_base_text_size_little"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/ui_holder_view_activity_label_self"

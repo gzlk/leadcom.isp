@@ -3,8 +3,9 @@ package com.leadcom.android.isp.helper.popup;
 import android.view.View;
 import android.widget.TextView;
 
-import com.hlk.hlklib.lib.view.ClearEditText;
+import com.hlk.hlklib.lib.view.CleanableEditText;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 
@@ -29,6 +30,7 @@ public class EditableDialogHelper {
     private BaseFragment fragment;
     private String titleString, inputString, inputHint;
     private DialogHelper dialogHelper;
+    private int maxLength;
 
     public EditableDialogHelper init(BaseFragment fragment) {
         this.fragment = fragment;
@@ -70,9 +72,14 @@ public class EditableDialogHelper {
         return this;
     }
 
+    public EditableDialogHelper setMaxInputableLength(int max) {
+        maxLength = max;
+        return this;
+    }
+
     private View dialogView;
     private TextView textView;
-    private ClearEditText input;
+    private CleanableEditText input;
 
     public void show() {
         if (null == dialogHelper) {
@@ -85,6 +92,7 @@ public class EditableDialogHelper {
                     dialogView = View.inflate(fragment.Activity(), layout, null);
                     textView = dialogView.findViewById(R.id.ui_custom_dialog_text);
                     input = dialogView.findViewById(R.id.ui_custom_dialog_input);
+                    input.setMaxLength(maxLength);
                 }
                 return dialogView;
             }
@@ -92,12 +100,21 @@ public class EditableDialogHelper {
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
                 textView.setText(titleString);
-                input.setTextHint(inputHint);
-                input.setValue(inputString);
+                input.setHint(inputHint);
+                input.setText(inputString);
                 input.focusEnd();
             }
         }).addOnDialogConfirmListener(confirmListener);
         dialogHelper.show();
+    }
+
+    public void hideKeyboard() {
+        Utils.hidingInputBoard(input);
+        //View view = fragment.Activity().getCurrentFocus();
+        //if (view != null) {
+        //    InputMethodManager inputManager = (InputMethodManager) fragment.Activity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        //    inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        //}
     }
 
     /**

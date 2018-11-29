@@ -1,11 +1,13 @@
 package com.leadcom.android.isp.helper.popup;
 
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 
@@ -30,7 +32,7 @@ public class DeleteDialogHelper {
     private DialogHelper.OnDialogConfirmListener confirmListener;
     private DialogHelper.OnDialogCancelListener cancelListener;
     private DialogHelper dialogHelper;
-    private String titleString, confirmString, cancelString;
+    private String titleString, subTitleString, confirmString, cancelString;
 
     public DeleteDialogHelper init(BaseFragment fragment) {
         activity = fragment.Activity();
@@ -92,8 +94,33 @@ public class DeleteDialogHelper {
         return this;
     }
 
+    public DeleteDialogHelper setSubTitle(int text) {
+        return setSubTitle(0 == text ? "" : StringHelper.getString(text));
+    }
+
+    public DeleteDialogHelper setSubTitle(String text) {
+        subTitleString = text;
+        return this;
+    }
+
+    private RecyclerViewAdapter mAdapter;
+
+    public DeleteDialogHelper setAdapter(RecyclerViewAdapter adapter) {
+        mAdapter = adapter;
+        return this;
+    }
+
+    private RecyclerView.LayoutManager mManager;
+
+    public DeleteDialogHelper setLayoutManager(RecyclerView.LayoutManager manager) {
+        mManager = manager;
+        return this;
+    }
+
     private View dialogView;
-    private TextView textView;
+    private TextView textView, subTextView;
+    private View listItemView;
+    private RecyclerView recyclerView;
 
     public void show() {
         if (null == dialogHelper) {
@@ -103,6 +130,9 @@ public class DeleteDialogHelper {
                     if (null == dialogView) {
                         dialogView = View.inflate(activity, layout, null);
                         textView = dialogView.findViewById(R.id.ui_custom_dialog_text);
+                        subTextView = dialogView.findViewById(R.id.ui_custom_dialog_subtext);
+                        listItemView = dialogView.findViewById(R.id.ui_custom_dialog_list_items);
+                        recyclerView = dialogView.findViewById(R.id.ui_tool_swipe_refreshable_recycler_view);
                     }
                     return dialogView;
                 }
@@ -110,6 +140,12 @@ public class DeleteDialogHelper {
                 @Override
                 public void onBindData(View dialogView, DialogHelper helper) {
                     textView.setText(!StringHelper.isEmpty(titleString) ? Html.fromHtml(titleString) : titleString);
+                    if (null != mAdapter) {
+                        listItemView.setVisibility(View.VISIBLE);
+                        recyclerView.setLayoutManager(mManager);
+                        recyclerView.setAdapter(mAdapter);
+                        subTextView.setText(subTitleString);
+                    }
                 }
             }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
                 @Override
@@ -121,6 +157,9 @@ public class DeleteDialogHelper {
                 @Override
                 public boolean onClick(View view) {
                     // 背景点击事件，返回true表示立即关闭dialog
+                    if (null != cancelListener) {
+                        cancelListener.onCancel();
+                    }
                     return true;
                 }
             }).setConfirmText(confirmString).setCancelText(cancelString)

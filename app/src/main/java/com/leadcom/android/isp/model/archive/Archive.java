@@ -12,6 +12,7 @@ import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.organization.ActSquad;
+import com.leadcom.android.isp.model.organization.ActivityOption;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.SubMember;
@@ -515,6 +516,8 @@ public class Archive extends Additional {
     private ArrayList<Member> groActivityReplyList;
     @Ignore
     private ArrayList<ActSquad> groSquadList;
+    @Ignore
+    private ArrayList<ActivityOption> additionalOptions;
 
     // 创建者相关信息 ********************************************************************************
 
@@ -1091,6 +1094,17 @@ public class Archive extends Additional {
 
     public void setGroSquadList(ArrayList<ActSquad> groSquadList) {
         this.groSquadList = groSquadList;
+    }
+
+    public ArrayList<ActivityOption> getAdditionalOptions() {
+        if (null == additionalOptions) {
+            additionalOptions = new ArrayList<>();
+        }
+        return additionalOptions;
+    }
+
+    public void setAdditionalOptions(ArrayList<ActivityOption> AdditionalOptions) {
+        this.additionalOptions = AdditionalOptions;
     }
 
     public String getHappenDate() {

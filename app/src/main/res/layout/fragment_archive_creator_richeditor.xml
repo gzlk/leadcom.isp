@@ -404,7 +404,7 @@
                 android:background="@android:color/white"
                 android:gravity="top|start"
                 android:orientation="vertical"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:paddingTop="@dimen/ui_static_dp_5"
                 android:paddingBottom="@dimen/ui_static_dp_5">
 
@@ -421,6 +421,10 @@
                     android:layout_marginTop="@dimen/ui_static_dp_5"
                     android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding">
 
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/ui_archive_creator_additional_options"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
             </LinearLayout>
 

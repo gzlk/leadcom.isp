@@ -18,6 +18,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayoutManager;
 import com.hlk.hlklib.layoutmanager.CustomGridLayoutManager;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
@@ -49,9 +52,11 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DateTimeHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.helper.popup.EditableDialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.attachment.AttacherItemViewHolder;
 import com.leadcom.android.isp.holder.attachment.AttachmentViewHolder;
+import com.leadcom.android.isp.holder.common.LabelViewHolder;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.holder.common.SimpleInputableViewHolder;
 import com.leadcom.android.isp.holder.individual.ImageViewHolder;
@@ -64,6 +69,7 @@ import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.ArchiveQuery;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
+import com.leadcom.android.isp.model.organization.ActivityOption;
 import com.leadcom.android.isp.model.organization.Squad;
 import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.service.DraftService;
@@ -877,6 +883,15 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         if (isEmpty(mArchive.getParticipator())) {
             ToastHelper.make().showMsg(R.string.ui_group_activity_editor_participator_is_blank);
             return false;
+        }
+        if (null != optionsAdapter) {
+            Iterator<ActivityOption> iterator = optionsAdapter.iterator();
+            while (iterator.hasNext()) {
+                ActivityOption option = iterator.next();
+                if (option.isSelected() && !mArchive.getAdditionalOptions().contains(option)) {
+                    mArchive.getAdditionalOptions().add(option);
+                }
+            }
         }
         mArchive.setRecorder(authorHolder.getValue());
         // 去掉活动议题（2018-11-28）
@@ -1893,6 +1908,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private CorneredEditText minuteContent;
     @ViewId(R.id.ui_archive_creator_additional_layout)
     private View additionalView;
+    @ViewId(R.id.ui_archive_creator_additional_options)
+    private RecyclerView additionalOptions;
     @ViewId(R.id.ui_archive_creator_rich_editor_template_images_layout)
     private View templateImages;
     @ViewId(R.id.ui_archive_creator_rich_editor_attachment_title)
@@ -1903,6 +1920,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private SimpleInputableViewHolder addressHolder, participantHolder, authorHolder;
 
     private ImageAdapter imageAdapter;
+    private OptionsAdapter optionsAdapter;
     private String[] templateItems;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -1946,12 +1964,132 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             topicView.setVisibility(View.GONE);
             // 增加附加选项
             additionalView.setVisibility(View.VISIBLE);
+            if (null == optionsAdapter) {
+                FlexboxLayoutManager manager = new FlexboxLayoutManager(additionalOptions.getContext(), FlexDirection.ROW, FlexWrap.WRAP);
+                additionalOptions.setLayoutManager(manager);
+                optionsAdapter = new OptionsAdapter();
+                additionalOptions.setAdapter(optionsAdapter);
+                ActivityOption option = new ActivityOption();
+                option.setSelectable(true);
+                option.setId("坐车");
+                option.setAdditionalOptionName("坐车");
+                optionsAdapter.add(option);
+                option = new ActivityOption();
+                option.setSelectable(true);
+                option.setId("住宿");
+                option.setAdditionalOptionName("住宿");
+                optionsAdapter.add(option);
+                option = new ActivityOption();
+                option.setSelectable(true);
+                option.setId("就餐");
+                option.setAdditionalOptionName("就餐");
+                optionsAdapter.add(option);
+                //optionsAdapter.add(optionAdd);
+            }
             //templateImages.setVisibility(View.GONE);
             titleView.setMaxLength(20);
             minuteTitle.setText(StringHelper.getString(R.string.ui_group_activity_editor_minute_title));
             imageTitle.setText(StringHelper.getString(R.string.ui_group_activity_editor_files_title));
         }
     }
+
+    private ActivityOption optionAdd = new ActivityOption() {{
+        setId("+");
+        setAdditionalOptionName("+");
+    }};
+
+    private class OptionsAdapter extends RecyclerViewAdapter<LabelViewHolder, ActivityOption> {
+        @Override
+        public LabelViewHolder onCreateViewHolder(View itemView, int viewType) {
+            LabelViewHolder holder = new LabelViewHolder(itemView, ArchiveEditorFragment.this);
+            holder.setOnViewHolderElementClickListener(optionsClickListener);
+            return holder;
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            return R.layout.holder_view_activity_label;
+        }
+
+        @Override
+        public void onBindHolderOfView(LabelViewHolder holder, int position, @Nullable ActivityOption item) {
+            holder.showContent(item);
+        }
+
+        @Override
+        protected int comparator(ActivityOption item1, ActivityOption item2) {
+            return 0;
+        }
+    }
+
+    private OnViewHolderElementClickListener optionsClickListener = new OnViewHolderElementClickListener() {
+
+        private int selectedIndex = -1;
+        private EditableDialogHelper helper;
+
+        @Override
+        public void onClick(View view, int index) {
+            ActivityOption option = optionsAdapter.get(index);
+            switch (view.getId()) {
+                case R.id.ui_holder_view_activity_label_container:
+                    if (option.getAdditionalOptionName().equals("+")) {
+                        selectedIndex = -1;
+                        // 添加新的
+                        showEditor(true);
+                    } else {
+                        option.setSelected(!option.isSelected());
+                        optionsAdapter.update(option);
+                    }
+                    break;
+                case R.id.ui_holder_view_activity_label_edit:
+                    selectedIndex = index;
+                    showEditor(false);
+                    break;
+            }
+        }
+
+        private void showEditor(boolean appendable) {
+            ActivityOption option = selectedIndex >= 0 ? optionsAdapter.get(selectedIndex) : null;
+            final String name = null != option ? option.getAdditionalOptionName() : "";
+            final boolean selected = null != option && option.isSelected();
+            if (null == helper) {
+                helper = EditableDialogHelper.helper().init(ArchiveEditorFragment.this)
+                        .setTitleText((appendable ? "添加" : "修改") + "附加选项")
+                        .setInputHint(R.string.ui_group_activity_editor_additional_creator_dialog_title).setMaxInputableLength(5);
+            }
+            helper.setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+                @Override
+                public boolean onConfirm() {
+                    String inputValue = helper.getInputValue();
+                    if (!isEmpty(inputValue) && inputValue.length() < 2) {
+                        ToastHelper.make().showMsg(R.string.ui_group_activity_editor_additional_name_too_short);
+                        return false;
+                    }
+                    if (!isEmpty(inputValue) && !inputValue.equals(name) && !inputValue.equals("+")) {
+                        ActivityOption opt = new ActivityOption();
+                        opt.setAdditionalOptionName(inputValue);
+                        opt.setId(inputValue);
+                        opt.setSelected(selected);
+                        if (selectedIndex >= 0) {
+                            optionsAdapter.replace(opt, selectedIndex);
+                        } else if (optionsAdapter.exist(opt)) {
+                            optionsAdapter.update(opt);
+                        } else {
+                            int index = optionsAdapter.indexOf(optionAdd);
+                            if (index < 4) {
+                                optionsAdapter.add(opt, index);
+                            } else {
+                                optionsAdapter.replace(opt, index);
+                            }
+                        }
+                    }
+                    helper.hideKeyboard();
+                    selectedIndex = -1;
+                    return true;
+                }
+            }).setInputValue(name).show();
+        }
+    };
 
     private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
         @SuppressLint("ClickableViewAccessibility")

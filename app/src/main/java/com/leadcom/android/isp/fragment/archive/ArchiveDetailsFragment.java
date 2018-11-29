@@ -19,6 +19,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.TextView;
 
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayoutManager;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -61,6 +64,7 @@ import com.leadcom.android.isp.helper.popup.DateTimeHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.publishable.Collectable;
+import com.leadcom.android.isp.holder.common.LabelViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.listener.OnTaskCompleteListener;
@@ -78,6 +82,7 @@ import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.common.ShareInfo;
 import com.leadcom.android.isp.model.operation.GRPOperation;
+import com.leadcom.android.isp.model.organization.ActivityOption;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.RelateGroup;
@@ -294,6 +299,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 displayActivityControl(true);
                 // 拉取当前用户是否已报名
                 checkActivityReported();
+                // 拉取活动详情
+                loadingActivityDetails();
             }
         }
 
@@ -393,6 +400,10 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         } else {
             title = activityStatus == Member.ActivityStatus.JOINED ? R.string.ui_group_activity_details_leave_warning_title_joined : R.string.ui_group_activity_details_leave_warning_title;
         }
+        boolean hasOption = mArchive.getAdditionalOptions().size() > 0;
+        if (hasOption && signIn) {
+            optionsAdapter = new OptionsAdapter();
+        }
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
@@ -408,7 +419,12 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     leaveButton.setEnabled(true);
                 }
             }
-        }).setTitleText(title).setConfirmText(R.string.ui_base_text_confirm).show();
+        }).setLayoutManager(hasOption && signIn ? new FlexboxLayoutManager(Activity(), FlexDirection.ROW, FlexWrap.WRAP) : null)
+                .setAdapter(hasOption && signIn ? optionsAdapter : null).setSubTitle(hasOption && signIn ? R.string.ui_group_activity_join_additional_title : 0)
+                .setTitleText(title).setConfirmText(R.string.ui_base_text_confirm).show();
+        if (hasOption && signIn) {
+            optionsAdapter.setData(mArchive.getAdditionalOptions());
+        }
     }
 
     private void tryJoinInActivity(final boolean signIn) {
@@ -428,8 +444,48 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     }
                 }
             }
-        }).joinActivity(mArchive.getGroupId(), mArchive.getGroActivityId(), signIn ? Member.ActivityStatus.JOINED : Member.ActivityStatus.LEAVE);
+        }).joinActivity(mArchive.getGroupId(), mArchive.getGroActivityId(), signIn ? Member.ActivityStatus.JOINED : Member.ActivityStatus.LEAVE, mArchive.getAdditionalOptions());
     }
+
+    private OptionsAdapter optionsAdapter;
+
+    private class OptionsAdapter extends RecyclerViewAdapter<LabelViewHolder, ActivityOption> {
+        @Override
+        public LabelViewHolder onCreateViewHolder(View itemView, int viewType) {
+            LabelViewHolder holder = new LabelViewHolder(itemView, ArchiveDetailsFragment.this);
+            holder.setOnViewHolderElementClickListener(optionsClickListener);
+            return holder;
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            return R.layout.holder_view_activity_label;
+        }
+
+        @Override
+        public void onBindHolderOfView(LabelViewHolder holder, int position, @Nullable ActivityOption item) {
+            holder.showContent(item);
+        }
+
+        @Override
+        protected int comparator(ActivityOption item1, ActivityOption item2) {
+            return 0;
+        }
+    }
+
+    private OnViewHolderElementClickListener optionsClickListener = new OnViewHolderElementClickListener() {
+
+        @Override
+        public void onClick(View view, int index) {
+            ActivityOption option = optionsAdapter.get(index);
+            switch (view.getId()) {
+                case R.id.ui_holder_view_activity_label_container:
+                    option.setSelected(!option.isSelected());
+                    optionsAdapter.update(option);
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onDelayRefreshComplete(int type) {
@@ -666,6 +722,19 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
                     }
                 }).start();
+    }
+
+    private void loadingActivityDetails() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success && null != archive) {
+                    mArchive.getAdditionalOptions().clear();
+                    mArchive.getAdditionalOptions().addAll(archive.getAdditionalOptions());
+                }
+            }
+        }).findActivity(mArchive.getGroActivityId());
     }
 
     /**

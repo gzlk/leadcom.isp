@@ -8,6 +8,7 @@ import com.leadcom.android.isp.api.query.ListQuery;
 import com.leadcom.android.isp.api.query.PageQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
+import com.leadcom.android.isp.model.organization.ActivityOption;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Role;
 import com.litesuits.http.request.param.HttpMethods;
@@ -346,12 +347,19 @@ public class MemberRequest extends Request<Member> {
     /**
      * 加入活动
      */
-    public void joinActivity(String groupId, String activityId, int status) {
+    public void joinActivity(String groupId, String activityId, int status, ArrayList<ActivityOption> options) {
+        ArrayList<ActivityOption> opt = new ArrayList<>();
+        for (ActivityOption option : options) {
+            if (option.isSelected()) {
+                opt.add(option);
+            }
+        }
         JSONObject object = new JSONObject();
         try {
             object.put("groupId", groupId)
                     .put("groActivityId", activityId)
-                    .put("status", status);
+                    .put("status", status)
+                    .put("memberAdditionalOptionList", new JSONArray(ActivityOption.toJSON(opt, new String[]{"id", "groActivityId", "additionalOptionName"})));
         } catch (JSONException e) {
             e.printStackTrace();
         }
