@@ -141,8 +141,9 @@
     <string name="ui_group_activity_editor_still_creating">活动还在准备中，请稍候&#8230;</string>
     <string name="ui_group_activity_editor_minute_title">活动\n说明</string>
     <string name="ui_group_activity_editor_additional_name_too_short">项目名称太短(大于等于2个字符)</string>
-    <string name="ui_group_activity_editor_additional_title">附加选项</string>
-    <string name="ui_group_activity_join_additional_title">欢迎报名参加活动，以下选项您也可以选择：</string>
+    <string name="ui_group_activity_editor_additional_title">活动举办方附带提供：</string>
+    <string name="ui_group_activity_editor_additional_description">勾选此次活动的附加选项(可多选)，可修改(不超过5个字)</string>
+    <string name="ui_group_activity_join_additional_title">欢迎报名参加此次活动，举办方额外向您提供以下附加选项(可多选)：</string>
     <string name="ui_group_activity_editor_additional_creator_dialog_title">选项名称</string>
     <string name="ui_group_activity_editor_files_title">图片(最多8张)</string>
     <string name="ui_group_activity_editor_title_is_blank">活动标题不能为空</string>

@@ -354,12 +354,13 @@ public class MemberRequest extends Request<Member> {
                 opt.add(option);
             }
         }
+        String json = ActivityOption.toJSON(opt, new String[]{"additionalOptionName"}).replace("additionalOptionName", "memberAdditionalOptionName");
         JSONObject object = new JSONObject();
         try {
             object.put("groupId", groupId)
                     .put("groActivityId", activityId)
                     .put("status", status)
-                    .put("memberAdditionalOptionList", new JSONArray(ActivityOption.toJSON(opt, new String[]{"id", "groActivityId", "additionalOptionName"})));
+                    .put("memberAdditionalOptionList", new JSONArray(json));
         } catch (JSONException e) {
             e.printStackTrace();
         }

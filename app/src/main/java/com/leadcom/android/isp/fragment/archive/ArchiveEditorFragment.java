@@ -2070,6 +2070,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         opt.setAdditionalOptionName(inputValue);
                         opt.setId(inputValue);
                         opt.setSelected(selected);
+                        opt.setSelectable(true);
                         if (selectedIndex >= 0) {
                             optionsAdapter.replace(opt, selectedIndex);
                         } else if (optionsAdapter.exist(opt)) {
