@@ -683,7 +683,7 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     /**
-     * 列取组织成员报名情况
+     * 列取下级组织成员报名情况
      */
     public void selectActivityGroupMember(String groupId, String currentGroupId, String activityId) {
         String param = format("/group/groActivityMember/selectOneReport?groupId=%s&currentGroupId=%s&groActivityId=%s", groupId, currentGroupId, activityId);

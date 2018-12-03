@@ -46,7 +46,7 @@ public class MemberRequest extends Request<Member> {
     private static class PageMember extends PageQuery<Member> {
     }
 
-    private static class ListQueryMember extends ListQuery<Member> {
+    private static class ListMember extends ListQuery<Member> {
     }
 
     private static class BooleanMember extends BoolQuery<Member> {
@@ -293,7 +293,7 @@ public class MemberRequest extends Request<Member> {
      * 拉取我的联系人列表，全部已关注的组织成员
      */
     public void listAllGroup() {
-        executeHttpRequest(getRequest(ListQueryMember.class, format("/user/user/list/allGroup", url(LIST)), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(ListMember.class, format("/user/user/list/allGroup", url(LIST)), "", HttpMethods.Get));
     }
 
     /**
@@ -366,6 +366,14 @@ public class MemberRequest extends Request<Member> {
         }
 
         executeHttpRequest(getRequest(SingleMember.class, url(Member.Type.ACTIVITY, UPDATE), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 拉取下级组织的成员报名情况
+     */
+    public void listActivityGroupMember(String groupId, String currentGroupId, String activityId) {
+        String param = format("%s?groupId=%s&currentGroupId=%s&groActivityId=%s", url(Member.Type.ACTIVITY, "/selectOneReport"), groupId, currentGroupId, activityId);
+        executeHttpRequest(getRequest(PageMember.class, param, "", HttpMethods.Get));
     }
 
     /**

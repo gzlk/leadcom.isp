@@ -7,8 +7,12 @@ import android.view.View;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
+import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.org.MemberRequest;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.holder.organization.ActivityMemberItemViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
@@ -16,6 +20,8 @@ import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.organization.ActSquad;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Member;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>活动报名详情列表页<br />
@@ -96,14 +102,20 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return false;
+        return true;
     }
 
     private void loadingData() {
         if (isCheckingGroups) {
             loadingGroupsMembers();
         } else {
-            loadingGroupMembers();
+            // 当前所在组织的id
+            String groupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
+            if (groupId.equals(mQueryId) && mQueryId.equals(mActivity.getFromGroupId())) {
+                loadingGroupMembers();
+            } else {
+                loadingActivityGroupMember();
+            }
         }
     }
 
@@ -141,6 +153,27 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
         }).selectActivityGroups(mQueryId, mActivity.getGroActivityId());
     }
 
+    // 拉取活动发起组织的成员报名详细列表
+    private void loadingActivityGroupMember() {
+        setLoadingText(R.string.ui_group_activity_collection_group_members_loading);
+        setNothingText(R.string.ui_group_activity_collection_group_members_nothing);
+        displayLoading(true);
+        MemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Member>() {
+            @Override
+            public void onResponse(List<Member> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success && null != list) {
+                    for (Member member : list) {
+                        mAdapter.add(member);
+                    }
+                }
+                displayLoading(false);
+                displayNothing(mAdapter.getItemCount() < 1);
+                stopRefreshing();
+            }
+        }).listActivityGroupMember(mActivity.getFromGroupId(), mQueryId, mActivity.getGroActivityId());
+    }
+
     // 拉取指定组织内的报名详细列表
     private void loadingGroupMembers() {
         setLoadingText(R.string.ui_group_activity_collection_group_members_loading);
@@ -165,27 +198,6 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
             }
         }).selectActivityGroupMember(mActivity.getGroupId(), mQueryId, mActivity.getGroActivityId());
     }
-//    private void loadingSubordinateMembers() {
-//        setLoadingText(R.string.ui_group_activity_collection_subordinate_members_loading);
-//        setNothingText(R.string.ui_group_activity_collection_subordinate_members_nothing);
-//        displayNothing(false);
-//        displayLoading(true);
-//        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
-//            @Override
-//            public void onResponse(Archive archive, boolean success, String message) {
-//                super.onResponse(archive, success, message);
-//                if (success && null != archive) {
-//                    mAdapter.add(archive);
-//                    for (Member member : archive.getGroActivityReplyList()) {
-//                        mAdapter.add(member);
-//                    }
-//                }
-//                displayLoading(false);
-//                displayNothing(mAdapter.getItemCount() <= 1);
-//                stopRefreshing();
-//            }
-//        }).listActivitySubordinateMember(mQueryId, mActivityId);
-//    }
 
     private void initializeAdapter() {
         if (null == mAdapter) {
@@ -203,13 +215,6 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
                 Concern group = (Concern) model;
                 ActivityCollectionDetailsFragment.open(ActivityCollectionDetailsFragment.this, group.getGroupId(), mActivity, false);
             }
-//            if (model instanceof Member) {
-//                Member member = (Member) model;
-//                if (!isEmpty(member.getGroupId())) {
-//                    // 查看下属组织的回复详情
-//                    ActivityReplyFragment.open(ActivityCollectionDetailsFragment.this, member.getId(), mActivity.getGroActivityId());
-//                }
-//            }
         }
     };
 

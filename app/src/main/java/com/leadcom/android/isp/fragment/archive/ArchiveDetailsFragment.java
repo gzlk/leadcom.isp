@@ -385,7 +385,13 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 break;
             case R.id.ui_archive_details_activity_report:
                 // 查看组织报名情况
-                ActivityCollectionDetailsFragment.open(this, PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), ""), mArchive, true);
+                String groupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
+                if (groupId.equals(mArchive.getFromGroupId())) {
+                    // 当前组织是活动发起组织，则需要查看下级统计
+                    ActivityCollectionDetailsFragment.open(this, groupId, mArchive, true);
+                } else {
+                    ActivityCollectionDetailsFragment.open(this, groupId, mArchive, false);
+                }
                 break;
             case R.id.ui_archive_details_activity_deliver:
                 GroupAllPickerFragment.IS_FOR_DELIVER = true;
