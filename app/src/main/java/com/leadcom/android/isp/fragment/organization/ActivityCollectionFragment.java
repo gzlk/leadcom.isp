@@ -98,9 +98,9 @@ public class ActivityCollectionFragment extends BaseViewPagerSupportFragment {
     @Override
     protected void initializeFragments() {
         if (mFragments.size() <= 0) {
-            Bundle bundle = ActivityCollectionDetailsFragment.getBundle(mArchive.getGroupId(), mArchive.getGroActivityId(), Member.Type.GROUP);
-            mFragments.add(ActivityCollectionDetailsFragment.newInstance(bundle));
-            bundle = ActivityCollectionDetailsFragment.getBundle(mArchive.getGroupId(), mArchive.getGroActivityId(), Member.Type.ACTIVITY);
+            //Bundle bundle = ActivityCollectionDetailsFragment.getBundle(mArchive.getGroupId(), mArchive.getGroActivityId(), Member.Type.GROUP);
+            //mFragments.add(ActivityCollectionDetailsFragment.newInstance(bundle));
+            Bundle bundle = ActivityCollectionDetailsFragment.getBundle(mArchive.getGroupId(), mArchive.getGroActivityId(), Member.Type.ACTIVITY);
             mFragments.add(ActivityCollectionDetailsFragment.newInstance(bundle));
         }
     }

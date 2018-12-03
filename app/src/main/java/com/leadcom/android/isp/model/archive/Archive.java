@@ -13,6 +13,7 @@ import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.organization.ActSquad;
 import com.leadcom.android.isp.model.organization.ActivityOption;
+import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.SubMember;
@@ -504,6 +505,8 @@ public class Archive extends Additional {
     private String toGroupId;
     @Column(Field.CountResult)
     private String countResult;
+    @Ignore
+    private String totalResult;
     @Column(Field.Reply)
     private String reply;
     @Column(Field.State)
@@ -518,6 +521,8 @@ public class Archive extends Additional {
     private ArrayList<ActSquad> groSquadList;
     @Ignore
     private ArrayList<ActivityOption> additionalOptions;
+    @Ignore
+    private ArrayList<Concern> memberGroVoList;
 
     // 创建者相关信息 ********************************************************************************
 
@@ -1027,6 +1032,25 @@ public class Archive extends Additional {
 
     public void setCountResult(String countResult) {
         this.countResult = countResult;
+    }
+
+    public String getTotalResult() {
+        return totalResult;
+    }
+
+    public void setTotalResult(String totalResult) {
+        this.totalResult = totalResult;
+    }
+
+    public ArrayList<Concern> getMemberGroVoList() {
+        if (null == memberGroVoList) {
+            memberGroVoList = new ArrayList<>();
+        }
+        return memberGroVoList;
+    }
+
+    public void setMemberGroVoList(ArrayList<Concern> memberGroVoList) {
+        this.memberGroVoList = memberGroVoList;
     }
 
     public String getReply() {

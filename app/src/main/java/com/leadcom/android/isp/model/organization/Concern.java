@@ -48,6 +48,7 @@ public class Concern extends Organization {
     private int type;
     private String groupId;
     private String groupName;
+    private String reportStr;
     private int authorized;
     private String allowGroupId, allowGroupName, targerResource;
     private ArrayList<Classify> docClassifyList;
@@ -74,6 +75,14 @@ public class Concern extends Organization {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    public String getReportStr() {
+        return reportStr;
+    }
+
+    public void setReportStr(String reportStr) {
+        this.reportStr = reportStr;
     }
 
     public boolean isAuthorized() {

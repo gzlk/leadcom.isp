@@ -51,12 +51,13 @@ import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.common.LabelPickFragment;
-import com.leadcom.android.isp.fragment.organization.ActivityCollectionFragment;
+import com.leadcom.android.isp.fragment.organization.ActivityCollectionDetailsFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAllPickerFragment;
 import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
 import com.leadcom.android.isp.fragment.organization.SquadPickerFragment;
 import com.leadcom.android.isp.helper.DownloadingHelper;
 import com.leadcom.android.isp.helper.FilePreviewHelper;
+import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.ArchiveDetailsHelper;
@@ -383,7 +384,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 warningSingInOrLeave(false);
                 break;
             case R.id.ui_archive_details_activity_report:
-                ActivityCollectionFragment.open(ArchiveDetailsFragment.this, mArchive);
+                // 查看组织报名情况
+                ActivityCollectionDetailsFragment.open(this, PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), ""), mArchive, true);
                 break;
             case R.id.ui_archive_details_activity_deliver:
                 GroupAllPickerFragment.IS_FOR_DELIVER = true;

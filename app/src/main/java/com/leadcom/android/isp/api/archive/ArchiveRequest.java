@@ -675,6 +675,22 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     /**
+     * 查询所有组织的报名情况
+     */
+    public void selectActivityGroups(String groupId, String activityId) {
+        String param = format("/group/groActivityMember/selectGroActivityReport?groupId=%s&groActivityId=%s", groupId, activityId);
+        executeHttpRequest(getRequest(SingleArchive.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 列取组织成员报名情况
+     */
+    public void selectActivityGroupMember(String groupId, String currentGroupId, String activityId) {
+        String param = format("/group/groActivityMember/selectOneReport?groupId=%s&currentGroupId=%s&groActivityId=%s", groupId, currentGroupId, activityId);
+        executeHttpRequest(getRequest(SingleArchive.class, param, "", HttpMethods.Get));
+    }
+
+    /**
      * 删除活动
      */
     public void deleteActivity(String activityId) {

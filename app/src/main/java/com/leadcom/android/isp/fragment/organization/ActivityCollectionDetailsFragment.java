@@ -8,11 +8,13 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.organization.ActivityMemberItemViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.organization.ActSquad;
+import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Member;
 
 /**
@@ -33,7 +35,7 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
         return amcdf;
     }
 
-    public static Bundle getBundle(String groupId, String activityId, int type) {
+    static Bundle getBundle(String groupId, String activityId, int type) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putString(PARAM_NAME, activityId);
@@ -41,27 +43,36 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
         return bundle;
     }
 
-    private String mActivityId;
-    private int mType;
+    public static void open(BaseFragment fragment, String groupId, Archive activity, boolean checkingGroup) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_QUERY_ID, groupId);
+        bundle.putSerializable(PARAM_JSON, activity);
+        bundle.putBoolean(PARAM_NAME, checkingGroup);
+        fragment.openActivity(ActivityCollectionDetailsFragment.class.getName(), bundle, true, false);
+    }
+
+    private Archive mActivity;
     private MemberAdapter mAdapter;
+    private boolean isCheckingGroups;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
-        mActivityId = bundle.getString(PARAM_NAME, "");
-        mType = bundle.getInt(PARAM_JSON, Member.Type.GROUP);
+        mActivity = (Archive) bundle.getSerializable(PARAM_JSON);
+        isCheckingGroups = bundle.getBoolean(PARAM_NAME, false);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
-        bundle.putString(PARAM_NAME, mActivityId);
-        bundle.putInt(PARAM_JSON, mType);
+        bundle.putSerializable(PARAM_JSON, mActivity);
+        bundle.putBoolean(PARAM_NAME, isCheckingGroups);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setCustomTitle(isCheckingGroups ? "组织报名统计" : "报名详情");
         isLoadingComplete(true);
     }
 
@@ -89,16 +100,48 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
     }
 
     private void loadingData() {
-        switch (mType) {
-            case Member.Type.GROUP:
-                loadingGroupMembers();
-                break;
-            case Member.Type.ACTIVITY:
-                loadingSubordinateMembers();
-                break;
+        if (isCheckingGroups) {
+            loadingGroupsMembers();
+        } else {
+            loadingGroupMembers();
         }
     }
 
+    /**
+     * 拉取所有组织的报名统计列表
+     */
+    private void loadingGroupsMembers() {
+        setLoadingText(R.string.ui_group_activity_collection_group_members_loading);
+        setNothingText(R.string.ui_group_activity_collection_group_members_nothing);
+        displayLoading(true);
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success && null != archive) {
+                    archive.setCountResult(archive.getTotalResult());
+                    mAdapter.add(archive);
+                    if (isCheckingGroups) {
+                        // 加载组织报名统计结果
+                        for (Concern group : archive.getMemberGroVoList()) {
+                            if (isEmpty(group.getId())) {
+                                group.setId(group.getGroupId());
+                            }
+                            if (group.getId().equals(mQueryId)) {
+                                group.setSelected(true);
+                            }
+                            mAdapter.add(group);
+                        }
+                    }
+                }
+                displayLoading(false);
+                displayNothing(mAdapter.getItemCount() <= 1);
+                stopRefreshing();
+            }
+        }).selectActivityGroups(mQueryId, mActivity.getGroActivityId());
+    }
+
+    // 拉取指定组织内的报名详细列表
     private void loadingGroupMembers() {
         setLoadingText(R.string.ui_group_activity_collection_group_members_loading);
         setNothingText(R.string.ui_group_activity_collection_group_members_nothing);
@@ -110,9 +153,6 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
                 if (success && null != archive) {
                     mAdapter.add(archive);
                     for (ActSquad squad : archive.getGroSquadList()) {
-                        if (squad.getSquadId().equals("0")) {
-                            squad.setSquadName("本组织成员");
-                        }
                         mAdapter.add(squad);
                         for (Member member : squad.getGroActivityMemberList()) {
                             mAdapter.add(member);
@@ -123,30 +163,29 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
                 displayNothing(mAdapter.getItemCount() <= 1);
                 stopRefreshing();
             }
-        }).listActivityGroupMember(mQueryId, mActivityId);
+        }).selectActivityGroupMember(mActivity.getGroupId(), mQueryId, mActivity.getGroActivityId());
     }
-
-    private void loadingSubordinateMembers() {
-        setLoadingText(R.string.ui_group_activity_collection_subordinate_members_loading);
-        setNothingText(R.string.ui_group_activity_collection_subordinate_members_nothing);
-        displayNothing(false);
-        displayLoading(true);
-        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
-            @Override
-            public void onResponse(Archive archive, boolean success, String message) {
-                super.onResponse(archive, success, message);
-                if (success && null != archive) {
-                    mAdapter.add(archive);
-                    for (Member member : archive.getGroActivityReplyList()) {
-                        mAdapter.add(member);
-                    }
-                }
-                displayLoading(false);
-                displayNothing(mAdapter.getItemCount() <= 1);
-                stopRefreshing();
-            }
-        }).listActivitySubordinateMember(mQueryId, mActivityId);
-    }
+//    private void loadingSubordinateMembers() {
+//        setLoadingText(R.string.ui_group_activity_collection_subordinate_members_loading);
+//        setNothingText(R.string.ui_group_activity_collection_subordinate_members_nothing);
+//        displayNothing(false);
+//        displayLoading(true);
+//        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+//            @Override
+//            public void onResponse(Archive archive, boolean success, String message) {
+//                super.onResponse(archive, success, message);
+//                if (success && null != archive) {
+//                    mAdapter.add(archive);
+//                    for (Member member : archive.getGroActivityReplyList()) {
+//                        mAdapter.add(member);
+//                    }
+//                }
+//                displayLoading(false);
+//                displayNothing(mAdapter.getItemCount() <= 1);
+//                stopRefreshing();
+//            }
+//        }).listActivitySubordinateMember(mQueryId, mActivityId);
+//    }
 
     private void initializeAdapter() {
         if (null == mAdapter) {
@@ -160,13 +199,17 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
         @Override
         public void onClick(View view, int index) {
             Model model = mAdapter.get(index);
-            if (model instanceof Member) {
-                Member member = (Member) model;
-                if (!isEmpty(member.getGroupId())) {
-                    // 查看下属组织的回复详情
-                    ActivityReplyFragment.open(ActivityCollectionDetailsFragment.this, member.getId(), mActivityId);
-                }
+            if (model instanceof Concern) {
+                Concern group = (Concern) model;
+                ActivityCollectionDetailsFragment.open(ActivityCollectionDetailsFragment.this, group.getGroupId(), mActivity, false);
             }
+//            if (model instanceof Member) {
+//                Member member = (Member) model;
+//                if (!isEmpty(member.getGroupId())) {
+//                    // 查看下属组织的回复详情
+//                    ActivityReplyFragment.open(ActivityCollectionDetailsFragment.this, member.getId(), mActivity.getGroActivityId());
+//                }
+//            }
         }
     };
 

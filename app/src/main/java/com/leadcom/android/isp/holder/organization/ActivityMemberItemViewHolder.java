@@ -14,6 +14,7 @@ import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.organization.ActSquad;
+import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Member;
 
 
@@ -54,6 +55,9 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
             showContent((ActSquad) model);
         else if (model instanceof Member)
             showContent((Member) model);
+        else if (model instanceof Concern) {
+            showContent((Concern) model);
+        }
     }
 
     private void showContent(Archive archive) {
@@ -91,6 +95,18 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
         timeView.setVisibility(isGroup ? View.GONE : View.VISIBLE);
         timeView.setText(member.isCreateDateDefault() ? "-" : fragment().formatDate(member.getCreateDate(), R.string.ui_base_text_date_format));
         iconView.setVisibility(isGroup ? View.VISIBLE : View.GONE);
+    }
+
+    private void showContent(Concern group) {
+        topLine.setVisibility(View.GONE);
+        textView.setText(Html.fromHtml(format("%s" + (!group.isSelected() ? "" : "(<font color=\"#a1a1a1\">本组织</font>)"), group.getGroupName())));
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size));
+        textView.setTextColor(getColor(R.color.textColor));
+        countView.setVisibility(View.GONE);
+        statusView.setVisibility(View.GONE);
+        timeView.setText(group.getReportStr());
+        timeView.setVisibility(View.VISIBLE);
+        iconView.setVisibility(View.VISIBLE);
     }
 
     @Click({R.id.ui_holder_view_activity_member_item_layout})
