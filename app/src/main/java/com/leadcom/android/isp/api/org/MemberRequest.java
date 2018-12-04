@@ -369,14 +369,6 @@ public class MemberRequest extends Request<Member> {
     }
 
     /**
-     * 拉取下级组织的成员报名情况
-     */
-    public void listActivityGroupMember(String groupId, String currentGroupId, String activityId) {
-        String param = format("%s?groupId=%s&currentGroupId=%s&groActivityId=%s", url(Member.Type.ACTIVITY, "/selectOneReport"), groupId, currentGroupId, activityId);
-        executeHttpRequest(getRequest(PageMember.class, param, "", HttpMethods.Get));
-    }
-
-    /**
      * 查询用户在活动中的加入状态
      */
     public void findActivityStatus(String groupId, String activityId) {

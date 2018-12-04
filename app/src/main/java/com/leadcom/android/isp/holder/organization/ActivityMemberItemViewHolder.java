@@ -3,6 +3,7 @@ package com.leadcom.android.isp.holder.organization;
 import android.text.Html;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.Click;
@@ -92,9 +93,20 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
         countView.setText(format("报名%d", member.getReportNum()));
         statusView.setText(Html.fromHtml(isGroup ? format("请假%d", member.getLeaveNum()) : getStatus(member)));
         statusView.setVisibility(View.VISIBLE);
+        resetWeight(isGroup);
         timeView.setVisibility(isGroup ? View.GONE : View.VISIBLE);
         timeView.setText(member.isCreateDateDefault() ? "-" : fragment().formatDate(member.getCreateDate(), R.string.ui_base_text_date_format));
         iconView.setVisibility(isGroup ? View.VISIBLE : View.GONE);
+    }
+
+    private void resetWeight(boolean isGroup) {
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) statusView.getLayoutParams();
+        params.weight = isGroup ? 0.8f : 2f;
+        statusView.setLayoutParams(params);
+
+        params = (LinearLayout.LayoutParams) textView.getLayoutParams();
+        params.weight = isGroup ? 1.8f : 0.8f;
+        textView.setLayoutParams(params);
     }
 
     private String getStatus(Member member) {
@@ -102,7 +114,9 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
         if (member.getList().size() > 0) {
             String sel = "";
             for (String text : member.getList()) {
-                sel += (!isEmpty(sel) ? "/" : "") + text;
+                if (!sel.contains(text)) {
+                    sel += (!isEmpty(sel) ? "/" : "") + text;
+                }
             }
             string += "(<font color=\"#a1a1a1\">" + sel + "</font>)";
         }
