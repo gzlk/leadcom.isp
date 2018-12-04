@@ -210,7 +210,21 @@ public class Member extends Leaguer {
     private String groActivityId;
     private String status;
     private String groupName;
-    private int leaveNum,reportNum;
+    private int leaveNum, reportNum;
+
+    @Ignore // 活动报名用户选择的附加选项列表
+    private ArrayList<String> list;
+
+    public ArrayList<String> getList() {
+        if (null == list) {
+            list = new ArrayList<>();
+        }
+        return list;
+    }
+
+    public void setList(ArrayList<String> list) {
+        this.list = list;
+    }
 
     public String getGroupId() {
         return groupId;
@@ -306,8 +320,8 @@ public class Member extends Leaguer {
         this.reportNum = reportNum;
     }
 /**
-     * 是否参加了活动
-     */
+ * 是否参加了活动
+ */
 //    public boolean isActJoined() {
 //        return status == ActivityStatus.JOINED;
 //    }
@@ -325,7 +339,6 @@ public class Member extends Leaguer {
 //    public boolean isActAbsent() {
 //        return status == ActivityStatus.ABSENT;
 //    }
-
     public static ExclusionStrategy getStrategy() {
         return strategy;
     }

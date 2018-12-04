@@ -109,13 +109,7 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
         if (isCheckingGroups) {
             loadingGroupsMembers();
         } else {
-            // 当前所在组织的id
-            String groupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
-            if (groupId.equals(mQueryId) && mQueryId.equals(mActivity.getFromGroupId())) {
-                loadingGroupMembers();
-            } else {
-                loadingActivityGroupMember();
-            }
+            loadingGroupMembers();
         }
     }
 
@@ -153,27 +147,6 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
         }).selectActivityGroups(mQueryId, mActivity.getGroActivityId());
     }
 
-    // 拉取活动发起组织的成员报名详细列表
-    private void loadingActivityGroupMember() {
-        setLoadingText(R.string.ui_group_activity_collection_group_members_loading);
-        setNothingText(R.string.ui_group_activity_collection_group_members_nothing);
-        displayLoading(true);
-        MemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Member>() {
-            @Override
-            public void onResponse(List<Member> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (success && null != list) {
-                    for (Member member : list) {
-                        mAdapter.add(member);
-                    }
-                }
-                displayLoading(false);
-                displayNothing(mAdapter.getItemCount() < 1);
-                stopRefreshing();
-            }
-        }).listActivityGroupMember(mActivity.getFromGroupId(), mQueryId, mActivity.getGroActivityId());
-    }
-
     // 拉取指定组织内的报名详细列表
     private void loadingGroupMembers() {
         setLoadingText(R.string.ui_group_activity_collection_group_members_loading);
@@ -184,10 +157,23 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success && null != archive) {
+                    if (!isEmpty(archive.getTotalResult())) {
+                        archive.setCountResult(archive.getTotalResult());
+                    }
+                    if (!isEmpty(archive.getGroupMemberTotalResult())) {
+                        archive.setCountResult(archive.getGroupMemberTotalResult());
+                    }
                     mAdapter.add(archive);
-                    for (ActSquad squad : archive.getGroSquadList()) {
-                        mAdapter.add(squad);
-                        for (Member member : squad.getGroActivityMemberList()) {
+                    if (archive.getGroSquadList().size() > 0) {
+                        for (ActSquad squad : archive.getGroSquadList()) {
+                            mAdapter.add(squad);
+                            for (Member member : squad.getGroActivityMemberList()) {
+                                mAdapter.add(member);
+                            }
+                        }
+                    }
+                    if (archive.getDtoList().size() > 0) {
+                        for (Member member : archive.getDtoList()) {
                             mAdapter.add(member);
                         }
                     }

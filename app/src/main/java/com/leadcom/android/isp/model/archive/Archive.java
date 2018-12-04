@@ -503,10 +503,14 @@ public class Archive extends Additional {
     private String groActivityId;
     @Column(Field.ToGroupId)
     private String toGroupId;
-    @Column(Field.CountResult)
+
+    @Ignore // 统计结果
     private String countResult;
-    @Ignore
+    @Ignore // 统计结果
     private String totalResult;
+    @Ignore // 统计结果
+    private String groupMemberTotalResult;
+
     @Column(Field.Reply)
     private String reply;
     @Column(Field.State)
@@ -516,7 +520,7 @@ public class Archive extends Additional {
     @Ignore
     private ArrayList<SubMember> groSquMemberList;
     @Ignore
-    private ArrayList<Member> groActivityReplyList;
+    private ArrayList<Member> groActivityReplyList, dtoList;
     @Ignore
     private ArrayList<ActSquad> groSquadList;
     @Ignore
@@ -1042,6 +1046,14 @@ public class Archive extends Additional {
         this.totalResult = totalResult;
     }
 
+    public String getGroupMemberTotalResult() {
+        return groupMemberTotalResult;
+    }
+
+    public void setGroupMemberTotalResult(String groupMemberTotalResult) {
+        this.groupMemberTotalResult = groupMemberTotalResult;
+    }
+
     public ArrayList<Concern> getMemberGroVoList() {
         if (null == memberGroVoList) {
             memberGroVoList = new ArrayList<>();
@@ -1051,6 +1063,17 @@ public class Archive extends Additional {
 
     public void setMemberGroVoList(ArrayList<Concern> memberGroVoList) {
         this.memberGroVoList = memberGroVoList;
+    }
+
+    public ArrayList<Member> getDtoList() {
+        if (null == dtoList) {
+            dtoList = new ArrayList<>();
+        }
+        return dtoList;
+    }
+
+    public void setDtoList(ArrayList<Member> dtoList) {
+        this.dtoList = dtoList;
     }
 
     public String getReply() {

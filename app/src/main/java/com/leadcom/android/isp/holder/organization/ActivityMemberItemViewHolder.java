@@ -90,11 +90,23 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size));
         countView.setVisibility(isGroup ? View.VISIBLE : View.GONE);
         countView.setText(format("报名%d", member.getReportNum()));
-        statusView.setText(isGroup ? format("请假%d", member.getLeaveNum()) : member.getStatus());
+        statusView.setText(Html.fromHtml(isGroup ? format("请假%d", member.getLeaveNum()) : getStatus(member)));
         statusView.setVisibility(View.VISIBLE);
         timeView.setVisibility(isGroup ? View.GONE : View.VISIBLE);
         timeView.setText(member.isCreateDateDefault() ? "-" : fragment().formatDate(member.getCreateDate(), R.string.ui_base_text_date_format));
         iconView.setVisibility(isGroup ? View.VISIBLE : View.GONE);
+    }
+
+    private String getStatus(Member member) {
+        String string = member.getStatus();
+        if (member.getList().size() > 0) {
+            String sel = "";
+            for (String text : member.getList()) {
+                sel += (!isEmpty(sel) ? "/" : "") + text;
+            }
+            string += "(<font color=\"#a1a1a1\">" + sel + "</font>)";
+        }
+        return string;
     }
 
     private void showContent(Concern group) {
