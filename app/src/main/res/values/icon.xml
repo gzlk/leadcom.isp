@@ -45,6 +45,7 @@
     <string name="ui_icon_add_oval">&#xe61c;</string>
     <string name="ui_icon_subtract_solid">&#xe7dd;</string>
     <string name="ui_icon_more">&#xe608;</string>
+    <string name="ui_icon_more_double_up">&#xe6bf;</string>
     <string name="ui_icon_refresh">&#xe79c;</string>
     <string name="ui_icon_camera">&#xe64b;</string>
     <string name="ui_icon_camera_hollow">&#xe69a;</string>

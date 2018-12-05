@@ -7,12 +7,12 @@ import android.view.View;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
-import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.api.org.MemberRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
+import com.leadcom.android.isp.holder.BaseViewHolder;
+import com.leadcom.android.isp.holder.common.ExpandCollapseViewHolder;
 import com.leadcom.android.isp.holder.organization.ActivityMemberItemViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
@@ -21,7 +21,7 @@ import com.leadcom.android.isp.model.organization.ActSquad;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Member;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>活动报名详情列表页<br />
@@ -57,7 +57,7 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
         fragment.openActivity(ActivityCollectionDetailsFragment.class.getName(), bundle, true, false);
     }
 
-    private Archive mActivity;
+    private Archive mActivity, dActivity;
     private MemberAdapter mAdapter;
     private boolean isCheckingGroups;
     private String mineGroupId;
@@ -149,6 +149,8 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
         }).selectActivityGroups(mQueryId, mActivity.getGroActivityId());
     }
 
+    private static final String LOADING = "_load_more_members";
+
     // 拉取指定组织内的报名详细列表
     private void loadingGroupMembers() {
         setLoadingText(R.string.ui_group_activity_collection_group_members_loading);
@@ -165,18 +167,38 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
                     if (!isEmpty(archive.getGroupMemberTotalResult())) {
                         archive.setCountResult(archive.getGroupMemberTotalResult());
                     }
+                    dActivity = archive;
                     mAdapter.add(archive);
+                    int count;
                     if (archive.getGroSquadList().size() > 0) {
                         for (ActSquad squad : archive.getGroSquadList()) {
                             mAdapter.add(squad);
+                            count = 0;
                             for (Member member : squad.getGroActivityMemberList()) {
                                 mAdapter.add(member);
+                                count++;
+                                if (count >= PAGE_SIZE && squad.getGroActivityMemberList().size() > PAGE_SIZE) {
+                                    Model model = new Model();
+                                    model.setId(LOADING + squad.getSquadId());
+                                    model.setCollapseStatus(count);
+                                    mAdapter.add(model);
+                                    break;
+                                }
                             }
                         }
                     }
                     if (archive.getDtoList().size() > 0) {
+                        count = 0;
                         for (Member member : archive.getDtoList()) {
                             mAdapter.add(member);
+                            count++;
+                            if (count >= PAGE_SIZE && archive.getDtoList().size() > PAGE_SIZE) {
+                                Model model = new Model();
+                                model.setId(LOADING);
+                                model.setCollapseStatus(count);
+                                mAdapter.add(model);
+                                break;
+                            }
                         }
                     }
                 }
@@ -199,16 +221,61 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
         @Override
         public void onClick(View view, int index) {
             Model model = mAdapter.get(index);
-            if (model instanceof Concern) {
-                Concern group = (Concern) model;
-                ActivityCollectionDetailsFragment.open(ActivityCollectionDetailsFragment.this, group.getGroupId(), mActivity, false);
+            switch (view.getId()) {
+                case R.id.ui_holder_view_activity_member_item_layout:
+                    if (model instanceof Concern) {
+                        // 打开下级组织的的报名情况列表
+                        Concern group = (Concern) model;
+                        ActivityCollectionDetailsFragment.open(ActivityCollectionDetailsFragment.this, group.getGroupId(), mActivity, false);
+                    }
+                    break;
+                case R.id.ui_holder_view_expand_collapse_clicker:
+                    // 展开更多
+                    if (dActivity.getDtoList().size() > 0) {
+                        expandMembers(dActivity.getDtoList(), model, index);
+                    } else if (dActivity.getGroSquadList().size() > 0) {
+                        String squadId = model.getId().replace(LOADING, "");
+                        for (ActSquad squad : dActivity.getGroSquadList()) {
+                            if (squad.getSquadId().equals(squadId)) {
+                                expandMembers(squad.getGroActivityMemberList(), model, index);
+                            }
+                        }
+                    }
+                    break;
             }
         }
     };
 
-    private class MemberAdapter extends RecyclerViewAdapter<ActivityMemberItemViewHolder, Model> {
+    private void expandMembers(ArrayList<Member> members, Model model, int modelIndex) {
+        int index = 0;
+        int size = members.size();
+        for (int i = model.getCollapseStatus(); i < size; i++) {
+            mAdapter.add(members.get(i), index + modelIndex);
+            index++;
+            if (index >= PAGE_SIZE) {
+                // 超出一页，再等待下一次列取
+                model.setCollapseStatus(index + model.getCollapseStatus());
+                break;
+            }
+        }
+        if (index < PAGE_SIZE) {
+            // 一页未满但已经没有了
+            //model.setCollapseStatus(index + model.getCollapseStatus());
+            //model.setSelected(true);
+            mAdapter.remove(model);
+        }
+    }
+
+    private class MemberAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
+        private static final int TYPE_MORE = 0, TYPE_MEMBER = 1;
+
         @Override
-        public ActivityMemberItemViewHolder onCreateViewHolder(View itemView, int viewType) {
+        public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
+            if (viewType == TYPE_MORE) {
+                ExpandCollapseViewHolder ecvh = new ExpandCollapseViewHolder(itemView, ActivityCollectionDetailsFragment.this);
+                ecvh.setOnViewHolderElementClickListener(elementClickListener);
+                return ecvh;
+            }
             ActivityMemberItemViewHolder holder = new ActivityMemberItemViewHolder(itemView, ActivityCollectionDetailsFragment.this);
             holder.setOnViewHolderElementClickListener(elementClickListener);
             return holder;
@@ -216,12 +283,22 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
 
         @Override
         public int itemLayout(int viewType) {
-            return R.layout.holder_view_activity_member_item;
+            return viewType == TYPE_MORE ? R.layout.holder_view_expand_collapse : R.layout.holder_view_activity_member_item;
         }
 
         @Override
-        public void onBindHolderOfView(ActivityMemberItemViewHolder holder, int position, @Nullable Model item) {
-            holder.showContent(item);
+        public int getItemViewType(int position) {
+            Model model = get(position);
+            return (!isEmpty(model.getId()) && model.getId().contains(LOADING)) ? TYPE_MORE : TYPE_MEMBER;
+        }
+
+        @Override
+        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
+            if (holder instanceof ActivityMemberItemViewHolder) {
+                ((ActivityMemberItemViewHolder) holder).showContent(item);
+            } else if (holder instanceof ExpandCollapseViewHolder) {
+                ((ExpandCollapseViewHolder) holder).showContent(item);
+            }
         }
 
         @Override

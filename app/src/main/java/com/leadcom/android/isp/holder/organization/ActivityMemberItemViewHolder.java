@@ -117,11 +117,13 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
         if (member.getList().size() > 0) {
             String sel = "";
             for (String text : member.getList()) {
-                if (!sel.contains(text)) {
+                if (!isEmpty(text) && !sel.contains(text)) {
                     sel += (!isEmpty(sel) ? "/" : "") + text;
                 }
             }
-            string += "(<font color=\"#a1a1a1\">" + sel + "</font>)";
+            if (!isEmpty(sel)) {
+                string += "(<font color=\"#a1a1a1\">" + sel + "</font>)";
+            }
         }
         return string;
     }
