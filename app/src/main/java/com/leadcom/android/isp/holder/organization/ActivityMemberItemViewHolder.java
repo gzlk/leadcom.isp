@@ -1,6 +1,7 @@
 package com.leadcom.android.isp.holder.organization;
 
 import android.text.Html;
+import android.text.InputFilter;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -88,11 +89,13 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
         boolean isGroup = !isEmpty(member.getGroupId());
         textView.setText(isGroup ? member.getGroupName() : member.getUserName());
         textView.setTextColor(getColor(R.color.textColor));
+        textView.setSelected(true);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size));
         countView.setVisibility(isGroup ? View.VISIBLE : View.GONE);
         countView.setText(format("报名%d", member.getReportNum()));
         statusView.setText(Html.fromHtml(isGroup ? format("请假%d", member.getLeaveNum()) : getStatus(member)));
         statusView.setVisibility(View.VISIBLE);
+        statusView.setSelected(true);
         resetWeight(isGroup);
         timeView.setVisibility(isGroup ? View.GONE : View.VISIBLE);
         timeView.setText(member.isCreateDateDefault() ? "-" : fragment().formatDate(member.getCreateDate(), R.string.ui_base_text_date_format));

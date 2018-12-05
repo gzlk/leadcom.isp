@@ -60,6 +60,7 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
     private Archive mActivity;
     private MemberAdapter mAdapter;
     private boolean isCheckingGroups;
+    private String mineGroupId;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -80,6 +81,7 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
         super.onActivityCreated(savedInstanceState);
         setCustomTitle(isCheckingGroups ? "组织报名统计" : "报名详情");
         isLoadingComplete(true);
+        mineGroupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
     }
 
     @Override
@@ -182,7 +184,7 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
                 displayNothing(mAdapter.getItemCount() <= 1);
                 stopRefreshing();
             }
-        }).selectActivityGroupMember(mActivity.getGroupId(), mQueryId, mActivity.getGroActivityId());
+        }).selectActivityGroupMember(mQueryId, mineGroupId, mActivity.getGroActivityId());
     }
 
     private void initializeAdapter() {

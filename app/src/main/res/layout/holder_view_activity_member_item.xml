@@ -7,7 +7,7 @@
     <View
         android:id="@+id/ui_holder_view_activity_member_item_top_line"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/ui_static_dp_1"
+        android:layout_height="@dimen/ui_static_dp_2"
         android:background="@color/windowBackground" />
 
     <LinearLayout
@@ -17,8 +17,8 @@
         android:background="@drawable/ui_background_clickable"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/ui_base_dimen_margin_padding"
-        android:paddingTop="@dimen/ui_base_dimen_margin_padding">
+        android:paddingTop="@dimen/ui_base_dimen_margin_padding"
+        android:paddingBottom="@dimen/ui_base_dimen_margin_padding">
 
         <TextView
             android:id="@+id/ui_holder_view_activity_member_item_text"
@@ -26,6 +26,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
             android:layout_weight="1.8"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="3"
+            android:singleLine="true"
             android:text="@string/app_name_default" />
 
         <TextView
@@ -42,7 +47,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.8"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:gravity="center_horizontal"
+            android:marqueeRepeatLimit="3"
+            android:singleLine="true"
             android:text="@string/app_name_default" />
 
         <TextView

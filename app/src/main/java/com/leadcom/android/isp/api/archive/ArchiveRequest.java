@@ -683,10 +683,14 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     /**
-     * 列取下级组织成员报名情况
+     * 列取自己组织或下级组织成员报名情况
+     *
+     * @param searchingGroupId 被搜索的组织id
+     * @param mineGroupId      当前用户所在的组织id
+     * @param activityId       活动id
      */
-    public void selectActivityGroupMember(String groupId, String currentGroupId, String activityId) {
-        String param = format("/group/groActivityMember/selectOneReport?groupId=%s&currentGroupId=%s&groActivityId=%s", groupId, currentGroupId, activityId);
+    public void selectActivityGroupMember(String searchingGroupId, String mineGroupId, String activityId) {
+        String param = format("/group/groActivityMember/selectOneReport?groupId=%s&currentGroupId=%s&groActivityId=%s", searchingGroupId, mineGroupId, activityId);
         executeHttpRequest(getRequest(SingleArchive.class, param, "", HttpMethods.Get));
     }
 
