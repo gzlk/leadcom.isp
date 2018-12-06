@@ -66,6 +66,7 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
         topLine.setVisibility(View.GONE);
         textView.setText(archive.getCountResult());
         textView.setTextColor(getColor(R.color.colorPrimary));
+        textView.setSelected(true);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size_small));
         countView.setVisibility(View.GONE);
         statusView.setVisibility(View.GONE);
