@@ -102,6 +102,7 @@
         <item>3|检查更新|Ver %s|1</item>
         <item>4|关于我们|</item>
         <item>5|抓取实时log|%d</item>
+        <item>6|切换Api(%s)|%d</item>
     </string-array>
     <string name="ui_text_setting_log_save_dialog_title">
         <![CDATA[<b>实时内容抓取提醒</b><br/>抓取log过程完毕之后别忘了回来这里关闭后台操作<br/><font color="#a1a1a1">长时间抓取log会导致手机变慢，请及时回来停止操作</font>]]>

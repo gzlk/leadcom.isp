@@ -2,16 +2,13 @@ package com.leadcom.android.isp.fragment.individual;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.ToggleButton;
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
-import com.leadcom.android.isp.apache.poi.FileUtils;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -59,6 +56,8 @@ public class SettingFragment extends BaseTransparentSupportFragment {
     private View aboutView;
     @ViewId(R.id.ui_setting_to_log)
     private View saveLogView;
+    @ViewId(R.id.ui_setting_api_debug)
+    private View apiDebugView;
 
     // holders
     private SimpleClickableViewHolder passwordHolder;
@@ -66,13 +65,14 @@ public class SettingFragment extends BaseTransparentSupportFragment {
     private SimpleClickableViewHolder cacheHolder;
     private SimpleClickableViewHolder upgradeHolder;
     private SimpleClickableViewHolder aboutHolder;
-    private ToggleableViewHolder logHolder;
+    private ToggleableViewHolder logHolder, apiHolder;
     private String[] strings;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         saveLogView.setVisibility(Cache.isReleasable() ? View.GONE : View.VISIBLE);
+        apiDebugView.setVisibility(Cache.cache().isApiDebug() ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -142,6 +142,11 @@ public class SettingFragment extends BaseTransparentSupportFragment {
             logHolder.addOnViewHolderToggleChangedListener(toggleChangedListener);
             logHolder.showContent(format(strings[5], LogcatHelper.helper().isStarting() ? 1 : 0));
         }
+        if (null == apiHolder) {
+            apiHolder = new ToggleableViewHolder(apiDebugView, this);
+            apiHolder.addOnViewHolderToggleChangedListener(apiToggle);
+            apiHolder.showContent(format(strings[6], (App.app().isNormalApi() ? "正常" : "我的电脑"), (App.app().isNormalApi() ? 1 : 0)));
+        }
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -150,6 +155,14 @@ public class SettingFragment extends BaseTransparentSupportFragment {
         App.app().logout();
         finishToSignIn();
     }
+
+    private ToggleableViewHolder.OnViewHolderToggleChangedListener apiToggle = new ToggleableViewHolder.OnViewHolderToggleChangedListener() {
+        @Override
+        public void onChange(int index, boolean togged) {
+            App.app().setApiDebug(togged);
+            apiHolder.showContent(format(strings[6], (App.app().isNormalApi() ? "正常" : "我的电脑"), (App.app().isNormalApi() ? 1 : 0)));
+        }
+    };
 
     private ToggleableViewHolder.OnViewHolderToggleChangedListener toggleChangedListener = new ToggleableViewHolder.OnViewHolderToggleChangedListener() {
 

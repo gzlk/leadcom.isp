@@ -201,6 +201,13 @@ public class Cache {
     }
 
     /**
+     * 是否后台api切换测试用户
+     */
+    public boolean isApiDebug() {
+        return !StringHelper.isEmpty(userPhone) && (userPhone.equals("13590665657") || userPhone.equals("18576595892"));
+    }
+
+    /**
      * 当前登录用户的id、姓名、网易云信登录的token、api服务器的accessToken
      */
     public String userId, nimToken, accessToken, userName, userPhone;

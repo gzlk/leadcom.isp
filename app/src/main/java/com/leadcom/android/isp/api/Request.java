@@ -22,7 +22,6 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.listener.OnHttpListener;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.query.FullTextQuery;
-import com.leadcom.android.isp.task.AsyncExecutableTask;
 import com.litesuits.http.LiteHttp;
 import com.litesuits.http.log.HttpLog;
 import com.litesuits.http.request.JsonRequest;
@@ -224,7 +223,8 @@ public abstract class Request<T> {
      * 组合请求
      */
     protected JsonRequest<Api<T>> getRequest(Type resultType, String action, final String body, final HttpMethods methods) {
-        final String url = format("%s%s", URL, action);
+        String baseUrl = format("%s/%s", App.app().isNormalApi() ? BaseApi.URL : BaseApi.URL1, BaseApi.API_VER);
+        final String url = format("%s%s", baseUrl, action);
         final long start = Utils.timestamp();
         OnHttpListener<Api<T>> listener = new OnHttpListener<Api<T>>() {
 

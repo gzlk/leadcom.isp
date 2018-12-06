@@ -1,8 +1,8 @@
 package com.leadcom.android.isp.holder.organization;
 
 import android.text.Html;
-import android.text.InputFilter;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -96,6 +96,7 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
         statusView.setText(Html.fromHtml(isGroup ? format("请假%d", member.getLeaveNum()) : getStatus(member)));
         statusView.setVisibility(View.VISIBLE);
         statusView.setSelected(true);
+        statusView.setGravity(isGroup ? Gravity.CENTER_HORIZONTAL : Gravity.CENTER_VERTICAL);
         resetWeight(isGroup);
         timeView.setVisibility(isGroup ? View.GONE : View.VISIBLE);
         timeView.setText(member.isCreateDateDefault() ? "-" : fragment().formatDate(member.getCreateDate(), R.string.ui_base_text_date_format));

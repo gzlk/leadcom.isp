@@ -124,6 +124,27 @@ public class App extends BaseActivityManagedApplication {
         return okHttpFailedTimes >= MAX_FAILED_TIME;
     }
 
+    /**
+     * true=普通正常服务器, false=后台测试自己的服务器
+     */
+    private boolean isNormalApi = true;
+
+    /**
+     * 是否正常api
+     */
+    public boolean isNormalApi() {
+        return isNormalApi;
+    }
+
+    /**
+     * 设置后台api服务器
+     *
+     * @param normalApi true=普通正常服务器, false=后台测试自己的服务器
+     */
+    public void setApiDebug(boolean normalApi) {
+        isNormalApi = normalApi;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
