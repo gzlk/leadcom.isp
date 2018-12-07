@@ -865,14 +865,23 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             return false;
         } else {
             Date date = Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), mArchive.getHappenDate());
-            if (isDateLessThanNow(date, 0)) {
-                ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            if (!checkActivityDate(calendar.getTime())) {
                 return false;
             }
-            if (isDateLessThanNow(date, 24)) {
-                ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_24h_after_now);
-                return false;
-            }
+//            if (isDateLessThanNow(date, 0)) {
+//                String time = Utils.format("MM月dd日HH时", date);
+//                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_group_activity_editor_time_limit_less_than_now, time));
+//                return false;
+//            }
+            // 去掉 24 小时时间间隔的判断
+//            if (isDateLessThanNow(date, 24)) {
+//                ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_24h_after_now);
+//                return false;
+//            }
         }
         mArchive.setSite(addressHolder.getValue());
         if (isEmpty(mArchive.getSite())) {
@@ -1068,9 +1077,29 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private boolean isDateLessThanNow(Date date, int addHours) {
+        // 需要比较的时间，不需要比较分、秒
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        if (cal.get(Calendar.MINUTE) > 0 || cal.get(Calendar.SECOND) > 0) {
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+        }
+
+        // 必须在当前时间之后的时间，不需要比较分、秒两个属性
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR, addHours);
-        return date.getTime() < calendar.getTime().getTime();
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        return cal.getTime().getTime() < calendar.getTime().getTime();
+    }
+
+    private boolean checkActivityDate(Date date) {
+        if (isDateLessThanNow(date, 0)) {
+            String time = Utils.format("MM月dd日HH时", date);
+            ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_group_activity_editor_time_limit_less_than_now, time));
+            return false;
+        }
+        return true;
     }
 
     private void openDateTimePicker() {
@@ -1078,24 +1107,29 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         DateTimeHelper.helper().setOnDateTimePickListener(new DateTimeHelper.OnDateTimePickListener() {
             @Override
             public void onPicked(Date date) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
                 if (mArchive.isActivity()) {
-                    if (isDateLessThanNow(date, 0)) {
-                        ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_now);
+                    // 去掉分、秒属性
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    if (!checkActivityDate(calendar.getTime())) {
                         return;
                     }
-                    if (isDateLessThanNow(date, 24)) {
-                        ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_24h_after_now);
-                        return;
-                    }
+                    // 去掉必须24小时之后的间隔  2018-12-07
+//                    if (isDateLessThanNow(date, 24)) {
+//                        ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_24h_after_now);
+//                        return;
+//                    }
                 }
-                String fullTime = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date);
+                String fullTime = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), calendar.getTime());
                 mArchive.setHappenDate(fullTime);
                 String time = mArchive.isActivity() ? formatDateTime(fullTime) : formatDate(fullTime);
                 if (null != timeHolder) {
                     timeHolder.showContent(format(templateItems[0], time));
                 }
             }
-        }).show(ArchiveEditorFragment.this, true, true, true, mArchive.isActivity(), mArchive.isActivity(), false, !mArchive.isTemplateArchive(), mArchive.getHappenDate());
+        }).show(ArchiveEditorFragment.this, true, true, true, mArchive.isActivity(), false, false, !mArchive.isTemplateArchive(), mArchive.getHappenDate());
     }
 
     private void insertImage(String url, String alt) {
@@ -1939,7 +1973,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         if (null == timeHolder) {
             timeHolder = new SimpleClickableViewHolder(timeView, this);
-            timeHolder.showContent(format(templateItems[0], mArchive.isActivity() ? "至少间隔24小时(必填)" : "选择时间(必填)"));
+            timeHolder.showContent(format(templateItems[0], mArchive.isActivity() ? "截止日期(必填)" : "选择时间(必填)"));
             timeHolder.addOnViewHolderClickListener(holderClickListener);
         }
         if (null == addressHolder) {
