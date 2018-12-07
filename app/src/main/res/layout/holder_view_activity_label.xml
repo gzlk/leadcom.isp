@@ -98,14 +98,14 @@
         android:layout_marginBottom="@dimen/ui_static_dp_1"
         android:layout_toEndOf="@+id/ui_holder_view_activity_label_container"
         android:translationZ="0dp"
-        android:visibility="gone"
-        app:cv_active_border="@color/textColorHintLight"
-        app:cv_background="@color/textColorHintLightLightLight"
-        app:cv_background_active="@color/textColorHintLightLight"
+        android:visibility="visible"
+        app:cv_active_border="@color/color_a03cbaff"
+        app:cv_background="@color/color_803cbaff"
+        app:cv_background_active="@color/color_803cbaff"
         app:cv_background_type="fill"
         app:cv_left_bottom_corner="@dimen/ui_static_dp_zero"
         app:cv_left_top_corner="@dimen/ui_static_dp_zero"
-        app:cv_normal_border="@color/textColorHintLight"
+        app:cv_normal_border="@color/color_a03cbaff"
         app:cv_right_bottom_corner="@dimen/ui_base_dimen_button_corner_size"
         app:cv_right_top_corner="@dimen/ui_base_dimen_button_corner_size">
 
@@ -117,7 +117,7 @@
             android:paddingStart="@dimen/ui_static_dp_10"
             android:paddingEnd="@dimen/ui_static_dp_10"
             android:text="@string/ui_icon_edit_pen_solid"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/ui_base_text_size_short" />
 
     </com.hlk.hlklib.lib.view.CorneredView>
