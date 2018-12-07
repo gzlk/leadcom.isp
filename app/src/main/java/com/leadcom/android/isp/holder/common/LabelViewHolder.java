@@ -5,13 +5,13 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.android.flexbox.FlexboxLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CornerTagView;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.model.Model;
@@ -45,6 +45,8 @@ public class LabelViewHolder extends BaseViewHolder {
     private CornerTagView tagView;
     @ViewId(R.id.ui_holder_view_activity_label_edit)
     private View editView;
+    @ViewId(R.id.ui_holder_view_activity_label_edit_icon)
+    private View editViewIcon;
     @ViewId(R.id.ui_holder_view_activity_label_self)
     private View selfDefined;
 
@@ -103,9 +105,9 @@ public class LabelViewHolder extends BaseViewHolder {
     }
 
     public void showContent(ActivityOption option) {
-        FlexboxLayoutManager.LayoutParams params = (FlexboxLayoutManager.LayoutParams) itemView.getLayoutParams();
-        params.rightMargin = getDimension(R.dimen.ui_static_dp_10);
-        itemView.setLayoutParams(params);
+        //FlexboxLayoutManager.LayoutParams params = (FlexboxLayoutManager.LayoutParams) itemView.getLayoutParams();
+        //params.rightMargin = getDimension(R.dimen.ui_static_dp_10);
+        //itemView.setLayoutParams(params);
         boolean isAdd = option.getAdditionalOptionName().equals("+");
         editView.setVisibility(isAdd ? View.GONE : (option.isSelectable() ? View.VISIBLE : View.GONE));
         textView.setText(option.getAdditionalOptionName());
@@ -115,6 +117,9 @@ public class LabelViewHolder extends BaseViewHolder {
 
     @Click({R.id.ui_holder_view_activity_label_container, R.id.ui_holder_view_activity_label_edit})
     private void viewClick(View view) {
+        if (view.getId() == R.id.ui_holder_view_activity_label_edit) {
+            editViewIcon.startAnimation(App.clickAnimation());
+        }
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
             return;
