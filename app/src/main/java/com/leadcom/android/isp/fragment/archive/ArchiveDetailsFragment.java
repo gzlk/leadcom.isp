@@ -52,8 +52,8 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.common.LabelPickFragment;
 import com.leadcom.android.isp.fragment.organization.ActivityCollectionDetailsFragment;
-import com.leadcom.android.isp.fragment.organization.GroupAllPickerFragment;
 import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
+import com.leadcom.android.isp.fragment.organization.GroupSubordinateSquadMemberPickerFragment;
 import com.leadcom.android.isp.fragment.organization.SquadPickerFragment;
 import com.leadcom.android.isp.helper.DownloadingHelper;
 import com.leadcom.android.isp.helper.FilePreviewHelper;
@@ -394,11 +394,18 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 }
                 break;
             case R.id.ui_archive_details_activity_deliver:
-                GroupAllPickerFragment.IS_FOR_DELIVER = true;
-                GroupAllPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), "活动下发", null, null);
+                openMemberPicker("活动下发");
+                //GroupAllPickerFragment.IS_FOR_DELIVER = true;
+                //GroupAllPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), "活动下发", null, null);
                 //openActivityDeliverDialog(true);
                 break;
         }
+    }
+
+    private void openMemberPicker(String title) {
+        String groupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
+        String groupName = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current_name, R.string.pf_last_login_user_group_current_name_beta), "");
+        GroupSubordinateSquadMemberPickerFragment.open(ArchiveDetailsFragment.this, groupId, groupName, title, null, null);
     }
 
     private void warningSingInOrLeave(final boolean signIn) {
@@ -1538,8 +1545,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                         case R.id.ui_popup_rich_editor_setting_participant:
                             // 参与者
                             isChooseGroup = true;
-                            GroupAllPickerFragment.IS_FOR_DELIVER = true;
-                            GroupAllPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), "选择成员", null, null);
+                            openMemberPicker("选择成员");
+                            //GroupAllPickerFragment.IS_FOR_DELIVER = true;
+                            //GroupAllPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), "选择成员", null, null);
                             //SquadsFragment.isOpenable = true;
                             //SquadsFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), "", true, null);
                             //GroupSquadContactPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), "", "[]");
@@ -1633,8 +1641,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     @Override
     protected void transform() {
         pushingType = PUSH_TRANSFORM;
-        GroupAllPickerFragment.IS_FOR_DELIVER = true;
-        GroupAllPickerFragment.open(this, mArchive.getGroupId(), "下发", null, null);
+        openMemberPicker("下发");
+        //GroupAllPickerFragment.IS_FOR_DELIVER = true;
+        //GroupAllPickerFragment.open(this, mArchive.getGroupId(), "下发", null, null);
         //openPushDialog();
     }
 

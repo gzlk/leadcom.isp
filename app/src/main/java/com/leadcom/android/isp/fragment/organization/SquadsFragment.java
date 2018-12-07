@@ -342,7 +342,7 @@ public class SquadsFragment extends GroupBaseFragment {
                     }
                 }
             }
-            squad.setSelectable(isSquadMemberAllSelected(squad));
+            squad.setSelected(isSquadMemberAllSelected(squad));
             mAdapter.update(squad);
         }
         resetSelectAllIcon();
@@ -356,7 +356,7 @@ public class SquadsFragment extends GroupBaseFragment {
                 case R.id.ui_holder_view_group_squad_container:
                     // 小组成员列表
                     if (selectable) {
-                        model.setSelected(!model.isSelected());
+                        model.setSelectable(!model.isSelectable());
                         displaySquadMember((Squad) model, index);
                     } else {
                         ContactFragment.open(SquadsFragment.this, (Squad) model);
@@ -387,8 +387,8 @@ public class SquadsFragment extends GroupBaseFragment {
                     break;
                 case R.id.ui_holder_view_group_squad_picker:
                     // 小组成员全选或取消全选
-                    model.setSelectable(!model.isSelectable());
-                    mAdapter.update(model);
+                    //model.setSelected(!model.isSelected());
+                    //mAdapter.update(model);
                     selectSquadMembers((Squad) model);
                     break;
             }
@@ -444,15 +444,19 @@ public class SquadsFragment extends GroupBaseFragment {
                 selected++;
             }
         }
-        squad.setSelectable(selected == squad.getGroSquMemberList().size());
+        squad.setSelected(selected == squad.getGroSquMemberList().size());
+        squad.setCollapseStatus(selected);
         mAdapter.update(squad);
         allSelected = isAllSelected();
         resetSelectAllIcon();
     }
 
     private void selectSquadMembers(Squad squad) {
+        squad.setSelected(!squad.isSelected());
+        squad.setCollapseStatus(squad.isSelected() ? squad.getGroSquMemberList().size() : 0);
+        mAdapter.update(squad);
         for (Member member : squad.getGroSquMemberList()) {
-            member.setSelected(squad.isSelectable());
+            member.setSelected(squad.isSelected());
             if (mAdapter.indexOf(member) >= 0) {
                 mAdapter.update(member);
             }
@@ -487,7 +491,7 @@ public class SquadsFragment extends GroupBaseFragment {
     private void displaySquadMember(Squad squad, int index) {
         Iterator<Model> iterator = mAdapter.iterator();
         int mIndex = 0;
-        if (squad.isSelected()) {
+        if (squad.isSelectable()) {
             // 显示小组成员
             if (null != squad.getGroSquMemberList()) {
                 for (Member member : squad.getGroSquMemberList()) {
@@ -580,7 +584,7 @@ public class SquadsFragment extends GroupBaseFragment {
                     member.setSelected(true);
                 }
             }
-            squad.setSelectable(isSquadMemberAllSelected(squad));
+            squad.setSelected(isSquadMemberAllSelected(squad));
             mAdapter.update(squad);
         }
         displayLoading(false);

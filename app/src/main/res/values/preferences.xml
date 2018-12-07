@@ -15,6 +15,7 @@
     <string name="pf_last_login_user_group_current" formatted="false">200007_%s</string>
     <string name="pf_last_login_user_contact_changed" formatted="false">200008_%s</string>
     <string name="pf_last_login_user_accounts" formatted="false">200009_%s</string>
+    <string name="pf_last_login_user_group_current_name" formatted="false">200010_%s</string>
 
     <!--beta-->
     <string name="pf_last_login_user_id_beta">200010</string>
@@ -27,6 +28,7 @@
     <string name="pf_last_login_user_group_current_beta" formatted="false">200007_%s</string>
     <string name="pf_last_login_user_contact_changed_beta" formatted="false">200008_%s</string>
     <string name="pf_last_login_user_accounts_beta" formatted="false">200009_%s</string>
+    <string name="pf_last_login_user_group_current_name_beta" formatted="false">200010_%s</string>
 
     <string name="pf_static_keyboard_height">300000</string>
     <string name="pf_static_temp_organization_create_alert">300010</string>

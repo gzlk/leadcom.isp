@@ -20,6 +20,7 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CorneredButton;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Squad;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 /**
  * <b>功能描述：</b>感兴趣的组织item<br />
@@ -48,6 +49,8 @@ public class GroupInterestViewHolder extends BaseViewHolder {
     private TextView descView;
     @ViewId(R.id.ui_holder_view_group_interest_right_icon)
     private CustomTextView rightIcon;
+    @ViewId(R.id.ui_holder_view_group_interest_loading)
+    private CircleProgressBar loadingView;
     @ViewId(R.id.ui_holder_view_item_left_blank)
     private View leftBlank;
 
@@ -226,6 +229,7 @@ public class GroupInterestViewHolder extends BaseViewHolder {
         }
         name = getSearchingText(name, searchingText);
         nameView.setText(Html.fromHtml(name));
+        loadingView.setVisibility(group.isRead() ? View.VISIBLE : View.GONE);
     }
 
     @Click({R.id.ui_holder_view_group_interest_root, R.id.ui_holder_view_group_interest_button, R.id.ui_holder_view_group_interest_select})

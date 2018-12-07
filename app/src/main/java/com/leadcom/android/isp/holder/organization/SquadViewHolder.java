@@ -2,9 +2,9 @@ package com.leadcom.android.isp.holder.organization;
 
 import android.text.Html;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.hlk.hlklib.etc.Utility;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -14,8 +14,8 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.model.operation.GRPOperation;
-import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Squad;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 /**
  * <b>功能描述：</b>小组的ViewHolder<br />
@@ -30,6 +30,8 @@ import com.leadcom.android.isp.model.organization.Squad;
 
 public class SquadViewHolder extends BaseViewHolder {
 
+    @ViewId(R.id.ui_holder_view_group_squad_blank)
+    private View blankView;
     @ViewId(R.id.ui_holder_view_group_squad_picker)
     private CustomTextView picker;
     @ViewId(R.id.ui_holder_view_group_squad_logo)
@@ -38,10 +40,13 @@ public class SquadViewHolder extends BaseViewHolder {
     private TextView nameView;
     @ViewId(R.id.ui_holder_view_group_squad_members)
     private TextView numberView;
+    @ViewId(R.id.ui_holder_view_group_squad_loading)
+    private CircleProgressBar loading;
     @ViewId(R.id.ui_tool_view_contact_button_edit)
     private View editButton;
 
     private boolean showPicker = false;
+    private boolean showBlank = false;
 
     public SquadViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -62,6 +67,10 @@ public class SquadViewHolder extends BaseViewHolder {
         logo.setVisibility(shown ? View.GONE : View.VISIBLE);
     }
 
+    public void showBlank(boolean shown) {
+        showBlank = shown;
+    }
+
     public void showContent(Squad squad, String searchingText) {
         String name = squad.getName();
         if (!isEmpty(name)) {
@@ -75,21 +84,19 @@ public class SquadViewHolder extends BaseViewHolder {
         }
         if (null != picker) {
             // 小组中成员是否被全选中
-            picker.setTextColor(getColor(squad.isSelectable() ? R.color.colorPrimary : R.color.textColorHintLight));
+            picker.setTextColor(getColor(squad.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
         }
-        nameView.setText(Html.fromHtml(name));
-        int selected = getSquadMemberSelected(squad);
-        numberView.setText(format("%s%d人", (showPicker ? (selected > 0 ? format("%d/", selected) : "") : ""), squad.getGroSquMemberList().size()));
-    }
 
-    private int getSquadMemberSelected(Squad squad) {
-        int cnt = 0;
-        for (Member member : squad.getGroSquMemberList()) {
-            if (member.isSelected()) {
-                cnt++;
-            }
-        }
-        return cnt;
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) blankView.getLayoutParams();
+        params.width = getDimension(showBlank ? R.dimen.ui_static_dp_15 : R.dimen.ui_static_dp_1);
+        blankView.setLayoutParams(params);
+
+        nameView.setText(Html.fromHtml(name));
+        int selected = squad.getCollapseStatus();
+        int total = squad.getGroSquMemberList().size();
+        numberView.setText(total > 0 ? format("%s%d人", (showPicker ? (selected > 0 ? format("%d/", selected) : "") : ""), squad.getGroSquMemberList().size()) : "");
+
+        loading.setVisibility(squad.isRead() ? View.VISIBLE : View.GONE);
     }
 
     @Click({R.id.ui_holder_view_group_squad_container,

@@ -39,14 +39,13 @@ import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.SquadRequest;
-import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
-import com.leadcom.android.isp.fragment.organization.GroupAllPickerFragment;
+import com.leadcom.android.isp.fragment.organization.GroupSubordinateSquadMemberPickerFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -2175,15 +2174,20 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
+            String groupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
+            String groupName = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current_name, R.string.pf_last_login_user_group_current_name_beta), "");
             if (mArchive.isActivity()) {
-                // 组织、下级组织、成员拾取器
-                GroupAllPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), "参与人",
+                GroupSubordinateSquadMemberPickerFragment.open(ArchiveEditorFragment.this, groupId, groupName, "",
                         mArchive.getGroupIdList(), mArchive.getGroSquMemberList());
+                // 组织、下级组织、成员拾取器
+                //GroupAllPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), "参与人",
+                //        mArchive.getGroupIdList(), mArchive.getGroSquMemberList());
             } else {
                 // 参与者
                 isOpenOther = true;
-                GroupAllPickerFragment.IS_FOR_DELIVER = true;
-                GroupAllPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), "参与人", null, null);
+                GroupSubordinateSquadMemberPickerFragment.open(ArchiveEditorFragment.this, groupId, groupName, "", null, null);
+                //GroupAllPickerFragment.IS_FOR_DELIVER = true;
+                //GroupAllPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), "参与人", null, null);
             }
         }
     };

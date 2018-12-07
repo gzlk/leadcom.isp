@@ -2,6 +2,7 @@ package com.leadcom.android.isp.holder.organization;
 
 import android.text.Html;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.Click;
@@ -199,7 +200,12 @@ public class ContactViewHolder extends BaseViewHolder {
                 buttonInvite.setText(member.isSelected() ? R.string.ui_phone_contact_invited : R.string.ui_phone_contact_add);
             }
         }
+
         leftBlank.setVisibility(pickerVisible && !member.isSelectable() ? View.VISIBLE : View.GONE);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) leftBlank.getLayoutParams();
+        params.width = getDimension(R.dimen.ui_static_dp_20) * leftBlankTimes;
+        leftBlank.setLayoutParams(params);
+
         iconPicker.setVisibility(pickerVisible ? View.VISIBLE : View.GONE);
         iconPicker.setTextColor(getColor(member.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
     }
@@ -222,6 +228,12 @@ public class ContactViewHolder extends BaseViewHolder {
 
     public void showPicker(boolean shown) {
         pickerVisible = shown;
+    }
+
+    private int leftBlankTimes = 1;
+
+    public void setLeftBlankTimes(int times) {
+        leftBlankTimes = times;
     }
 
     @Click({R.id.ui_holder_view_contact_layout,

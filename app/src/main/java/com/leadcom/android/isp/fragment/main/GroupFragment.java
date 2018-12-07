@@ -476,6 +476,8 @@ public class GroupFragment extends GroupBaseFragment {
                 Cache.cache().updateGroup(group);
             }
             gAdapter.setData(list);
+        } else {
+            handingListener.onComplete();
         }
     }
 
@@ -575,6 +577,7 @@ public class GroupFragment extends GroupBaseFragment {
         //tagView.setText(group.isTZ() ? R.string.ui_group_header_tongzhan_flag : R.string.ui_group_header_minmeng_flag);
         if (isNeedPermission) {
             PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), group.getId());
+            PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_group_current_name, R.string.pf_last_login_user_group_current_name_beta), group.getName());
             currentGroup = group.getId();
         }
         if (null != gAdapter) {
