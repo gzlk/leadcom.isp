@@ -1923,7 +1923,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private OptionsAdapter optionsAdapter;
     private String[] templateItems;
 
-    @SuppressLint("ClickableViewAccessibility")
     private void initializeTemplate() {
         if (null == imageAdapter) {
             if (mArchive.isActivity()) {
