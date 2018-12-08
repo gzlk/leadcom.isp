@@ -24,6 +24,7 @@ import com.leadcom.android.isp.api.common.PushMsgRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.SettingFragment;
@@ -34,6 +35,8 @@ import com.leadcom.android.isp.fragment.main.SystemMessageFragment;
 import com.leadcom.android.isp.fragment.organization.GroupConstructFragment;
 import com.leadcom.android.isp.fragment.organization.GroupsFragment;
 import com.leadcom.android.isp.helper.LogcatHelper;
+import com.leadcom.android.isp.helper.PreferenceHelper;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.UpgradeHelper;
 import com.leadcom.android.isp.lib.permission.MPermission;
@@ -245,7 +248,15 @@ public class MainActivity extends TitleActivity {
 
         setDisplayPage();
         App.dispatchCallbacks();
-        UpgradeHelper.helper(this).checkVersion();
+
+        // 一天只有第一次打开主页面时会在这里检测更新，否则到个人设置里去更新
+        String date = Utils.formatDateOfNow("yyyy-MM-dd");
+        String last = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_last_update_check_date, R.string.pf_last_login_user_last_update_check_date_beta), "");
+        if (StringHelper.isEmpty(last) || !last.equals(date)) {
+            PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_last_update_check_date, R.string.pf_last_login_user_last_update_check_date_beta), last);
+            UpgradeHelper.helper(this).checkVersion();
+        }
+
         if (!Cache.isReleasable()) {
             ToastHelper.make().showMsg(R.string.ui_text_main_inner_test_toast);
         }
