@@ -254,6 +254,7 @@ public class MainActivity extends TitleActivity {
         String last = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_last_update_check_date, R.string.pf_last_login_user_last_update_check_date_beta), "");
         if (StringHelper.isEmpty(last) || !last.equals(date)) {
             PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_last_update_check_date, R.string.pf_last_login_user_last_update_check_date_beta), last);
+            log(format("last checked upgrade is: %s, this time is: %s, now need check upgrade.", last, date));
             UpgradeHelper.helper(this).checkVersion();
         }
 
