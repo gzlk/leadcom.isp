@@ -1076,7 +1076,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     }
 
-    private boolean isDateLessThanNow(Date date, int addHours) {
+    private static boolean isDateLessThanNow(Date date, int addHours) {
         // 需要比较的时间，不需要比较分、秒
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -1093,7 +1093,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         return cal.getTime().getTime() < calendar.getTime().getTime();
     }
 
-    private boolean checkActivityDate(Date date) {
+    static boolean checkActivityDate(Date date) {
         if (isDateLessThanNow(date, 0)) {
             String time = Utils.format("MM月dd日HH时", date);
             ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_group_activity_editor_time_limit_less_than_now, time));
@@ -2177,7 +2177,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             String groupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
             String groupName = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current_name, R.string.pf_last_login_user_group_current_name_beta), "");
             if (mArchive.isActivity()) {
-                GroupSubordinateSquadMemberPickerFragment.open(ArchiveEditorFragment.this, groupId, groupName, "",
+                GroupSubordinateSquadMemberPickerFragment.open(ArchiveEditorFragment.this, groupId, groupName, "", true,
                         mArchive.getGroupIdList(), mArchive.getGroSquMemberList());
                 // 组织、下级组织、成员拾取器
                 //GroupAllPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), "参与人",
@@ -2185,7 +2185,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             } else {
                 // 参与者
                 isOpenOther = true;
-                GroupSubordinateSquadMemberPickerFragment.open(ArchiveEditorFragment.this, groupId, groupName, "", null, null);
+                GroupSubordinateSquadMemberPickerFragment.open(ArchiveEditorFragment.this, groupId, groupName, "", false, null, null);
                 //GroupAllPickerFragment.IS_FOR_DELIVER = true;
                 //GroupAllPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), "参与人", null, null);
             }

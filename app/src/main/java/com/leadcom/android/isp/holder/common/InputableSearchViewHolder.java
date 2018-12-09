@@ -148,6 +148,13 @@ public class InputableSearchViewHolder extends BaseViewHolder {
         Utils.hidingInputBoard(searchInput);
     }
 
+    /**
+     * 设置是否可以输入搜索
+     */
+    public void setInputEnabled(boolean enable) {
+        searchInput.setEnabled(enable);
+    }
+
     @Click({R.id.ui_holder_view_searchable_clear_icon})
     private void onClick(View view) {
         switch (view.getId()) {

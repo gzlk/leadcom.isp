@@ -3,16 +3,15 @@ package com.leadcom.android.isp.fragment.organization;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.org.RelationRequest;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
+import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.organization.ContactViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
 import com.leadcom.android.isp.holder.organization.SquadViewHolder;
@@ -48,28 +47,26 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         return gssmpf;
     }
 
-    public static void open(BaseFragment fragment, String groupId, String groupName, String title, ArrayList<String> groups, ArrayList<SubMember> members) {
+    public static void open(BaseFragment fragment, String groupId, String groupName, String title, boolean subordinate, ArrayList<String> groups, ArrayList<SubMember> members) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putString(PARAM_NAME, groupName);
         bundle.putString(PARAM_JSON, title);
-        bundle.putBoolean(PARAM_SQUAD_ID, true);
+        bundle.putBoolean(PARAM_SQUAD_ID, subordinate);
         bundle.putStringArrayList(PARAM_SEARCHED, groups);
         bundle.putSerializable(PARAM_SELECTABLE, members);
         fragment.openActivity(GroupSubordinateSquadMemberPickerFragment.class.getName(), bundle, REQUEST_SELECT, true, false);
     }
 
-    @ViewId(R.id.ui_tool_view_select_all_root)
-    private View selectAllRoot;
-    @ViewId(R.id.ui_tool_view_select_all_title)
-    private TextView selectAllTitle;
-    @ViewId(R.id.ui_tool_view_select_all_icon)
-    private CustomTextView selectAllIcon;
+    @ViewId(R.id.ui_holder_view_searchable_container)
+    private View searchView;
+    private InputableSearchViewHolder searchViewHolder;
 
     private String mGroupName, mTitle, searchingText = "", mGroupMemberSquadId;
-    private ArrayList<String> groups;
+    private ArrayList<String> selectedGroups;
     private ArrayList<Squad> squads = new ArrayList<>();
-    private ArrayList<SubMember> members;
+    private ArrayList<RelateGroup> groups = new ArrayList<>();
+    private ArrayList<SubMember> selectedMembers;
     private PickerAdapter mAdapter;
     private boolean showSubordinate = true;
 
@@ -80,13 +77,13 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         mGroupName = bundle.getString(PARAM_NAME, "");
         mTitle = bundle.getString(PARAM_JSON, "");
         showSubordinate = bundle.getBoolean(PARAM_SQUAD_ID, true);
-        groups = bundle.getStringArrayList(PARAM_SEARCHED);
-        if (null == groups) {
-            groups = new ArrayList<>();
+        selectedGroups = bundle.getStringArrayList(PARAM_SEARCHED);
+        if (null == selectedGroups) {
+            selectedGroups = new ArrayList<>();
         }
-        members = (ArrayList<SubMember>) bundle.getSerializable(PARAM_SELECTABLE);
-        if (null == members) {
-            members = new ArrayList<>();
+        selectedMembers = (ArrayList<SubMember>) bundle.getSerializable(PARAM_SELECTABLE);
+        if (null == selectedMembers) {
+            selectedMembers = new ArrayList<>();
         }
     }
 
@@ -96,8 +93,8 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         bundle.putString(PARAM_NAME, mGroupName);
         bundle.putBoolean(PARAM_SQUAD_ID, showSubordinate);
         bundle.putString(PARAM_JSON, mTitle);
-        bundle.putStringArrayList(PARAM_SEARCHED, groups);
-        bundle.putSerializable(PARAM_SELECTABLE, members);
+        bundle.putStringArrayList(PARAM_SEARCHED, selectedGroups);
+        bundle.putSerializable(PARAM_SELECTABLE, selectedMembers);
     }
 
     @Override
@@ -119,7 +116,7 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_organization_member;
+        return R.layout.fragment_searchable_list_swipe_enabled;
     }
 
     @Override
@@ -134,6 +131,12 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
 
     @Override
     public void doingInResume() {
+        if (null == searchViewHolder) {
+            searchViewHolder = new InputableSearchViewHolder(searchView, this);
+            searchViewHolder.setOnSearchingListener(onSearchingListener);
+            // 初始化的时候由于还未加载成员列表或小组，不能输入进行搜索
+            searchViewHolder.setInputEnabled(false);
+        }
         if (null == mAdapter) {
             mAdapter = new PickerAdapter();
             mRecyclerView.setAdapter(mAdapter);
@@ -142,10 +145,12 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
             group.setId(mQueryId);
             group.setGroupId(mQueryId);
             group.setGroupName(mGroupName + ("(<font color=\"#a1a1a1\">本组织</font>)"));
-            mAdapter.add(group);
+            groups.add(group);
             // 拉取下级组织列表
             if (showSubordinate) {
                 loadSubordinates();
+            } else {
+                showGroups();
             }
         }
     }
@@ -154,6 +159,19 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
     protected boolean shouldSetDefaultTitleEvents() {
         return true;
     }
+
+    private InputableSearchViewHolder.OnSearchingListener onSearchingListener = new InputableSearchViewHolder.OnSearchingListener() {
+        @Override
+        public void onSearching(String text) {
+            searchingText = text;
+            mAdapter.clear();
+            if (isEmpty(searchingText)) {
+                showGroups();
+            } else {
+                searching();
+            }
+        }
+    };
 
     private void resultSelectedData() {
         // 选择了的成员
@@ -179,21 +197,66 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         resultData(SubMember.toJson(selected));
     }
 
+    private void searching() {
+        // 显示所有符合条件的下级组织名称
+        for (RelateGroup group : groups) {
+            group.setLocalDeleted(group.isSelectable());
+            if (group.getGroupId().equals(mQueryId)) {
+                mAdapter.add(group);
+            } else if (!isEmpty(group.getGroupName()) && group.getGroupName().contains(searchingText)) {
+                mAdapter.add(group);
+            }
+        }
+        // 显示所有符合条件的支部以及其下符合条件的成员
+        int index = 1;
+        for (Squad squad : squads) {
+            squad.setLocalDeleted(squad.isSelectable());
+            if (!isEmpty(squad.getName()) && squad.getName().contains(searchingText)) {
+                // 如果小组名也在搜索范围内，则直接显示小组
+                squad.setSelectable(false);
+                mAdapter.add(squad);
+            }
+            for (Member member : squad.getGroSquMemberList()) {
+                if (!isEmpty(member.getUserName()) && member.getUserName().contains(searchingText)) {
+                    if (!squad.isSelectable()) {
+                        squad.setSelectable(true);
+                    }
+                    mAdapter.update(squad);
+                    mAdapter.add(member);
+                }
+            }
+        }
+    }
+
     private void loadSubordinates() {
         RelationRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RelateGroup>() {
             @Override
             public void onResponse(List<RelateGroup> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success && null != list) {
-                    for (RelateGroup group : list) {
-                        if (groups.contains(group.getGroupId())) {
-                            group.setSelected(true);
-                        }
-                        mAdapter.update(group);
-                    }
+                    groups.addAll(list);
                 }
+                showGroups();
             }
         }).list(mQueryId, RelateGroup.RelationType.SUBORDINATE);
+    }
+
+    private void showGroups() {
+        for (RelateGroup group : groups) {
+            // 恢复之前的展开、收缩状态
+            group.setSelectable(group.isLocalDeleted());
+            if (!group.getGroupId().equals(mQueryId) && selectedGroups.contains(group.getGroupId())) {
+                group.setSelected(true);
+            }
+            mAdapter.add(group);
+        }
+        if (squads.size() > 0) {
+            // 显示小组列表
+            displaySquads();
+        } else if (selectedMembers.size() > 0) {
+            // 如果小组列表为空，则看看传入的成员列表是否有数据，有则直接拉取小组列表，否则等到点击之后再拉取
+            fetchingRemoteSquads(mQueryId);
+        }
     }
 
     @Override
@@ -220,6 +283,7 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         Model model = mAdapter.get(0);
         model.setRead(false);
         mAdapter.update(model);
+        searchViewHolder.setInputEnabled(true);
     }
 
     private boolean isSquadMemberAllSelected(Squad squad) {
@@ -231,9 +295,9 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         return true;
     }
 
-    private boolean isMemberExist(SubMember m, boolean squadable) {
-        for (SubMember member : members) {
-            if (squadable) {
+    private boolean isMemberExist(SubMember m, boolean isCheckSquad) {
+        for (SubMember member : selectedMembers) {
+            if (isCheckSquad) {
                 if (!isEmpty(member.getSquadId()) && member.getSquadId().equals(m.getSquadId()) && member.getUserId().equals(m.getUserId())) {
                     return true;
                 }
@@ -262,14 +326,27 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         }
         squad.setSelected(isSquadMemberAllSelected(squad));
         squad.setRead(false);
-        mAdapter.update(squad);
+        checkSquadMemberSelectedStatus(squad.getId());
+        //mAdapter.update(squad);
+
+        // 检测是否有预先全选中
+        Model model = mAdapter.get(mQueryId);
+        model.setSelected(isTotalMemberSelected());
+        mAdapter.update(model);
     }
 
     private void displaySquads() {
         Model group = mAdapter.get(mQueryId);
         int index = mAdapter.indexOf(group), cnt = 0;
         for (Squad squad : squads) {
+            // 恢复之前的状态
+            squad.setSelectable(squad.isLocalDeleted());
             cnt++;
+            if (squad.getId().equals(mGroupMemberSquadId) && squad.getGroSquMemberList().size() <= 0) {
+                // 第一次显示本组织的成员但还未拉取成员列表时，直接拉取成员列表
+                squad.setRead(true);
+                fetchingRemoteMembers(mOrganizationId, "");
+            }
             mAdapter.add(squad, index + cnt);
             if (squad.isSelectable()) {
                 // 同时恢复小组成员的展开状态
@@ -279,9 +356,11 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
                 }
             }
             if (!squad.getId().equals(mGroupMemberSquadId)) {
-                checkSquadMemberAllSelected(squad.getId());
+                checkSquadMemberSelectedStatus(squad.getId());
             }
         }
+        // 检测是否所有成员都被选中了
+        checkTotalMemberSelected();
     }
 
     // 从列表里删除小组和其已经显示了的成员
@@ -307,20 +386,20 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
     }
 
     private void displaySquadMember(Squad squad, int index) {
-        int mIndex = 0;
         if (squad.isSelectable()) {
             // 显示小组成员
             if (squad.getGroSquMemberList().size() > 0) {
+                int mIndex = 0;
                 for (Member member : squad.getGroSquMemberList()) {
-                    boolean addable = true;
-                    if (!isEmpty(searchingText)) {
-                        // 如果是在搜索则只显示搜索匹配的记录
-                        addable = !isEmpty(member.getUserName()) && member.getUserName().contains(searchingText);
-                    }
-                    if (addable) {
-                        mIndex += 1;
-                        mAdapter.add(member, index + mIndex);
-                    }
+                    //boolean addable = true;
+                    //if (!isEmpty(searchingText)) {
+                    //    // 如果是在搜索则只显示搜索匹配的记录
+                    //    addable = !isEmpty(member.getUserName()) && member.getUserName().contains(searchingText);
+                    //}
+                    //if (addable) {
+                    mIndex += 1;
+                    mAdapter.add(member, index + mIndex);
+                    //}
                 }
             } else if (squad.getId().equals(mGroupMemberSquadId)) {
                 squad.setRead(true);
@@ -344,10 +423,15 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         }
     }
 
-    private void selectSquadMembers(Squad squad) {
-        squad.setSelected(!squad.isSelected());
+    /**
+     * 全选中某个小组的成员并显示
+     */
+    private void allSelectSquadMembers(Squad squad, boolean select) {
+        squad.setSelected(select);
         squad.setCollapseStatus(squad.isSelected() ? squad.getGroSquMemberList().size() : 0);
-        mAdapter.update(squad);
+        if (mAdapter.exist(squad)) {
+            mAdapter.update(squad);
+        }
 
         for (Member member : squad.getGroSquMemberList()) {
             member.setSelected(squad.isSelected());
@@ -357,7 +441,10 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         }
     }
 
-    private void checkSquadMemberAllSelected(String squadId) {
+    /**
+     * 检测小组成员的选中情况并更新小组
+     */
+    private void checkSquadMemberSelectedStatus(String squadId) {
         Squad squad = (Squad) mAdapter.get(squadId);
         int selected = 0;
         for (Member member : squad.getGroSquMemberList()) {
@@ -370,14 +457,54 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         mAdapter.update(squad);
     }
 
+    private void checkTotalMemberSelected() {
+        RelateGroup group = (RelateGroup) mAdapter.get(mQueryId);
+        group.setSelected(isTotalMemberSelected());
+        mAdapter.update(group);
+    }
+
+    /**
+     * 是否所有成员都除以选中状态
+     */
+    private boolean isTotalMemberSelected() {
+        for (Squad squad : squads) {
+            if (!squad.isSelected()) {
+                return false;
+            }
+            for (Member member : squad.getGroSquMemberList()) {
+                if (!member.isSelected()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
             Model model = mAdapter.get(index);
             switch (view.getId()) {
                 case R.id.ui_holder_view_group_interest_root:
+                case R.id.ui_holder_view_group_interest_select:
                     // 下级组织的选中
                     if (model.getId().equals(mQueryId)) {
+                        if (!isEmpty(searchingText)) {
+                            // 只有不处于搜索列表时才展开、收缩小组列表列表
+                            return;
+                        }
+                        if (view.getId() == R.id.ui_holder_view_group_interest_select) {
+                            // 如果是选择控件，则需要判断是全选还是展开列表
+                            if (squads.size() > 0) {
+                                model.setSelected(!model.isSelected());
+                                // 需要全选组织内的所有小组和成员
+                                for (Squad squad : squads) {
+                                    allSelectSquadMembers(squad, model.isSelected());
+                                }
+                                mAdapter.update(model);
+                                return;
+                            }
+                        }
                         // 展开或收缩小组列表
                         model.setSelectable(!model.isSelectable());
                         mAdapter.update(model);
@@ -399,14 +526,32 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
                     }
                     break;
                 case R.id.ui_holder_view_group_squad_container:
+                    Squad squad = (Squad) model;
+                    if (!isEmpty(searchingText)) {
+                        // 在搜索状态下，如果小组名称包含搜索的文字，则需要打开小组的成员列表；
+                        // 反之，如果小组名称不包含所搜索的文字，则说明其下有成员被搜索出来了，则不需要展开、收起
+                        if (squad.getName().contains(searchingText)) {
+                            squad.setSelectable(!squad.isSelectable());
+                            mAdapter.update(squad);
+                            displaySquadMember(squad, index);
+                        }
+                        return;
+                    }
                     // 显示或隐藏小组成员
-                    model.setSelectable(!model.isSelectable());
-                    mAdapter.update(model);
-                    displaySquadMember((Squad) model, index);
+                    squad.setSelectable(!squad.isSelectable());
+                    squad.setLocalDeleted(squad.isSelectable());
+                    mAdapter.update(squad);
+                    displaySquadMember(squad, index);
                     break;
                 case R.id.ui_holder_view_group_squad_picker:
+                    if (!isEmpty(searchingText)) {
+                        // 只有不处于搜索列表时才展开、收缩小组成员列表
+                        return;
+                    }
                     // 小组成员全选或取消全选
-                    selectSquadMembers((Squad) model);
+                    allSelectSquadMembers((Squad) model, !model.isSelected());
+                    // 检测是否所有成员都被选中了
+                    checkTotalMemberSelected();
                     break;
                 case R.id.ui_holder_view_contact_layout:
                 case R.id.ui_holder_view_contact_picker:
@@ -414,7 +559,9 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
                     mAdapter.update(model);
                     // 组织成员或小组成员选择
                     Member member = (Member) model;
-                    checkSquadMemberAllSelected(member.getSquadId());
+                    checkSquadMemberSelectedStatus(member.getSquadId());
+                    // 检测是否所有成员都被选中了
+                    checkTotalMemberSelected();
                     break;
             }
         }
@@ -478,11 +625,11 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
             if (holder instanceof ContactViewHolder) {
-                ((ContactViewHolder) holder).showContent((Member) item, "");
+                ((ContactViewHolder) holder).showContent((Member) item, searchingText);
             } else if (holder instanceof SquadViewHolder) {
-                ((SquadViewHolder) holder).showContent((Squad) item, "");
+                ((SquadViewHolder) holder).showContent((Squad) item, searchingText);
             } else if (holder instanceof GroupInterestViewHolder) {
-                ((GroupInterestViewHolder) holder).showContent((RelateGroup) item, "");
+                ((GroupInterestViewHolder) holder).showContent((RelateGroup) item, searchingText);
             }
         }
 

@@ -394,7 +394,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 }
                 break;
             case R.id.ui_archive_details_activity_deliver:
-                openMemberPicker("活动下发");
+                openMemberPicker("活动下发", true);
                 //GroupAllPickerFragment.IS_FOR_DELIVER = true;
                 //GroupAllPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), "活动下发", null, null);
                 //openActivityDeliverDialog(true);
@@ -402,10 +402,10 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         }
     }
 
-    private void openMemberPicker(String title) {
+    private void openMemberPicker(String title, boolean subordinate) {
         String groupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
         String groupName = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current_name, R.string.pf_last_login_user_group_current_name_beta), "");
-        GroupSubordinateSquadMemberPickerFragment.open(ArchiveDetailsFragment.this, groupId, groupName, title, null, null);
+        GroupSubordinateSquadMemberPickerFragment.open(ArchiveDetailsFragment.this, groupId, groupName, title, subordinate, null, null);
     }
 
     private void warningSingInOrLeave(final boolean signIn) {
@@ -770,11 +770,13 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     }
                     // 是否可以查看统计
                     reportButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_REPORT_COLLECT) || Cache.cache().isMe() ? View.VISIBLE : View.GONE);
+                    // 当前用户是组织管理员时，且有下发活动的权限时显示下发按钮
+                    deliverButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_DELIVER) && !mArchive.isStopped() ? View.VISIBLE : View.GONE);
                     if (null == member) {
                         // 返回的member为空则说明不能报名，此时如果当前用户是组织管理员的话，提醒其下发活动
                         //reportButton.setVisibility(View.VISIBLE);
                         // 当前用户是组织管理员时，且有下发活动的权限时显示下发按钮
-                        deliverButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_DELIVER) && !mArchive.isStopped() ? View.VISIBLE : View.GONE);
+                        //deliverButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_DELIVER) && !mArchive.isStopped() ? View.VISIBLE : View.GONE);
                     } else {
                         refreshReportButtons(member);
                     }
@@ -784,7 +786,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     }
 
     private void refreshReportButtons(Member member) {
-        deliverButton.setVisibility(View.GONE);
+        //deliverButton.setVisibility(View.GONE);
         activityStatus = Integer.valueOf(member.getStatus());
         // 未报名或请假状态下可以继续报名（请假后也可以报名）
         signButton.setEnabled(activityStatus >= Member.ActivityStatus.LEAVE);
@@ -1545,7 +1547,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                         case R.id.ui_popup_rich_editor_setting_participant:
                             // 参与者
                             isChooseGroup = true;
-                            openMemberPicker("选择成员");
+                            openMemberPicker("参与成员", false);
                             //GroupAllPickerFragment.IS_FOR_DELIVER = true;
                             //GroupAllPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), "选择成员", null, null);
                             //SquadsFragment.isOpenable = true;
@@ -1590,24 +1592,22 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         DateTimeHelper.helper().setOnDateTimePickListener(new DateTimeHelper.OnDateTimePickListener() {
             @Override
             public void onPicked(Date date) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
                 if (mArchive.isActivity()) {
-                    Calendar calendar = Calendar.getInstance();
-                    if (date.getTime() < calendar.getTime().getTime()) {
-                        ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_now);
-                        return;
-                    }
-                    calendar.add(Calendar.HOUR, 24);
-                    if (date.getTime() < calendar.getTime().getTime()) {
-                        ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_24h_after_now);
+                    // 去掉分、秒属性
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    if (!ArchiveEditorFragment.checkActivityDate(calendar.getTime())) {
                         return;
                     }
                 }
-                String fullTime = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date);
+                String fullTime = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), calendar.getTime());
                 mArchive.setHappenDate(fullTime);
                 String time = mArchive.isActivity() ? formatDateTime(fullTime) : formatDate(fullTime);
                 _helper.setArchive(mArchive).showHappenDate(time);
             }
-        }).show(ArchiveDetailsFragment.this, true, true, true, mArchive.isActivity(), mArchive.isActivity(), false, !mArchive.isTemplateArchive(), mArchive.getHappenDate());
+        }).show(ArchiveDetailsFragment.this, true, true, true, mArchive.isActivity(), false, false, !mArchive.isTemplateArchive(), mArchive.getHappenDate());
     }
 
     @Override
@@ -1641,7 +1641,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     @Override
     protected void transform() {
         pushingType = PUSH_TRANSFORM;
-        openMemberPicker("下发");
+        openMemberPicker("活动下发", true);
         //GroupAllPickerFragment.IS_FOR_DELIVER = true;
         //GroupAllPickerFragment.open(this, mArchive.getGroupId(), "下发", null, null);
         //openPushDialog();

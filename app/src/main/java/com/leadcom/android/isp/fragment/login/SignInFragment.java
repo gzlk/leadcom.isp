@@ -127,7 +127,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
             public void afterTextChanged(Editable s) {
                 inputtedAccount = "";
                 String saved = "";
-                if (s.length() >= 4) {
+                if (s.length() >= 2) {
                     inputtedAccount = s.toString();
                     saved = getSameAs(inputtedAccount);
                 }
