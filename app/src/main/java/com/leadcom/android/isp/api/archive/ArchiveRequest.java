@@ -16,6 +16,7 @@ import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.ArchivePushTarget;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.organization.ActivityOption;
+import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.SubMember;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -615,10 +616,22 @@ public class ArchiveRequest extends Request<Archive> {
     public void transferActivity(String groupId, String fromGroupId, String activityId, ArrayList<SubMember> members) {
         JSONObject object = new JSONObject();
         try {
+            ArrayList<SubMember> users = new ArrayList<>();
+            ArrayList<String> groups = new ArrayList<>();
+            if (null != members && members.size() > 0) {
+                for (SubMember member : members) {
+                    if (member.isGroup()) {
+                        groups.add(member.getUserId());
+                    } else if (member.isMember()) {
+                        users.add(member);
+                    }
+                }
+            }
             object.put("groupId", groupId)
                     .put("fromGroupId", fromGroupId)
                     .put("groActivityId", activityId)
-                    .put("groSquMemberList", new JSONArray(SubMember.toJson(members, new String[]{"userName", "type"})));
+                    .put("groSquMemberList", new JSONArray(SubMember.toJson(users, new String[]{"userName", "type"})))
+                    .put("groupIdList", new JSONArray(groups));
         } catch (JSONException e) {
             e.printStackTrace();
         }
