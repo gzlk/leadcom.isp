@@ -100,6 +100,8 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        //searchView.setVisibility(View.GONE);
+        //searchView.setAlpha(0f);
         mGroupMemberSquadId = "group_" + mQueryId;
         enableSwipe(false);
         isLoadingComplete(true);
@@ -144,7 +146,9 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
             RelateGroup group = new RelateGroup();
             group.setId(mQueryId);
             group.setGroupId(mQueryId);
-            group.setGroupName(mGroupName + ("(<font color=\"#a1a1a1\">本组织</font>)"));
+            group.setGroupName(mGroupName);
+            // 默认展开
+            group.setLocalDeleted(true);
             groups.add(group);
             // 拉取下级组织列表
             if (showSubordinate) {
@@ -208,7 +212,6 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
             }
         }
         // 显示所有符合条件的支部以及其下符合条件的成员
-        int index = 1;
         for (Squad squad : squads) {
             squad.setLocalDeleted(squad.isSelectable());
             if (!isEmpty(squad.getName()) && squad.getName().contains(searchingText)) {
@@ -229,6 +232,7 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
     }
 
     private void loadSubordinates() {
+        displayLoading(true);
         RelationRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RelateGroup>() {
             @Override
             public void onResponse(List<RelateGroup> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -236,6 +240,7 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
                 if (success && null != list) {
                     groups.addAll(list);
                 }
+                displayLoading(false);
                 showGroups();
             }
         }).list(mQueryId, RelateGroup.RelationType.SUBORDINATE);
@@ -253,7 +258,10 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         if (squads.size() > 0) {
             // 显示小组列表
             displaySquads();
-        } else if (selectedMembers.size() > 0) {
+        } else {
+            RelateGroup group = (RelateGroup) mAdapter.get(mQueryId);
+            group.setRead(true);
+            mAdapter.update(group);
             // 如果小组列表为空，则看看传入的成员列表是否有数据，有则直接拉取小组列表，否则等到点击之后再拉取
             fetchingRemoteSquads(mQueryId);
         }
