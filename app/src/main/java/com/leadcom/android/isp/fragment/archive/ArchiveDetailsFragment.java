@@ -297,9 +297,6 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             displayLoading(false);
             // 活动时显示报名按钮
             if (mArchive.isActivity()) {
-                displayActivityControl(true);
-                // 拉取当前用户是否已报名
-                checkActivityReported();
                 // 拉取活动详情
                 loadingActivityDetails();
             }
@@ -747,7 +744,12 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 if (success && null != archive) {
                     mArchive.getAdditionalOptions().clear();
                     mArchive.getAdditionalOptions().addAll(archive.getAdditionalOptions());
+                    mArchive.setHappenDate(archive.getHappenDate());
+                    mArchive.setState(archive.getState());
                 }
+                displayActivityControl(true);
+                // 拉取当前用户是否已报名
+                checkActivityReported();
             }
         }).findActivity(mArchive.getGroActivityId());
     }
@@ -771,12 +773,12 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     // 是否可以查看统计
                     reportButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_REPORT_COLLECT) || Cache.cache().isMe() ? View.VISIBLE : View.GONE);
                     // 当前用户是组织管理员时，且有下发活动的权限时显示下发按钮
-                    deliverButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_DELIVER) && !mArchive.isStopped() ? View.VISIBLE : View.GONE);
+                    //deliverButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_DELIVER) && !mArchive.isStopped() ? View.VISIBLE : View.GONE);
                     if (null == member) {
                         // 返回的member为空则说明不能报名，此时如果当前用户是组织管理员的话，提醒其下发活动
                         //reportButton.setVisibility(View.VISIBLE);
                         // 当前用户是组织管理员时，且有下发活动的权限时显示下发按钮
-                        //deliverButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_DELIVER) && !mArchive.isStopped() ? View.VISIBLE : View.GONE);
+                        deliverButton.setVisibility(Role.hasOperation(mArchive.getGroupId(), GRPOperation.ACTIVITY_DELIVER) && !mArchive.isStopped() ? View.VISIBLE : View.GONE);
                     } else {
                         refreshReportButtons(member);
                     }
@@ -786,7 +788,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     }
 
     private void refreshReportButtons(Member member) {
-        //deliverButton.setVisibility(View.GONE);
+        deliverButton.setVisibility(View.GONE);
         activityStatus = Integer.valueOf(member.getStatus());
         // 未报名或请假状态下可以继续报名（请假后也可以报名）
         signButton.setEnabled(activityStatus >= Member.ActivityStatus.LEAVE);
