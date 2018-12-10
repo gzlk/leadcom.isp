@@ -34,6 +34,8 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_activity_member_item_top_line)
     private View topLine;
+    @ViewId(R.id.ui_holder_view_activity_member_item_left_blank)
+    private View leftBlank;
     @ViewId(R.id.ui_holder_view_activity_member_item_text)
     private TextView textView;
     @ViewId(R.id.ui_holder_view_activity_member_item_count)
@@ -63,6 +65,7 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
     }
 
     private void showContent(Archive archive) {
+        leftBlank.setVisibility(View.GONE);
         topLine.setVisibility(View.GONE);
         textView.setText(archive.getCountResult());
         textView.setTextColor(getColor(R.color.colorPrimary));
@@ -77,8 +80,9 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
     }
 
     private void showContent(ActSquad squad) {
+        leftBlank.setVisibility(View.GONE);
         topLine.setVisibility(View.VISIBLE);
-        textView.setText(Html.fromHtml(format("<b>%s</b>" + (squad.getSquadId().equals("0") ? "" : "(<font color=\"#a1a1a1\">支部</font>)"), squad.getSquadName())));
+        textView.setText(Html.fromHtml(squad.getSquadName()));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size));
         textView.setTextColor(getColor(R.color.textColor));
         textView.setSingleLine(true);
@@ -91,11 +95,12 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
     private void showContent(Member member) {
         topLine.setVisibility(View.GONE);
         boolean isGroup = !isEmpty(member.getGroupId());
-        textView.setText(isGroup ? member.getGroupName() : member.getUserName());
+        leftBlank.setVisibility(isGroup ? View.GONE : View.VISIBLE);
+        textView.setText(isGroup ? member.getGroupName() : getMemberName(member.getUserName()));
         textView.setTextColor(getColor(R.color.textColor));
-        textView.setSelected(true);
+        //textView.setSelected(true);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size));
-        textView.setSingleLine(true);
+        //textView.setSingleLine(true);
         countView.setVisibility(isGroup ? View.VISIBLE : View.GONE);
         countView.setText(format("报名%d", member.getReportNum()));
         statusView.setText(Html.fromHtml(isGroup ? format("请假%d", member.getLeaveNum()) : getStatus(member)));
@@ -106,6 +111,21 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
         timeView.setVisibility(isGroup ? View.GONE : View.VISIBLE);
         timeView.setText(member.isCreateDateDefault() ? "-" : fragment().formatDate(member.getCreateDate(), R.string.ui_base_text_date_format));
         iconView.setVisibility(isGroup ? View.VISIBLE : View.GONE);
+    }
+
+    private String getMemberName(String name) {
+        String text = "", org = name;
+        int max = 4;
+        if (!isEmpty(org)) {
+            int len = org.length();
+            while (len > max) {
+                text = org.substring(0, max) + "\n";
+                org = org.substring(max);
+                len = isEmpty(org) ? 0 : org.length();
+            }
+            text += org;
+        }
+        return text;
     }
 
     private void resetWeight(boolean isGroup) {
@@ -136,7 +156,8 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
 
     private void showContent(Concern group) {
         topLine.setVisibility(View.GONE);
-        textView.setText(Html.fromHtml(format("%s" + (!group.isSelected() ? "" : "(<font color=\"#a1a1a1\">本组织</font>)"), group.getGroupName())));
+        leftBlank.setVisibility(View.GONE);
+        textView.setText(Html.fromHtml(group.getGroupName()));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size));
         textView.setTextColor(getColor(R.color.textColor));
         textView.setSingleLine(true);

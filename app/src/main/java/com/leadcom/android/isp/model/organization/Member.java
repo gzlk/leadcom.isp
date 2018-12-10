@@ -219,6 +219,11 @@ public class Member extends Leaguer {
         if (null == list) {
             list = new ArrayList<>();
         }
+        if (list.size() < 3) {
+            list.add("");
+            list.add("");
+            list.add("");
+        }
         return list;
     }
 
@@ -302,6 +307,18 @@ public class Member extends Leaguer {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public boolean isJoined() {
+        return !isEmpty(status) && status.contains("报");
+    }
+
+    public boolean isLeaved() {
+        return !isEmpty(status) && status.contains("假");
+    }
+
+    public boolean isAbsent() {
+        return !isEmpty(status) && status.contains("未");
     }
 
     public int getLeaveNum() {

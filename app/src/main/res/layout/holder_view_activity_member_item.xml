@@ -20,17 +20,18 @@
         android:paddingTop="@dimen/ui_base_dimen_margin_padding"
         android:paddingBottom="@dimen/ui_base_dimen_margin_padding">
 
+        <View
+            android:id="@+id/ui_holder_view_activity_member_item_left_blank"
+            android:layout_width="@dimen/ui_static_dp_15"
+            android:layout_height="@dimen/ui_static_dp_5"
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/ui_holder_view_activity_member_item_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
             android:layout_weight="1.8"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:marqueeRepeatLimit="3"
-            android:singleLine="true"
             android:text="@string/app_name_default" />
 
         <TextView
@@ -60,6 +61,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:gravity="end"
             android:text="@string/app_name_default"
             android:textColor="@color/textColorHint"
             android:textSize="@dimen/ui_base_text_size_small" />

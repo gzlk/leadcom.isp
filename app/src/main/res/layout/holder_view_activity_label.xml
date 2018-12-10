@@ -98,7 +98,7 @@
         android:layout_marginBottom="@dimen/ui_static_dp_1"
         android:layout_toEndOf="@+id/ui_holder_view_activity_label_container"
         android:translationZ="0dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:cv_active_border="@color/color_a03cbaff"
         app:cv_background="@color/color_803cbaff"
         app:cv_background_active="@color/color_803cbaff"

@@ -14,6 +14,7 @@ import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.ExpandCollapseViewHolder;
 import com.leadcom.android.isp.holder.organization.ActivityMemberItemViewHolder;
+import com.leadcom.android.isp.holder.organization.ActivityMemberUserViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
@@ -175,6 +176,7 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
                             mAdapter.add(squad);
                             count = 0;
                             for (Member member : squad.getGroActivityMemberList()) {
+                                member.setSquadId(squad.getId());
                                 mAdapter.add(member);
                                 count++;
                                 if (count >= PAGE_SIZE && squad.getGroActivityMemberList().size() > PAGE_SIZE) {
@@ -267,7 +269,7 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
     }
 
     private class MemberAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
-        private static final int TYPE_MORE = 0, TYPE_MEMBER = 1;
+        private static final int TYPE_MORE = 0, TYPE_MEMBER = 1, TYPE_USER = 2;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -275,6 +277,8 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
                 ExpandCollapseViewHolder ecvh = new ExpandCollapseViewHolder(itemView, ActivityCollectionDetailsFragment.this);
                 ecvh.setOnViewHolderElementClickListener(elementClickListener);
                 return ecvh;
+            } else if (viewType == TYPE_USER) {
+                return new ActivityMemberUserViewHolder(itemView, ActivityCollectionDetailsFragment.this);
             }
             ActivityMemberItemViewHolder holder = new ActivityMemberItemViewHolder(itemView, ActivityCollectionDetailsFragment.this);
             holder.setOnViewHolderElementClickListener(elementClickListener);
@@ -283,18 +287,32 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
 
         @Override
         public int itemLayout(int viewType) {
-            return viewType == TYPE_MORE ? R.layout.holder_view_expand_collapse : R.layout.holder_view_activity_member_item;
+            switch (viewType) {
+                case TYPE_MORE:
+                    return R.layout.holder_view_expand_collapse;
+                case TYPE_MEMBER:
+                    return R.layout.holder_view_activity_member_item;
+                case TYPE_USER:
+                    return R.layout.holder_view_activity_member_user;
+            }
+            return 0;
         }
 
         @Override
         public int getItemViewType(int position) {
             Model model = get(position);
+            if (model instanceof Member) {
+                Member member = (Member) model;
+                return !isEmpty(member.getGroupId()) ? TYPE_MEMBER : TYPE_USER;
+            }
             return (!isEmpty(model.getId()) && model.getId().contains(LOADING)) ? TYPE_MORE : TYPE_MEMBER;
         }
 
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
-            if (holder instanceof ActivityMemberItemViewHolder) {
+            if (holder instanceof ActivityMemberUserViewHolder) {
+                ((ActivityMemberUserViewHolder) holder).showContent((Member) item);
+            } else if (holder instanceof ActivityMemberItemViewHolder) {
                 ((ActivityMemberItemViewHolder) holder).showContent(item);
             } else if (holder instanceof ExpandCollapseViewHolder) {
                 ((ExpandCollapseViewHolder) holder).showContent(item);

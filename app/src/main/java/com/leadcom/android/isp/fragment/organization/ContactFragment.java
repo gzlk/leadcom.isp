@@ -39,6 +39,7 @@ import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -176,7 +177,7 @@ public class ContactFragment extends GroupBaseFragment {
         if (isOpenable) {
             // 有权限添加成员时，显示手机通讯录入口
             if (showType == TYPE_ORG) {
-                if (hasOperation(mQueryId, GRPOperation.MEMBER_ADD)) {
+                if (Cache.cache().isMe() || hasOperation(mQueryId, GRPOperation.MEMBER_ADD)) {
                     setRightIcon(R.string.ui_icon_add);
                     setRightTitleClickListener(new OnTitleButtonClickListener() {
                         @Override
