@@ -66,7 +66,9 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
         topLine.setVisibility(View.GONE);
         textView.setText(archive.getCountResult());
         textView.setTextColor(getColor(R.color.colorPrimary));
-        textView.setSelected(true);
+        //textView.setSelected(true);
+        textView.setMaxLines(0);
+        textView.setSingleLine(false);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size_small));
         countView.setVisibility(View.GONE);
         statusView.setVisibility(View.GONE);
@@ -79,6 +81,7 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
         textView.setText(Html.fromHtml(format("<b>%s</b>" + (squad.getSquadId().equals("0") ? "" : "(<font color=\"#a1a1a1\">支部</font>)"), squad.getSquadName())));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size));
         textView.setTextColor(getColor(R.color.textColor));
+        textView.setSingleLine(true);
         countView.setVisibility(View.GONE);
         statusView.setVisibility(View.GONE);
         timeView.setVisibility(View.GONE);
@@ -92,6 +95,7 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
         textView.setTextColor(getColor(R.color.textColor));
         textView.setSelected(true);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size));
+        textView.setSingleLine(true);
         countView.setVisibility(isGroup ? View.VISIBLE : View.GONE);
         countView.setText(format("报名%d", member.getReportNum()));
         statusView.setText(Html.fromHtml(isGroup ? format("请假%d", member.getLeaveNum()) : getStatus(member)));
@@ -135,6 +139,7 @@ public class ActivityMemberItemViewHolder extends BaseViewHolder {
         textView.setText(Html.fromHtml(format("%s" + (!group.isSelected() ? "" : "(<font color=\"#a1a1a1\">本组织</font>)"), group.getGroupName())));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size));
         textView.setTextColor(getColor(R.color.textColor));
+        textView.setSingleLine(true);
         countView.setVisibility(View.GONE);
         statusView.setVisibility(View.GONE);
         timeView.setText(group.getReportStr());
