@@ -1,9 +1,15 @@
 package com.leadcom.android.isp.fragment.organization;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
@@ -63,6 +69,9 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
     private boolean isCheckingGroups;
     private String mineGroupId;
 
+    @ViewId(R.id.ui_activity_collection_details_top_status)
+    private View topTitleView;
+
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
@@ -83,6 +92,9 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
         setCustomTitle(isCheckingGroups ? "组织报名统计" : "报名详情");
         isLoadingComplete(true);
         mineGroupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
+        if (!isCheckingGroups) {
+            showTopTitleView(false, 0);
+        }
     }
 
     @Override
@@ -96,6 +108,11 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
     @Override
     protected void onLoadingMore() {
 
+    }
+
+    @Override
+    public int getLayout() {
+        return R.layout.fragment_activity_collection_details;
     }
 
     @Override
@@ -215,8 +232,40 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
         if (null == mAdapter) {
             mAdapter = new MemberAdapter();
             mRecyclerView.setAdapter(mAdapter);
+            if (!isCheckingGroups) {
+                mRecyclerView.addOnScrollListener(scrollListener);
+            }
             loadingData();
         }
+    }
+
+    private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            LinearLayoutManager manager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+            assert manager != null;
+            showTopTitleView(manager.findFirstCompletelyVisibleItemPosition() > 1, duration());
+        }
+    };
+
+    private void showTopTitleView(final boolean shown, int duration) {
+        topTitleView.clearAnimation();
+        topTitleView.animate().setDuration(duration).alpha(shown ? 1f : 0f).translationY(shown ? 0 : -topTitleView.getMeasuredHeight() * 1.1f).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation, boolean isReverse) {
+                if (shown) {
+                    topTitleView.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation, boolean isReverse) {
+                if (!shown) {
+                    topTitleView.setVisibility(View.GONE);
+                }
+            }
+        }).start();
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {

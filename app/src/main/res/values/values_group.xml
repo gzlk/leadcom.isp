@@ -192,6 +192,10 @@
     <string name="ui_group_activity_collection_not_activity">参数错误：非活动内容没有报名统计</string>
     <string name="ui_group_activity_collection_top_text_1">组织成员报名情况</string>
     <string name="ui_group_activity_collection_top_text_2">下属组织报名情况</string>
+    <string name="ui_group_activity_collection_top_member">成员</string>
+    <string name="ui_group_activity_collection_top_status">状态</string>
+    <string name="ui_group_activity_collection_top_additional">附加选项</string>
+    <string name="ui_group_activity_collection_top_time">日期</string>
     <string name="ui_group_activity_collection_group_members_loading">正在加载组织成员报名信息&#8230;</string>
     <string name="ui_group_activity_collection_subordinate_members_loading">正在加载下级组织回复&#8230;</string>
     <string name="ui_group_activity_collection_group_members_nothing">暂时没有成员报名，请稍后再试</string>

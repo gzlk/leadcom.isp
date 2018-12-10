@@ -8,7 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:minHeight="@dimen/ui_base_dimen_button_height"
         android:orientation="horizontal">
 
         <View
@@ -19,6 +18,8 @@
             android:id="@+id/ui_holder_view_activity_member_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_static_dp_5"
+            android:layout_marginBottom="@dimen/ui_static_dp_5"
             android:maxLength="3"
             android:minWidth="@dimen/ui_static_dp_60"
             android:text="@string/app_name_default" />
