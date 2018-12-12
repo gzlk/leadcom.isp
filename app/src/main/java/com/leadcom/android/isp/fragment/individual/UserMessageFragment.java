@@ -186,7 +186,7 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
                     switch (msg.getSourceType()) {
                         case UserMessage.SourceType.MOMENT:
                             if (null == msg.getUserMmt()) {
-                                ToastHelper.make().showMsg(R.string.ui_individual_message_moment_deleted);
+                                ToastHelper.helper().showMsg(R.string.ui_individual_message_moment_deleted);
                             } else {
                                 MomentDetailsFragment.open(UserMessageFragment.this, msg.getSourceId());
                             }
@@ -194,10 +194,10 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
                         default:
                             int type = msg.getSourceType() == UserMessage.SourceType.USER_ARCHIVE ? Archive.Type.USER : Archive.Type.GROUP;
                             if (type == Archive.Type.USER && null == msg.getUserDoc()) {
-                                ToastHelper.make().showMsg(R.string.ui_individual_message_user_archive_deleted);
+                                ToastHelper.helper().showMsg(R.string.ui_individual_message_user_archive_deleted);
                                 return;
                             } else if (type == Archive.Type.GROUP && null == msg.getGroDoc()) {
-                                ToastHelper.make().showMsg(R.string.ui_individual_message_group_archive_deleted);
+                                ToastHelper.helper().showMsg(R.string.ui_individual_message_group_archive_deleted);
                                 return;
                             }
                             Archive archive = type == Archive.Type.USER ? msg.getUserDoc() : msg.getGroDoc();

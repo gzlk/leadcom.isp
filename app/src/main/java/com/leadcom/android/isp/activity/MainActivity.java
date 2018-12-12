@@ -46,7 +46,6 @@ import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionNeverAskAg
 import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
 import com.leadcom.android.isp.model.common.PushMessage;
 import com.leadcom.android.isp.service.ContactService;
-import com.leadcom.android.isp.statusbar.StatusBarUtils;
 
 /**
  * <b>功能描述：</b>主页窗体<br />
@@ -183,7 +182,7 @@ public class MainActivity extends TitleActivity {
     @OnMPermissionDenied(REQ_BASE_PERMISSIONS)
     @OnMPermissionNeverAskAgain(REQ_BASE_PERMISSIONS)
     public void onBasePermissionRequestFailed() {
-        ToastHelper.make(this).showMsg(R.string.ui_text_permission_basic_denied);
+        ToastHelper.helper().showMsg(R.string.ui_text_permission_basic_denied);
         MPermission.printMPermissionResult(false, this, permissions);
     }
 
@@ -251,15 +250,15 @@ public class MainActivity extends TitleActivity {
 
         // 一天只有第一次打开主页面时会在这里检测更新，否则到个人设置里去更新
         String date = Utils.formatDateOfNow("yyyy-MM-dd");
-        String last = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_last_update_check_date, R.string.pf_last_login_user_last_update_check_date_beta), "");
+        String last = PreferenceHelper.get(StringHelper.getString(Cache.get(R.string.pf_last_login_user_last_update_check_date, R.string.pf_last_login_user_last_update_check_date_beta), Cache.cache().userId), "");
         if (StringHelper.isEmpty(last) || !last.equals(date)) {
-            PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_last_update_check_date, R.string.pf_last_login_user_last_update_check_date_beta), last);
+            PreferenceHelper.save(StringHelper.getString(Cache.get(R.string.pf_last_login_user_last_update_check_date, R.string.pf_last_login_user_last_update_check_date_beta), Cache.cache().userId), date);
             log(format("last checked upgrade is: %s, this time is: %s, now need check upgrade.", last, date));
             UpgradeHelper.helper(this).checkVersion();
         }
 
         if (!Cache.isReleasable()) {
-            ToastHelper.make().showMsg(R.string.ui_text_main_inner_test_toast);
+            ToastHelper.helper().showMsg(R.string.ui_text_main_inner_test_toast);
         }
         if (hasPhoneContactPermission()) {
             ContactService.refresh();

@@ -45,17 +45,17 @@ public class ShareToWeiBo extends Shareable implements WbShareCallback {
 
     @Override
     public void onWbShareSuccess() {
-        ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_weibo_complete);
+        ToastHelper.helper().showMsg(R.string.ui_base_share_text_share_to_weibo_complete);
     }
 
     @Override
     public void onWbShareCancel() {
-        ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_weibo_cancel);
+        ToastHelper.helper().showMsg(R.string.ui_base_share_text_share_to_weibo_cancel);
     }
 
     @Override
     public void onWbShareFail() {
-        ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_weibo_failed);
+        ToastHelper.helper().showMsg(R.string.ui_base_share_text_share_to_weibo_failed);
     }
 
     public static ShareToWeiBo init(Context activityContext) {
@@ -119,7 +119,7 @@ public class ShareToWeiBo extends Shareable implements WbShareCallback {
                 if (WbSdk.supportMultiImage(ctx)) {
                     weiboMessage.multiImageObject = getImageObject(images);
                 } else {
-                    ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_weibo_not_support_multi_image);
+                    ToastHelper.helper().showMsg(R.string.ui_base_share_text_share_to_weibo_not_support_multi_image);
                     return;
                 }
             }

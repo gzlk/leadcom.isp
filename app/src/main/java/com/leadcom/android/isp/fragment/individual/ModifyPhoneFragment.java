@@ -68,7 +68,7 @@ public class ModifyPhoneFragment extends BaseVerifyFragment {
     private void tryVerifyPhone() {
         final String phone = inputView.getValue();
         if (StringHelper.isEmpty(phone)) {
-            ToastHelper.make().showMsg(R.string.ui_text_verify_phone_value_incorrect);
+            ToastHelper.helper().showMsg(R.string.ui_text_verify_phone_value_incorrect);
             return;
         }
         SimpleDialogHelper.init(Activity()).show(StringHelper.getString(R.string.ui_text_modify_phone_number_verify_warning, phone), StringHelper.getString(R.string.ui_base_text_ok), StringHelper.getString(R.string.ui_base_text_cancel), new DialogHelper.OnDialogConfirmListener() {

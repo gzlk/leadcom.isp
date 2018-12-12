@@ -60,7 +60,7 @@ public class FeedbackFragment extends BaseTransparentSupportFragment {
             String additional = getString(R.string.ui_text_feedback_content_version, buildType, version, api, internal);
             commitAdvice(additional + content);
         } else {
-            ToastHelper.make().showMsg(R.string.ui_text_feedback_content_empty);
+            ToastHelper.helper().showMsg(R.string.ui_text_feedback_content_empty);
         }
     }
 
@@ -71,7 +71,7 @@ public class FeedbackFragment extends BaseTransparentSupportFragment {
                 super.onResponse(advice, success, message);
                 if (success) {
                     finish();
-                    ToastHelper.make().showMsg(R.string.ui_text_feedback_committed);
+                    ToastHelper.helper().showMsg(R.string.ui_text_feedback_committed);
                 }
             }
         }).add(content);

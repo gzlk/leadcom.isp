@@ -25,7 +25,6 @@ import com.leadcom.android.isp.fragment.common.InnerWebViewFragment;
 import com.leadcom.android.isp.fragment.common.OfficeOnlinePreviewFragment;
 import com.leadcom.android.isp.fragment.common.PdfViewerFragment;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.model.common.Attachment;
 
 import java.io.File;
@@ -93,7 +92,7 @@ public class FilePreviewHelper {
                 previewMimeFile(activity, path, extension);
             }
         } else {
-            ToastHelper.make().showMsg(R.string.ui_base_text_file_ext_not_valid);
+            ToastHelper.helper().showMsg(R.string.ui_base_text_file_ext_not_valid);
             // 强制用text方式打开文件
             previewMimeFile(activity, path, "txt");
         }

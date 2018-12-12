@@ -26,11 +26,9 @@ import com.leadcom.android.isp.api.archive.ClassifyRequest;
 import com.leadcom.android.isp.api.archive.DictionaryRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.user.MemberDutyRequest;
-import com.leadcom.android.isp.api.user.UserMsgRequest;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
 import com.leadcom.android.isp.fragment.organization.GroupBaseFragment;
 import com.leadcom.android.isp.fragment.organization.MemberDutyDetailsFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -41,7 +39,6 @@ import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
 import com.leadcom.android.isp.holder.common.TextViewHolder;
 import com.leadcom.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupMemberDutyViewHolder;
-import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
@@ -799,7 +796,7 @@ public class ArchiveSearchFragment extends GroupBaseFragment {
 
     private boolean isStillLoading() {
         if (stillLoading) {
-            ToastHelper.make().showMsg(R.string.ui_text_archive_searching_still_loading);
+            ToastHelper.helper().showMsg(R.string.ui_text_archive_searching_still_loading);
             return true;
         }
         return false;
@@ -918,7 +915,7 @@ public class ArchiveSearchFragment extends GroupBaseFragment {
         }
         mAdapter.add(last);
         if (mAdapter.getItemCount() <= 1) {
-            ToastHelper.make().showMsg(R.string.ui_text_home_archive_search_empty);
+            ToastHelper.helper().showMsg(R.string.ui_text_home_archive_search_empty);
         }
         stopRefreshing();
     }
@@ -1152,7 +1149,7 @@ public class ArchiveSearchFragment extends GroupBaseFragment {
                 case R.id.ui_holder_view_group_member_duty_count_archive:
                     // 查看用户的档案列表
                     //if (duty.getDocNum() <= 0) {
-                    //    ToastHelper.make().showMsg(isSquad ? R.string.ui_group_member_duty_count_no_archive_squad : R.string.ui_group_member_duty_count_no_archive);
+                    //    ToastHelper.helper().showMsg(isSquad ? R.string.ui_group_member_duty_count_no_archive_squad : R.string.ui_group_member_duty_count_no_archive);
                     //} else {
                     if (isSquad) {
                         open(ArchiveSearchFragment.this, SEARCH_DUTY, mQueryId, duty.getSquadId(), "", mGroupName, duty.getSquadName());
@@ -1165,7 +1162,7 @@ public class ArchiveSearchFragment extends GroupBaseFragment {
                 case R.id.ui_holder_view_group_member_duty_count_activity:
                     // 查看用户加入的活动列表
                     //if (duty.getActivityNum() <= 0) {
-                    //    ToastHelper.make().showMsg(isSquad ? R.string.ui_group_member_duty_count_no_activity_squad : R.string.ui_group_member_duty_count_no_activity);
+                    //    ToastHelper.helper().showMsg(isSquad ? R.string.ui_group_member_duty_count_no_activity_squad : R.string.ui_group_member_duty_count_no_activity);
                     //} else {
                     if (isSquad) {
                         open(ArchiveSearchFragment.this, SEARCH_DUTY, mQueryId, duty.getSquadId(), "", mGroupName, duty.getSquadName());

@@ -117,7 +117,7 @@ public class UploadRequest extends Request<Upload> {
                     }
                 } else {
                     log(format("upload response fail %s", data.getMsg()));
-                    ToastHelper.make().showMsg(data.getMsg());
+                    ToastHelper.helper().showMsg(data.getMsg());
                     if (null != onMultipleRequestListener) {
                         onMultipleRequestListener.failedCode = -1;
                         onMultipleRequestListener.failedMessage = data.getMsg();

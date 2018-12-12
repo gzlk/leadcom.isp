@@ -116,7 +116,7 @@ public class MemberDutyFragment extends GroupBaseFragment {
                     if (!isNeedPermission || hasOperation(mQueryId, GRPOperation.MEMBER_DUTY)) {
                         ArchiveSearchFragment.open(MemberDutyFragment.this, ArchiveSearchFragment.SEARCH_DUTY, mQueryId, "", mGroupName);
                     } else {
-                        ToastHelper.make().showMsg(R.string.ui_group_details_no_permission_to_member_duty);
+                        ToastHelper.helper().showMsg(R.string.ui_group_details_no_permission_to_member_duty);
                     }
                     break;
                 case 1:
@@ -124,7 +124,7 @@ public class MemberDutyFragment extends GroupBaseFragment {
                     if (!isNeedPermission || hasOperation(mQueryId, GRPOperation.SQUAD_DUTY)) {
                         ArchiveSearchFragment.open(MemberDutyFragment.this, ArchiveSearchFragment.SEARCH_DUTY_SQUAD, mQueryId, "", mGroupName);
                     } else {
-                        ToastHelper.make().showMsg(R.string.ui_group_details_no_permission_to_squad_duty);
+                        ToastHelper.helper().showMsg(R.string.ui_group_details_no_permission_to_squad_duty);
                     }
                     break;
             }

@@ -120,7 +120,7 @@ public class GroupsFragment extends GroupBaseFragment {
             @Override
             public void onSearching(String text) {
                 if (isSearching) {
-                    ToastHelper.make().showMsg(R.string.ui_phone_contact_waiting_pagination);
+                    ToastHelper.helper().showMsg(R.string.ui_phone_contact_waiting_pagination);
                     return;
                 }
                 mSearchingText = text;
@@ -350,7 +350,7 @@ public class GroupsFragment extends GroupBaseFragment {
                     if (!mSelectable) {
                         if (group.isNoneRelation()) {
                             if (mQueryId.equals(group.getGroupId())) {
-                                ToastHelper.make().showMsg(R.string.ui_group_constructor_groups_add_self_warning);
+                                ToastHelper.helper().showMsg(R.string.ui_group_constructor_groups_add_self_warning);
                             } else {
                                 warningRelationAdd(group.getGroupId(), group.getGroupName());
                             }

@@ -14,7 +14,6 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.CoverTemplateViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
-import com.leadcom.android.isp.holder.common.TextViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.Model;
@@ -64,7 +63,7 @@ public class CoverTemplateFragment extends BaseSwipeRefreshSupportFragment {
                     CoverTemplate cover = (CoverTemplate) mAdapter.get(selectedIndex);
                     resultData(cover.getUrl());
                 } else {
-                    ToastHelper.make().showMsg(R.string.ui_activity_cover_picker_none_image_selected1);
+                    ToastHelper.helper().showMsg(R.string.ui_activity_cover_picker_none_image_selected1);
                 }
             }
         });

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.cache.Cache;
 
 /**
  * 简单的配置数据
@@ -24,8 +25,10 @@ public class PreferenceHelper {
     /**
      * 保存简单的数据到Preference
      */
-    @SuppressWarnings("ConstantConditions")
     public static void save(String key, String value) {
+        if (!StringHelper.isEmpty(key) && key.contains("%s")) {
+            key = StringHelper.format(key, Cache.cache().userId);
+        }
         SharedPreferences.Editor editor = App.app().getSharedPreferences(name(), Context.MODE_PRIVATE).edit();
         try {
             editor.putString(key, value);
@@ -55,7 +58,6 @@ public class PreferenceHelper {
         return get(key, null);
     }
 
-    @SuppressWarnings("ConstantConditions")
     private static String name() {
         return SHARED_NAME;//StringHelper.format("%s_%s", SHARED_NAME, Cryptography.md5(App.app().UserId()));
     }
@@ -63,8 +65,10 @@ public class PreferenceHelper {
     /**
      * 从Preference中获取字符串值
      */
-    @SuppressWarnings("ConstantConditions")
     public static String get(String key, String defaultValue) {
+        if (!StringHelper.isEmpty(key) && key.contains("%s")) {
+            key = StringHelper.format(key, Cache.cache().userId);
+        }
         return App.app().getSharedPreferences(name(), Context.MODE_PRIVATE).getString(key, defaultValue);
     }
 }

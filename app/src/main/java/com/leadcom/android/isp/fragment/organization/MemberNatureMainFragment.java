@@ -122,7 +122,7 @@ public class MemberNatureMainFragment extends BaseViewPagerSupportFragment {
                 public void onResponse(MemberClassify memberClassify, boolean success, String message) {
                     super.onResponse(memberClassify, success, message);
                     if (success) {
-                        ToastHelper.make().showMsg(R.string.ui_group_member_nature_more_updated);
+                        ToastHelper.helper().showMsg(R.string.ui_group_member_nature_more_updated);
                         for (BaseFragment fragment : mFragments) {
                             ((MemberNatureFragment) fragment).onSwipeRefreshing();
                         }
@@ -130,7 +130,7 @@ public class MemberNatureMainFragment extends BaseViewPagerSupportFragment {
                 }
             }).updateUserNatures(mQueryId, mUserId, natures);
         } else {
-            ToastHelper.make().showMsg(R.string.ui_group_member_nature_more_nothing_to_update);
+            ToastHelper.helper().showMsg(R.string.ui_group_member_nature_more_nothing_to_update);
         }
     }
 

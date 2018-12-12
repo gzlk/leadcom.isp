@@ -328,7 +328,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
 //            @Override
 //            public void onSucceed(File data, Response<File> response) {
 //                super.onSucceed(data, response);
-//                ToastHelper.make(Activity()).showMsg(StringHelper.getString(R.string.ui_base_text_downloading_completed, local));
+//                ToastHelper.helper(Activity()).showMsg(StringHelper.getString(R.string.ui_base_text_downloading_completed, local));
 //            }
 //
 //            @Override

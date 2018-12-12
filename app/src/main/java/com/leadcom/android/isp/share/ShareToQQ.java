@@ -59,17 +59,17 @@ public class ShareToQQ extends Shareable {
 
         @Override
         public void onComplete(Object o) {
-            ToastHelper.make().showMsg(type == TO_QQ ? R.string.ui_base_share_text_share_to_qq_complete : R.string.ui_base_share_text_share_to_qzone_complete);
+            ToastHelper.helper().showMsg(type == TO_QQ ? R.string.ui_base_share_text_share_to_qq_complete : R.string.ui_base_share_text_share_to_qzone_complete);
         }
 
         @Override
         public void onError(UiError uiError) {
-            ToastHelper.make().showMsg(StringHelper.getString(type == TO_QQ ? R.string.ui_base_share_text_share_to_qq_failed : R.string.ui_base_share_text_share_to_qzone_failed, uiError.errorMessage, uiError.errorCode, uiError.errorDetail));
+            ToastHelper.helper().showMsg(StringHelper.getString(type == TO_QQ ? R.string.ui_base_share_text_share_to_qq_failed : R.string.ui_base_share_text_share_to_qzone_failed, uiError.errorMessage, uiError.errorCode, uiError.errorDetail));
         }
 
         @Override
         public void onCancel() {
-            ToastHelper.make().showMsg(type == TO_QQ ? R.string.ui_base_share_text_share_to_qq_cancel : R.string.ui_base_share_text_share_to_qzone_cancel);
+            ToastHelper.helper().showMsg(type == TO_QQ ? R.string.ui_base_share_text_share_to_qq_cancel : R.string.ui_base_share_text_share_to_qzone_cancel);
         }
     }
 

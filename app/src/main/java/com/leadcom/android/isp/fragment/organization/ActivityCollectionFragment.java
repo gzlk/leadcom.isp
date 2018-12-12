@@ -73,7 +73,7 @@ public class ActivityCollectionFragment extends BaseViewPagerSupportFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (null == mArchive || !mArchive.isActivity()) {
-            ToastHelper.make().showMsg(R.string.ui_group_activity_collection_not_activity);
+            ToastHelper.helper().showMsg(R.string.ui_group_activity_collection_not_activity);
             finish();
         } else {
             setCustomTitle(R.string.ui_group_activity_collection_fragment_title);

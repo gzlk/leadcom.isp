@@ -137,7 +137,7 @@ public class DownloadingHelper {
             }
             long taskId = getDownloadTask();
             if (taskId > 0 && isTaskRunning(taskId)) {
-                ToastHelper.make().showMsg(R.string.ui_system_updating_exist);
+                ToastHelper.helper().showMsg(R.string.ui_system_updating_exist);
                 return;
             }
 
@@ -195,7 +195,7 @@ public class DownloadingHelper {
                 completeListener.onComplete();
             }
         } else {
-            ToastHelper.make().showMsg(R.string.ui_system_updating_failure);
+            ToastHelper.helper().showMsg(R.string.ui_system_updating_failure);
             if (null != failureListener) {
                 failureListener.onFailure();
             }

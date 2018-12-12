@@ -96,12 +96,12 @@ public class CopyLocalFileTask extends AsyncedTask<String, Integer, Boolean> {
                 values.put(MediaStore.Images.Media.MIME_TYPE, "jpg");
                 values.put(MediaStore.Images.Media.DATA, targetPath);
                 App.app().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-                ToastHelper.make().showMsg(R.string.ui_base_text_downloading_image_completed);
+                ToastHelper.helper().showMsg(R.string.ui_base_text_downloading_image_completed);
             } else {
-                ToastHelper.make().showMsg(R.string.ui_base_text_downloading_file_completed);
+                ToastHelper.helper().showMsg(R.string.ui_base_text_downloading_file_completed);
             }
         } else {
-            ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_base_text_downloading_fail, error));
+            ToastHelper.helper().showMsg(StringHelper.getString(R.string.ui_base_text_downloading_fail, error));
         }
         if (null != completeListener) {
             completeListener.onComplete();

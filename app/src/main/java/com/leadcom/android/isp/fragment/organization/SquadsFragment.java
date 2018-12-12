@@ -146,7 +146,7 @@ public class SquadsFragment extends GroupBaseFragment {
                     public void onClick() {
                         ArrayList<SubMember> list = getSelectedItems();
                         if (list.size() <= 0) {
-                            ToastHelper.make().showMsg(R.string.ui_group_activity_editor_participator_select_none);
+                            ToastHelper.helper().showMsg(R.string.ui_group_activity_editor_participator_select_none);
                         } else {
                             resultData(SubMember.toJson(list));
                         }
@@ -272,7 +272,7 @@ public class SquadsFragment extends GroupBaseFragment {
             public boolean onConfirm() {
                 String name = titleView.getValue();
                 if (isEmpty(name)) {
-                    ToastHelper.make().showMsg(R.string.ui_organization_squad_add_name_invalid);
+                    ToastHelper.helper().showMsg(R.string.ui_organization_squad_add_name_invalid);
                     return false;
                 }
                 String intro = introView.getValue();

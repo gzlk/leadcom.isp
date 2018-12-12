@@ -155,7 +155,7 @@ public class GroupCreateFragment extends BaseSwipeRefreshSupportFragment {
     private void tryCreateOrganization() {
         String name = nameHolder.getValue();
         if (isEmpty(name)) {
-            ToastHelper.make().showMsg(R.string.ui_organization_creator_name_invalid);
+            ToastHelper.helper().showMsg(R.string.ui_organization_creator_name_invalid);
             return;
         }
         Utils.hidingInputBoard(nameView);

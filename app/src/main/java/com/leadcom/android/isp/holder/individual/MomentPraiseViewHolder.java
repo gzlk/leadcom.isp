@@ -87,7 +87,7 @@ public class MomentPraiseViewHolder extends BaseViewHolder {
             if (!isEmpty(url)) {
                 App.openUserInfo(fragment(), clicked);
             } else {
-                ToastHelper.make().showMsg(R.string.ui_text_user_information_blank_or_error_id);
+                ToastHelper.helper().showMsg(R.string.ui_text_user_information_blank_or_error_id);
             }
         }
     };

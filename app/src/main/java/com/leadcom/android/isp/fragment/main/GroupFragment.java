@@ -190,7 +190,7 @@ public class GroupFragment extends GroupBaseFragment {
         addOnImageSelectedListener(albumImageSelectedListener);
         // 文件上传完毕后的回调处理
         setOnFileUploadingListener(mOnFileUploadingListener);
-        currentGroup = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
+        currentGroup = PreferenceHelper.get(StringHelper.getString(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), Cache.cache().userId), "");
         if (isSingle) {
             titleTextView.setText(TITLE);
         }
@@ -361,7 +361,7 @@ public class GroupFragment extends GroupBaseFragment {
             public boolean onConfirm() {
                 String name = titleView.getValue();
                 if (isEmpty(name)) {
-                    ToastHelper.make().showMsg(R.string.ui_group_details_self_define_name_blank);
+                    ToastHelper.helper().showMsg(R.string.ui_group_details_self_define_name_blank);
                     return false;
                 }
                 addClassify(name);
@@ -576,8 +576,8 @@ public class GroupFragment extends GroupBaseFragment {
         //tagView.setVisibility(group.isNoneNature() || isSingle ? View.GONE : View.VISIBLE);
         //tagView.setText(group.isTZ() ? R.string.ui_group_header_tongzhan_flag : R.string.ui_group_header_minmeng_flag);
         if (isNeedPermission) {
-            PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), group.getId());
-            PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_group_current_name, R.string.pf_last_login_user_group_current_name_beta), group.getName());
+            PreferenceHelper.save(StringHelper.getString(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), Cache.cache().userId), group.getId());
+            PreferenceHelper.save(StringHelper.getString(Cache.get(R.string.pf_last_login_user_group_current_name, R.string.pf_last_login_user_group_current_name_beta), Cache.cache().userId), group.getName());
             currentGroup = group.getId();
         }
         if (null != gAdapter) {
@@ -915,7 +915,7 @@ public class GroupFragment extends GroupBaseFragment {
                 if (!isNeedPermission || hasOperation(group.getId(), GRPOperation.MEMBER_DUTY) || hasOperation(group.getId(), GRPOperation.SQUAD_DUTY)) {
                     MemberDutyFragment.open(this, group.getId(), group.getName(), isNeedPermission);
                 } else {
-                    ToastHelper.make().showMsg(R.string.ui_group_details_no_permission_to_duty);
+                    ToastHelper.helper().showMsg(R.string.ui_group_details_no_permission_to_duty);
                 }
                 //ArchivesFragment.open(this, group.getId(), getString(R.string.ui_group_archive_fragment_title));
                 break;

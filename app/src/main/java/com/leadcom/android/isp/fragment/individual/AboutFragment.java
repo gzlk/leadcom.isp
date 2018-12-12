@@ -99,7 +99,7 @@ public class AboutFragment extends BaseLayoutSupportFragment {
         public void onClick(int index) {
             switch (index) {
                 case 0:
-                    ToastHelper.make().showMsg(strings[index].replaceAll("[\\d+|]", ""));
+                    ToastHelper.helper().showMsg(strings[index].replaceAll("[\\d+|]", ""));
                     break;
                 case 1:
                     openActivity(FeedbackFragment.class.getName(), "", true, false);

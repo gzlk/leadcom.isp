@@ -3,10 +3,10 @@
 
     <corners android:radius="@dimen/ui_base_dimen_button_corner_size" />
 
-    <solid android:color="@color/transparent_60" />
+    <solid android:color="@color/textColorHintLightLightLight" />
 
     <stroke
-        android:width="1dp"
-        android:color="@color/toastBackground" />
+        android:width="@dimen/ui_base_border_size_normal"
+        android:color="@color/textColorHintLight" />
 
 </shape>

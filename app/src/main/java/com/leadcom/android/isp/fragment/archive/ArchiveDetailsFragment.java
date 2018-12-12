@@ -262,7 +262,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         @Override
         public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
             if (message.contains("未找到") || message.contains("删除")) {
-                ToastHelper.make().showMsg(message);
+                ToastHelper.helper().showMsg(message);
                 finish();
                 result.confirm();
                 return true;
@@ -382,7 +382,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 break;
             case R.id.ui_archive_details_activity_report:
                 // 查看组织报名情况
-                String groupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
+                String groupId = PreferenceHelper.get(StringHelper.getString(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), Cache.cache().userId), "");
                 if (groupId.equals(mArchive.getFromGroupId())) {
                     // 当前组织是活动发起组织，则需要查看下级统计
                     ActivityCollectionDetailsFragment.open(this, groupId, mArchive, true);
@@ -400,8 +400,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     }
 
     private void openMemberPicker(String title, boolean subordinate) {
-        String groupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
-        String groupName = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current_name, R.string.pf_last_login_user_group_current_name_beta), "");
+        String groupId = PreferenceHelper.get(StringHelper.getString(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), Cache.cache().userId), "");
+        String groupName = PreferenceHelper.get(StringHelper.getString(Cache.get(R.string.pf_last_login_user_group_current_name, R.string.pf_last_login_user_group_current_name_beta), Cache.cache().userId), "");
         GroupSubordinateSquadMemberPickerFragment.open(ArchiveDetailsFragment.this, groupId, groupName, title, subordinate, null, null);
     }
 
@@ -445,7 +445,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             public void onResponse(Member member, boolean success, String message) {
                 super.onResponse(member, success, message);
                 if (success) {
-                    ToastHelper.make().showMsg(signIn ? R.string.ui_group_activity_details_sign_up_succeed : R.string.ui_group_activity_details_leave_succeed);
+                    ToastHelper.helper().showMsg(signIn ? R.string.ui_group_activity_details_sign_up_succeed : R.string.ui_group_activity_details_leave_succeed);
                     member.setStatus(String.valueOf(signIn ? Member.ActivityStatus.JOINED : Member.ActivityStatus.LEAVE));
                     refreshReportButtons(member);
                 } else {
@@ -556,7 +556,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 displayLoading(false);
-                ToastHelper.make().showMsg(message);
+                ToastHelper.helper().showMsg(message);
                 if (success) {
                     new Dao<>(Archive.class).delete(mQueryId);
                     // 返回成功
@@ -866,13 +866,13 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         DownloadingHelper.helper().init(Activity()).setShowNotification(true).setOnTaskFailureListener(new OnTaskFailureListener() {
             @Override
             public void onFailure() {
-                ToastHelper.make().showMsg(R.string.ui_system_updating_failure);
+                ToastHelper.helper().showMsg(R.string.ui_system_updating_failure);
             }
         }).setOnTaskCompleteListener(new OnTaskCompleteListener() {
             @Override
             public void onComplete() {
                 //String downloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-                //ToastHelper.make().showMsg(format("已下载到%s", downloadPath));
+                //ToastHelper.helper().showMsg(format("已下载到%s", downloadPath));
                 log(format("downloaded, url: %s, local: %s, ext: %s, name: %s", url, local, extension, name));
                 FilePreviewHelper.previewFile(Activity(), local, name, extension);
             }
@@ -884,7 +884,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         @Override
         public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
             if (!NetworkUtil.isNetAvailable(App.app())) {
-                ToastHelper.make().showMsg(R.string.ui_base_text_network_invalid);
+                ToastHelper.helper().showMsg(R.string.ui_base_text_network_invalid);
                 return;
             }
             startingDownload(url);
@@ -900,11 +900,11 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             // 选择了下发的成员
             String result = getResultedData(data);
             if (isEmpty(result)) {
-                ToastHelper.make().showMsg(R.string.ui_group_activity_details_transform_dialog_member_select_empty);
+                ToastHelper.helper().showMsg(R.string.ui_group_activity_details_transform_dialog_member_select_empty);
             } else {
                 final ArrayList<SubMember> members = SubMember.fromJson(result);
                 if (null == members || members.size() < 1) {
-                    ToastHelper.make().showMsg(R.string.ui_group_activity_details_transform_dialog_member_select_empty);
+                    ToastHelper.helper().showMsg(R.string.ui_group_activity_details_transform_dialog_member_select_empty);
                 } else {
                     String title = StringHelper.getString(R.string.ui_group_activity_details_transform_member_selected, SubMember.getMemberNames(members), members.size());
                     DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
@@ -1218,7 +1218,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 if (members.size() > 0) {
                     tryTransferActivity(members);
                 } else {
-                    ToastHelper.make().showMsg(R.string.ui_group_activity_details_transform_dialog_member_select_empty);
+                    ToastHelper.helper().showMsg(R.string.ui_group_activity_details_transform_dialog_member_select_empty);
                 }
             }
         }).setConfirmText(pushingType == PUSH_GROUPS ? R.string.ui_base_text_forward : (pushingType == PUSH_CLASSIFY ? R.string.ui_base_text_classify : R.string.ui_base_text_confirm)).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
@@ -1230,7 +1230,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success) {
-                    ToastHelper.make().showMsg(R.string.ui_group_activity_details_transform_success);
+                    ToastHelper.helper().showMsg(R.string.ui_group_activity_details_transform_success);
                     checkActivityReported();
                 }
             }
@@ -1243,7 +1243,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success) {
-                    ToastHelper.make().showMsg(message);
+                    ToastHelper.helper().showMsg(message);
                 }
             }
         }).push(groupIds, mQueryId);
@@ -1255,7 +1255,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success) {
-                    ToastHelper.make().showMsg(message);
+                    ToastHelper.helper().showMsg(message);
                 }
             }
         }).push(mQueryId, targets, groups);
@@ -1267,7 +1267,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success) {
-                    ToastHelper.make().showMsg(getString(R.string.ui_text_archive_details_classify_success, classifyName));
+                    ToastHelper.helper().showMsg(getString(R.string.ui_text_archive_details_classify_success, classifyName));
                 }
             }
         }).classify(mQueryId, classifyId);
@@ -1522,7 +1522,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                         case R.id.ui_popup_rich_editor_setting_branch_picker:
                             // 所属支部
                             if (isEmpty(mArchive.getGroupId())) {
-                                ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
+                                ToastHelper.helper().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
                             } else {
                                 //isOpenOther = true;
                                 SquadPickerFragment.open(ArchiveDetailsFragment.this, mArchive.getGroupId(), mArchive.getBranch());
@@ -1535,7 +1535,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                         case R.id.ui_popup_rich_editor_setting_property:
                             // 档案性质
                             if (isEmpty(mArchive.getGroupId())) {
-                                ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
+                                ToastHelper.helper().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
                             } else {
                                 //isOpenOther = true;
                                 LabelPickFragment.open(ArchiveDetailsFragment.this, LabelPickFragment.TYPE_PROPERTY, mArchive.getGroupId(), mArchive.getDocClassifyId());
@@ -1674,7 +1674,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private void tryRecommendArchive() {
         if (null != mArchive) {
             if (isEmpty(mArchive.getId()) || mArchive.getId().equals("null")) {
-                ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_id_null);
+                ToastHelper.helper().showMsg(R.string.ui_archive_recommend_archive_id_null);
             } else {
                 // 没有推荐则推荐，有推荐则取消推荐
                 if (!mArchive.isRecommend()) {
@@ -1685,7 +1685,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 }
             }
         } else {
-            ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_null);
+            ToastHelper.helper().showMsg(R.string.ui_archive_recommend_archive_null);
         }
     }
 
@@ -1698,7 +1698,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 if (success) {
                     mArchive.setRecommend(Archive.RecommendType.RECOMMENDED);
                     prepareShareDialogElement(mArchive);
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_details_recommend_ok);
+                    ToastHelper.helper().showMsg(R.string.ui_text_archive_details_recommend_ok);
                 }
             }
         }).recommend(mQueryId);
@@ -1713,7 +1713,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 if (success) {
                     mArchive.setRecommend(Archive.RecommendType.UN_RECOMMEND);
                     prepareShareDialogElement(mArchive);
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_details_recommended_ok);
+                    ToastHelper.helper().showMsg(R.string.ui_text_archive_details_recommended_ok);
                 }
                 displayLoading(false);
             }
@@ -1745,7 +1745,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private void tryAwardArchive() {
         if (null != mArchive) {
             if (isEmpty(mArchive.getId()) || mArchive.getId().equals("null")) {
-                ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_id_null);
+                ToastHelper.helper().showMsg(R.string.ui_archive_recommend_archive_id_null);
             } else {
                 // 没有推荐则推荐，有推荐则取消推荐
                 if (!mArchive.awarded()) {
@@ -1756,7 +1756,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 }
             }
         } else {
-            ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_null);
+            ToastHelper.helper().showMsg(R.string.ui_archive_recommend_archive_null);
         }
     }
 
@@ -1768,7 +1768,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 if (success) {
                     mArchive.setAwardable(Archive.AwardType.AWARDED);
                     prepareShareDialogElement(mArchive);
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_details_award_ok);
+                    ToastHelper.helper().showMsg(R.string.ui_text_archive_details_award_ok);
                 }
                 displayLoading(false);
             }
@@ -1783,7 +1783,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 if (success) {
                     mArchive.setAwardable(Archive.AwardType.NONE);
                     prepareShareDialogElement(mArchive);
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_details_awarded_ok);
+                    ToastHelper.helper().showMsg(R.string.ui_text_archive_details_awarded_ok);
                 }
                 displayLoading(false);
             }

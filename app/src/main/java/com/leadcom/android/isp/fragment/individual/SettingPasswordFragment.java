@@ -76,7 +76,7 @@ public class SettingPasswordFragment extends BaseTransparentSupportFragment {
             old = "";
         }
         if (StringHelper.isEmpty(old)) {
-            ToastHelper.make().showMsg(R.string.ui_text_edit_password_old_incorrect);
+            ToastHelper.helper().showMsg(R.string.ui_text_edit_password_old_incorrect);
             return;
         }
         String newOne = newPassword.getText().toString();
@@ -84,7 +84,7 @@ public class SettingPasswordFragment extends BaseTransparentSupportFragment {
             newOne = "";
         }
         if (StringHelper.isEmpty(newOne)) {
-            ToastHelper.make().showMsg(R.string.ui_text_edit_password_new_incorrect);
+            ToastHelper.helper().showMsg(R.string.ui_text_edit_password_new_incorrect);
             return;
         }
         String newConfirm = cfmPassword.getText().toString();
@@ -92,7 +92,7 @@ public class SettingPasswordFragment extends BaseTransparentSupportFragment {
             newConfirm = "";
         }
         if (StringHelper.isEmpty(newConfirm) || !newConfirm.equals(newOne)) {
-            ToastHelper.make().showMsg(R.string.ui_text_edit_password_new_not_equal);
+            ToastHelper.helper().showMsg(R.string.ui_text_edit_password_new_not_equal);
             return;
         }
         editPassword(old, newOne);
@@ -108,7 +108,7 @@ public class SettingPasswordFragment extends BaseTransparentSupportFragment {
 //                    if (null != user && !StringHelper.isEmpty(user.getId())) {
 //                        App.app().setCurrentUser(user);
 //                    }
-                    ToastHelper.make().showMsg(R.string.ui_text_edit_password_success);
+                    ToastHelper.helper().showMsg(R.string.ui_text_edit_password_success);
                     finish();
                 }
             }

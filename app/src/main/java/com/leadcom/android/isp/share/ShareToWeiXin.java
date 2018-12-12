@@ -10,11 +10,9 @@ import android.net.Uri;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.etc.Utils;
-import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.model.common.Attachment;
-import com.leadcom.android.isp.model.organization.Concern;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
@@ -50,11 +48,11 @@ public class ShareToWeiXin extends Shareable {
             if (wxapi.getWXAppSupportAPI() >= 0x21020001) {
                 return wxapi.registerApp(APP_ID);
             } else {
-                ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_wx_not_support_api);
+                ToastHelper.helper().showMsg(R.string.ui_base_share_text_share_to_wx_not_support_api);
                 return false;
             }
         } else {
-            ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_wx_not_installed);
+            ToastHelper.helper().showMsg(R.string.ui_base_share_text_share_to_wx_not_installed);
             return false;
         }
     }
@@ -70,7 +68,7 @@ public class ShareToWeiXin extends Shareable {
             return;
         }
         if (isEmpty(text) && (null == images || images.size() < 1)) {
-            ToastHelper.make().showMsg(R.string.ui_base_share_text_share_blank);
+            ToastHelper.helper().showMsg(R.string.ui_base_share_text_share_blank);
             return;
         }
         if (regToWX(activityContext)) {
@@ -87,7 +85,7 @@ public class ShareToWeiXin extends Shareable {
                     break;
             }
         } else {
-            ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_wx_register_failed);
+            ToastHelper.helper().showMsg(R.string.ui_base_share_text_share_to_wx_register_failed);
         }
     }
 
@@ -96,7 +94,7 @@ public class ShareToWeiXin extends Shareable {
      */
     public static void shareToWeiXin(Context context, @ShareType int type, String title, String description, String url, String image) {
         if (isEmpty(title) || isEmpty(url)) {
-            ToastHelper.make().showMsg(R.string.ui_base_share_text_share_webpage_blank);
+            ToastHelper.helper().showMsg(R.string.ui_base_share_text_share_webpage_blank);
             return;
         }
         if (regToWX(context)) {
@@ -121,7 +119,7 @@ public class ShareToWeiXin extends Shareable {
                     break;
             }
         } else {
-            ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_wx_register_failed);
+            ToastHelper.helper().showMsg(R.string.ui_base_share_text_share_to_wx_register_failed);
         }
     }
 

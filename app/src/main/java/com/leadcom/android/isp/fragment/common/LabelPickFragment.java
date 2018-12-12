@@ -410,7 +410,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
                 int selected = selected();
                 // 如果已选择的数量超过2个且当前项未被选中则说明是要选中一个新的，提醒
                 if (selected >= mMaxSelectable && !model.isSelected()) {
-                    ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_archive_label_picker_picked_max, mMaxSelectable, fetchingTitle()));
+                    ToastHelper.helper().showMsg(StringHelper.getString(R.string.ui_archive_label_picker_picked_max, mMaxSelectable, fetchingTitle()));
                 } else {
                     model.setSelected(!model.isSelected());
                     mAdapter.notifyItemChanged(index);
@@ -477,7 +477,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         if (null != labelName) {
             String name = labelName.getValue();
             if (isEmpty(name)) {
-                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_archive_label_picker_create_invalid_name, fetchingTitle()));
+                ToastHelper.helper().showMsg(StringHelper.getString(R.string.ui_archive_label_picker_create_invalid_name, fetchingTitle()));
                 return;
             }
             if (mType == TYPE_LABEL) {

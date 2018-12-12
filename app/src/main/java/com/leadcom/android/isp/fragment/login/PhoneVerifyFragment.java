@@ -68,14 +68,14 @@ public class PhoneVerifyFragment extends BaseVerifyFragment {
                 if (!StringHelper.isEmpty(verifyPhone)) {
                     openActivity(CodeVerifyFragment.class.getName(), StringHelper.format("%d,%s", verifyType, verifyPhone), true, true);
                 } else {
-                    ToastHelper.make().showMsg(R.string.ui_text_verify_phone_value_incorrect);
+                    ToastHelper.helper().showMsg(R.string.ui_text_verify_phone_value_incorrect);
                 }
                 break;
             case R.id.ui_verify_phone_to_service_protocol:
-                ToastHelper.make().showMsg(R.string.ui_text_verify_phone_protocol_2);
+                ToastHelper.helper().showMsg(R.string.ui_text_verify_phone_protocol_2);
                 break;
             case R.id.ui_verify_phone_to_privacy_policy:
-                ToastHelper.make().showMsg(R.string.ui_text_verify_phone_protocol_4);
+                ToastHelper.helper().showMsg(R.string.ui_text_verify_phone_protocol_4);
                 break;
         }
     }

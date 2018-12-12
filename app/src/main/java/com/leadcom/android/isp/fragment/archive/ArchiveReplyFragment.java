@@ -186,12 +186,12 @@ public class ArchiveReplyFragment extends BaseTransparentSupportFragment {
     private void tryReplyArchive() {
         String title = titleHolder.getValue();
         if (isEmpty(title)) {
-            ToastHelper.make().showMsg(R.string.ui_text_archive_reply_title_blank);
+            ToastHelper.helper().showMsg(R.string.ui_text_archive_reply_title_blank);
             return;
         }
         String content = contentView.getValue();
         if (isEmpty(content)) {
-            ToastHelper.make().showMsg(R.string.ui_text_archive_reply_content_blank);
+            ToastHelper.helper().showMsg(R.string.ui_text_archive_reply_content_blank);
             return;
         }
         replyArchive(title, content);
@@ -203,7 +203,7 @@ public class ArchiveReplyFragment extends BaseTransparentSupportFragment {
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success) {
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_reply_success);
+                    ToastHelper.helper().showMsg(R.string.ui_text_archive_reply_success);
                     resultData(mArchive.getId());
                     //finish();
                 }

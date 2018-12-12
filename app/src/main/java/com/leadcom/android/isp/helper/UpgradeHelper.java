@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import com.leadcom.android.isp.BuildConfig;
@@ -81,7 +80,7 @@ public class UpgradeHelper {
                             warningUpdatable(url, ver, systemUpdate.getForceUpdate());
                         }
                     } else if (showMsgNotNeed) {
-                        ToastHelper.make().showMsg(R.string.ui_system_updatable_not_need_update);
+                        ToastHelper.helper().showMsg(R.string.ui_system_updatable_not_need_update);
                     }
                 }
             }

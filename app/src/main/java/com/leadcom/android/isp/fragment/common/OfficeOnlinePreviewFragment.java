@@ -226,7 +226,7 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
             public void onResponse(Collection collection, boolean success, String message) {
                 super.onResponse(collection, success, message);
                 if (success) {
-                    ToastHelper.make().showMsg(message);
+                    ToastHelper.helper().showMsg(message);
                 }
             }
         }).add(mQueryId);
@@ -241,10 +241,10 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
             }
             try {
                 FileUtils.fileCopy(localReal, targetPath);
-                ToastHelper.make().showMsg("文件已保存到：" + downloadPath);
+                ToastHelper.helper().showMsg("文件已保存到：" + downloadPath);
             } catch (Exception e) {
                 e.printStackTrace();
-                ToastHelper.make().showMsg("文件保存失败：" + e.getMessage());
+                ToastHelper.helper().showMsg("文件保存失败：" + e.getMessage());
             }
         }
     }

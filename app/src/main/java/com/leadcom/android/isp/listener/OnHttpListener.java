@@ -63,9 +63,9 @@ public abstract class OnHttpListener<T> extends HttpListener<T> {
         super.onFailure(e, response);
         HttpStatus status = response.getHttpStatus();
         if (e.getMessage().contains("com.google.gson.JsonSyntaxException")) {
-            ToastHelper.make().showMsg(R.string.ui_base_text_network_failed_api);
+            ToastHelper.helper().showMsg(R.string.ui_base_text_network_failed_api);
         } else {
-            ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_base_text_network_failed, (null == status ? -1 : status.getCode())));
+            ToastHelper.helper().showMsg(StringHelper.getString(R.string.ui_base_text_network_failed, (null == status ? -1 : status.getCode())));
         }
         onFailed(null == status ? -1 : status.getCode(), e.getMessage());
         LogHelper.log("OnHttpListener", e.getMessage());
@@ -99,7 +99,7 @@ public abstract class OnHttpListener<T> extends HttpListener<T> {
     public void onCancel(T t, Response<T> response) {
         super.onCancel(t, response);
         HttpStatus status = response.getHttpStatus();
-        ToastHelper.make(null).showMsg(StringHelper.getString(R.string.ui_base_text_network_canceled, (null == status ? -1 : status.getCode())));
+        ToastHelper.helper().showMsg(StringHelper.getString(R.string.ui_base_text_network_canceled, (null == status ? -1 : status.getCode())));
         onFailed(null == status ? -1 : status.getCode(), "网络操作已取消");
     }
 }

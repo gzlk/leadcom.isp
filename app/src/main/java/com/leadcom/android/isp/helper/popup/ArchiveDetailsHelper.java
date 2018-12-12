@@ -546,7 +546,7 @@ public class ArchiveDetailsHelper {
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success) {
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_details_update_success);
+                    ToastHelper.helper().showMsg(R.string.ui_text_archive_details_update_success);
                 }
             }
         }).update(mArchive, type);

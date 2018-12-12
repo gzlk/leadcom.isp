@@ -138,7 +138,7 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
                     if (null != user) {
                         setCustomTitle(StringHelper.getString(R.string.ui_individual_moment_list_fragment_title, user.getName()));
                     } else {
-                        ToastHelper.make().showMsg(R.string.ui_individual_moment_list_user_not_exists);
+                        ToastHelper.helper().showMsg(R.string.ui_individual_moment_list_user_not_exists);
                     }
                 }
             }

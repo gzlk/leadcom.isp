@@ -250,7 +250,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     }
 
     protected void closeWithWarning(int text) {
-        ToastHelper.make().showMsg(text);
+        ToastHelper.helper().showMsg(text);
         finish();
     }
 
@@ -818,7 +818,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
 
     protected void shareToLink() {
         ClipboardHelper.copyToClipboard(Activity(), mShareInfo.getTargetPath());
-        ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_link_copied);
+        ToastHelper.helper().showMsg(R.string.ui_base_share_text_share_to_link_copied);
     }
 
     /**

@@ -179,7 +179,7 @@ public class TextViewUtils {
             lineSpacingAdd = textView.getLineSpacingExtra();
             includePad = textView.getIncludeFontPadding();
         } else {
-            // Call private methods and make sure to provide fallback defaults in case something
+            // Call private methods and helper sure to provide fallback defaults in case something
             // goes wrong. The default values have been inlined with the StaticLayout defaults.
             lineSpacingMultiplier = invokeAndReturnWithDefault(textView,
                     "getLineSpacingMultiplier", lineSpacingMultiplier);

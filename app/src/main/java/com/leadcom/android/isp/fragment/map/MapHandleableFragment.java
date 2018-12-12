@@ -268,7 +268,7 @@ public abstract class MapHandleableFragment extends BaseLocationSupportFragment 
             reduceLocation();
             startLocation();
         } else {
-            ToastHelper.make().showMsg(R.string.ui_activity_sign_map_picker_locate_failed);
+            ToastHelper.helper().showMsg(R.string.ui_activity_sign_map_picker_locate_failed);
         }
     }
 

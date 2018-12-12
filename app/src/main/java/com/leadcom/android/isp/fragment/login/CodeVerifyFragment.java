@@ -173,12 +173,12 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
                 }
                 String code = codeView.getValue();
                 if (StringHelper.isEmpty(code)) {
-                    ToastHelper.make().showMsg(R.string.ui_text_verify_code_value_incorrect);
+                    ToastHelper.helper().showMsg(R.string.ui_text_verify_code_value_incorrect);
                     return;
                 }
                 if (!StringHelper.isEmpty(receivedVerifyCode) && !code.equals(receivedVerifyCode)) {
                     // 如果收到的验证码不为空则需要先验证一下用户输入的是否正确
-                    ToastHelper.make().showMsg(R.string.ui_text_verify_code_value_not_same_as_received);
+                    ToastHelper.helper().showMsg(R.string.ui_text_verify_code_value_not_same_as_received);
                     return;
                 }
                 super.verifyCode = code;
@@ -213,7 +213,7 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
                         openActivity(SignUpFragment.class.getName(), params, true, true);
                     }
                 } else {
-                    ToastHelper.make().showMsg(R.string.ui_text_verify_code_value_error);
+                    ToastHelper.helper().showMsg(R.string.ui_text_verify_code_value_error);
                 }
             }
         }).verifyCaptcha(verifyPhone, super.verifyCode);
@@ -227,7 +227,7 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
                 if (success) {
                     resultData(verifyPhone);
                 }
-                ToastHelper.make().showMsg(message);
+                ToastHelper.helper().showMsg(message);
             }
         }).resetPhone(verifyPhone, super.verifyCode);
     }

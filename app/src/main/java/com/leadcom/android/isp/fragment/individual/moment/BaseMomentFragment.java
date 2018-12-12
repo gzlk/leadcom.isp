@@ -103,7 +103,7 @@ public abstract class BaseMomentFragment extends BaseCmtLikeColFragment {
                 displayLoading(false);
                 if (success) {
                     mMoment.setAuthPublic(state == Seclusion.Type.Public ? 2 : Seclusion.Type.Public);
-                    ToastHelper.make().showMsg(state == Seclusion.Type.Public ? R.string.ui_text_moment_details_privacy_privacy : R.string.ui_text_moment_details_privacy_public);
+                    ToastHelper.helper().showMsg(state == Seclusion.Type.Public ? R.string.ui_text_moment_details_privacy_privacy : R.string.ui_text_moment_details_privacy_public);
                 }
             }
         }).update(mQueryId, state == Seclusion.Type.Public ? 2 : Seclusion.Type.Public);
@@ -117,7 +117,7 @@ public abstract class BaseMomentFragment extends BaseCmtLikeColFragment {
                 @Override
                 public void onUncollected(boolean success, Model model) {
                     if (success) {
-                        ToastHelper.make().showMsg(R.string.ui_base_share_to_favorite_canceled);
+                        ToastHelper.helper().showMsg(R.string.ui_base_share_to_favorite_canceled);
                     }
                 }
             }).uncollect(mMoment.getColId());
@@ -127,7 +127,7 @@ public abstract class BaseMomentFragment extends BaseCmtLikeColFragment {
                 @Override
                 public void onCollected(boolean success, Model model) {
                     if (success) {
-                        ToastHelper.make().showMsg(R.string.ui_base_share_to_favorite_success);
+                        ToastHelper.helper().showMsg(R.string.ui_base_share_to_favorite_success);
                     }
                 }
             }).collect(Collection.get(mMoment));

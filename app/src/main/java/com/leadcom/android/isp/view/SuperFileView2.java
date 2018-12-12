@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.leadcom.android.isp.application.App;
@@ -72,10 +71,10 @@ public class SuperFileView2 extends FrameLayout implements TbsReaderView.ReaderC
             if (bool) {
                 this.mTbsReaderView.openFile(localBundle);
             } else {
-                ToastHelper.make().showMsg("Cannot open file with X5 core.");
+                ToastHelper.helper().showMsg("Cannot open file with X5 core.");
             }
         } else {
-            ToastHelper.make().showMsg("文件路径无效！");
+            ToastHelper.helper().showMsg("文件路径无效！");
         }
 
     }

@@ -90,7 +90,7 @@ public class VideoPlayerActivity extends BaseActivity implements EasyVideoCallba
         // To play files, you can use Uri.fromFile(new File("..."))
         player.setSource(Uri.parse(videoUrl + "#.mp4"));
 
-        //ToastHelper.make(this).showMsg("建议在wifi环境下播放视频");
+        //ToastHelper.helper(this).showMsg("建议在wifi环境下播放视频");
         // From here, the player view will show a progress indicator until the player is prepared.
         // Once it's prepared, the progress indicator goes away and the controls become enabled for the user to begin playback.
 
@@ -194,7 +194,7 @@ public class VideoPlayerActivity extends BaseActivity implements EasyVideoCallba
             public void onResponse(Collection collection, boolean success, String message) {
                 super.onResponse(collection, success, message);
                 if (success) {
-                    ToastHelper.make().showMsg(message);
+                    ToastHelper.helper().showMsg(message);
                 }
             }
         }).add(videoUrl);

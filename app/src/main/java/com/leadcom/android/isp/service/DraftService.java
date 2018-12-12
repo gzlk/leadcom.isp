@@ -119,7 +119,7 @@ public class DraftService extends BaseService {
                     if (null != archive && !StringHelper.isEmpty(archive.getId())) {
                         broadcasting(archive);
                     }
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_draft_saved);
+                    ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_create_draft_saved);
                 }
             }
         }).save(archive, true, false);

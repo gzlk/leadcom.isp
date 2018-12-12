@@ -150,7 +150,7 @@ public class BasePopupInputSupportFragment extends BaseDelayRefreshSupportFragme
         if (!allowBlank) {
             // 不允许空白输入时检测输入
             if (StringHelper.isEmpty(result)) {
-                ToastHelper.make().showMsg(R.string.ui_popup_input_invalid_input);
+                ToastHelper.helper().showMsg(R.string.ui_popup_input_invalid_input);
                 return;
             }
         }

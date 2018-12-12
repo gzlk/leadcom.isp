@@ -153,7 +153,7 @@ public abstract class Request<T> {
         if (NetworkUtil.isNetAvailable(App.app())) {
             http.executeAsync(request);
         } else {
-            ToastHelper.make().showMsg(R.string.ui_base_text_network_invalid);
+            ToastHelper.helper().showMsg(R.string.ui_base_text_network_invalid);
         }
     }
 
@@ -300,7 +300,7 @@ public abstract class Request<T> {
                     } else {
                         if (!data.getCode().equals(BaseApi.SQUAD_NOT_EXIT)) {
                             // 支部查询不到时，不用提醒
-                            ToastHelper.make().showMsg(data.getMsg());
+                            ToastHelper.helper().showMsg(data.getMsg());
                         }
                         fireFailedListenerEvents(data.getMsg());
                         if (data.isNeedLoginAgain()) {
@@ -311,7 +311,7 @@ public abstract class Request<T> {
                     }
                 } else {
                     String empty = StringHelper.getString(R.string.ui_base_text_network_failed_body_empty);
-                    ToastHelper.make().showMsg(empty);
+                    ToastHelper.helper().showMsg(empty);
                     fireFailedListenerEvents(empty);
                 }
             }

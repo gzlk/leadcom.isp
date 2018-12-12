@@ -98,7 +98,7 @@ public class GroupsContactPickerFragment extends BaseSwipeRefreshSupportFragment
         if (members.size() < 1) {
             warningNothingSelected();
         } else {
-            //ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_organization_contact_picker_resulted, selected, members.size()));
+            //ToastHelper.helper().showMsg(StringHelper.getString(R.string.ui_organization_contact_picker_resulted, selected, members.size()));
             resultData(Json.gson().toJson(members, new TypeToken<ArrayList<SubMember>>() {
             }.getType()));
         }

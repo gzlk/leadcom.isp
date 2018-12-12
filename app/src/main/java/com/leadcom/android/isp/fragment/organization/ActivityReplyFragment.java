@@ -357,12 +357,12 @@ public class ActivityReplyFragment extends GroupBaseFragment {
     private void tryReplyActivity() {
         mArchive.setReply(subjectHolder.getValue());
         if (isEmpty(mArchive.getReply())) {
-            ToastHelper.make().showMsg(R.string.ui_group_activity_reply_subject_is_null);
+            ToastHelper.helper().showMsg(R.string.ui_group_activity_reply_subject_is_null);
             return;
         }
         mArchive.setContent(contentView.getValue());
         if (isEmpty(mArchive.getContent())) {
-            ToastHelper.make().showMsg(R.string.ui_group_activity_reply_content_is_null);
+            ToastHelper.helper().showMsg(R.string.ui_group_activity_reply_content_is_null);
             return;
         }
         replyActivity();
@@ -374,7 +374,7 @@ public class ActivityReplyFragment extends GroupBaseFragment {
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success) {
-                    ToastHelper.make().showMsg(R.string.ui_group_activity_reply_success);
+                    ToastHelper.helper().showMsg(R.string.ui_group_activity_reply_success);
                     resultData(archive.getId());
                 }
             }

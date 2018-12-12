@@ -171,7 +171,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
             //uploadFiles();
         } else {
             if (StringHelper.isEmpty(momentContent.getValue())) {
-                ToastHelper.make().showMsg(R.string.ui_text_new_moment_content_cannot_blank);
+                ToastHelper.helper().showMsg(R.string.ui_text_new_moment_content_cannot_blank);
                 return;
             }
             addMoment(null, "");
@@ -434,7 +434,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
             Seclusion seclusion = PrivacyFragment.getSeclusion(privacy);
             PrivacyFragment.open(MomentCreatorFragment.this, seclusion, true);
             //openActivity(UserPrivacyFragment.class.getName(), json, REQUEST_SECURITY, true, false);
-            //ToastHelper.make(Activity()).showMsg("隐私设置");
+            //ToastHelper.helper(Activity()).showMsg("隐私设置");
         }
     };
 

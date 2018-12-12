@@ -53,7 +53,7 @@ public class SignUpFragment extends BaseVerifyFragment {
         setCustomTitle(R.string.ui_text_sign_up_fragment_title);
         setLeftText(R.string.ui_text_reset_password_fragment_title_left_text);
         if (verifyType != VT_SIGN_UP) {
-            ToastHelper.make(Activity()).showMsg(R.string.ui_text_sign_up_incorrect_params);
+            ToastHelper.helper().showMsg(R.string.ui_text_sign_up_incorrect_params);
             finishToSignIn();
         }
     }
@@ -72,7 +72,7 @@ public class SignUpFragment extends BaseVerifyFragment {
     private void elementClick(View view) {
         String name = nameText.getValue();
         if (StringHelper.isEmpty(name)) {
-            ToastHelper.make().showMsg(R.string.ui_text_sign_up_name_value_incorrect);
+            ToastHelper.helper().showMsg(R.string.ui_text_sign_up_name_value_incorrect);
             return;
         }
         String password = passwordText.getText().toString();
@@ -80,7 +80,7 @@ public class SignUpFragment extends BaseVerifyFragment {
             password = "";
         }
         if (StringHelper.isEmpty(password)) {
-            ToastHelper.make().showMsg(R.string.ui_text_sign_up_password_value_incorrect);
+            ToastHelper.helper().showMsg(R.string.ui_text_sign_up_password_value_incorrect);
             return;
         }
         trySignUp(name, password);
@@ -92,7 +92,7 @@ public class SignUpFragment extends BaseVerifyFragment {
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success) {
-                    ToastHelper.make().showMsg(message);
+                    ToastHelper.helper().showMsg(message);
                     // 转到登录
                     finishToSignIn();
                 }

@@ -96,7 +96,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String json = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_accounts, R.string.pf_last_login_user_accounts_beta), "[]");
+        String json = PreferenceHelper.get(StringHelper.getString(Cache.get(R.string.pf_last_login_user_accounts, R.string.pf_last_login_user_accounts_beta), Cache.cache().userId), "[]");
         loginedAccounts = Json.gson().fromJson(json, new TypeToken<ArrayList<String>>() {
         }.getType());
         if (loginedAccounts.size() > 0) {
@@ -312,12 +312,12 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
 
     @OnMPermissionDenied(GRANT_STORAGE)
     private void onStoragePermissionDenied() {
-        ToastHelper.make().showMsg(R.string.ui_grant_permission_storage_denied);
+        ToastHelper.helper().showMsg(R.string.ui_grant_permission_storage_denied);
     }
 
     @OnMPermissionNeverAskAgain(GRANT_STORAGE)
     private void onStoragePermissionNeverAskAgain() {
-        ToastHelper.make().showMsg(R.string.ui_grant_permission_storage_never_ask_again);
+        ToastHelper.helper().showMsg(R.string.ui_grant_permission_storage_never_ask_again);
         if (null != signInButton) {
             //signInButton.setEnabled(false);
         }
@@ -374,9 +374,9 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 pwd = "";
             }
             if (isEmpty(account)) {
-                ToastHelper.make(Activity()).showMsg(R.string.ui_text_sign_in_account_value_incorrect);
+                ToastHelper.helper().showMsg(R.string.ui_text_sign_in_account_value_incorrect);
             } else if (isEmpty(pwd)) {
-                ToastHelper.make(Activity()).showMsg(R.string.ui_text_sign_in_password_value_incorrect);
+                ToastHelper.helper().showMsg(R.string.ui_text_sign_in_password_value_incorrect);
             } else {
                 if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     String text = StringHelper.getString(R.string.ui_grant_permission_storage_warning);
@@ -397,7 +397,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                     // 开始登录
                     signIn(account, pwd);
                 } else {
-                    ToastHelper.make().showMsg(R.string.ui_text_sign_in_still_processing);
+                    ToastHelper.helper().showMsg(R.string.ui_text_sign_in_still_processing);
                 }
             }
         } else {
@@ -436,7 +436,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                     // 同步成功之后检测网易云登录状态
                     checkNimStatus();
                 } else {
-                    ToastHelper.make().showMsg(message);
+                    ToastHelper.helper().showMsg(message);
                     needToReLogin();
                 }
             }
@@ -450,7 +450,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     }
 
     private void saveLoginedAccounts() {
-        PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_accounts, R.string.pf_last_login_user_accounts_beta), Json.gson().toJson(loginedAccounts));
+        PreferenceHelper.save(StringHelper.getString(Cache.get(R.string.pf_last_login_user_accounts, R.string.pf_last_login_user_accounts_beta), Cache.cache().userId), Json.gson().toJson(loginedAccounts));
     }
 
     private void signIn(final String account, String password) {

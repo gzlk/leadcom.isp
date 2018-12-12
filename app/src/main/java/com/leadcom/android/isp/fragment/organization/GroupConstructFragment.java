@@ -124,7 +124,7 @@ public class GroupConstructFragment extends GroupBaseFragment {
         }
 
         private void showToast(int index) {
-            ToastHelper.make().showMsg(index == 0 ? R.string.ui_group_constructor_groups_no_super : (index == 1 ? R.string.ui_group_constructor_groups_no_subordinate : R.string.ui_group_constructor_groups_no_squad));
+            ToastHelper.helper().showMsg(index == 0 ? R.string.ui_group_constructor_groups_no_super : (index == 1 ? R.string.ui_group_constructor_groups_no_subordinate : R.string.ui_group_constructor_groups_no_squad));
         }
     };
 

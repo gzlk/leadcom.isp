@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.helper;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,10 +11,7 @@ import android.widget.Toast;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
-import com.leadcom.android.isp.etc.Utils;
 import com.hlk.hlklib.lib.view.CustomTextView;
-
-import java.lang.ref.SoftReference;
 
 /**
  * 提供静态显示Toast消息的Helper
@@ -22,19 +20,25 @@ import java.lang.ref.SoftReference;
 public class ToastHelper {
 
     private static final String TAG = "ToastHelper";
-    private static long lastToasted = 0;
-    private SoftReference<Context> mContext;
+    @SuppressLint("StaticFieldLeak")
+    private static ToastHelper helper;
 
-    private ToastHelper(Context context) {
-        mContext = new SoftReference<>(null == context ? App.app() : context);
+    private Handler handler;
+    private final Object synObj = new Object();
+    private Toast toast = null;
+    private View toastView;
+    private TextView toastText;
+    private CustomTextView toastIcon;
+
+    public static ToastHelper helper() {
+        if (null == helper) {
+            helper = new ToastHelper();
+        }
+        return helper;
     }
 
-    public static ToastHelper make() {
-        return make(null);
-    }
-
-    public static ToastHelper make(Context context) {
-        return new ToastHelper(context);
+    private ToastHelper() {
+        handler = new Handler(Looper.getMainLooper());
     }
 
     public void showMsg(int text) {
@@ -49,75 +53,39 @@ public class ToastHelper {
         showMsg(msg, null);
     }
 
-    public void showMsg(String msg, String icon) {
-        showMsg(msg, icon, null);
-    }
-
-    public void showMsg(String msg, String icon, Handler handler) {
-        long time = Utils.timestamp();
-        if ((time - lastToasted) >= 1000) {
-            lastToasted = time;
-            if (null == handler) {
-                toastInThread(msg, icon);
-            } else {
-                toastInHandle(handler, msg, icon);
-            }
-        }
-    }
-
-    /**
-     * 在线程中显示toast消息
-     */
-    private void toastInThread(final String msg, final String icon) {
-
-        new Thread() {
-
-            @Override
+    public void showMsg(final String msg, final String icon) {
+        new Thread(new Runnable() {
             public void run() {
-                try {
-                    // Toast 显示需要出现在一个线程的消息队列中
-                    Looper.prepare();
-                    toast(msg, icon);
-                    Looper.loop();
-                } catch (Exception ignore) {
-                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        synchronized (synObj) {
+                            toast(msg, icon);
+                        }
+                    }
+                });
             }
-        }.start();
-
-    }
-
-    /**
-     * 在Handler中显示toast消息
-     */
-    private void toastInHandle(Handler handler, final String msg, final String icon) {
-
-        handler.post(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    toast(msg, icon);
-                } catch (Exception ignore) {
-                }
-            }
-        });
-
+        }).start();
     }
 
     private void toast(String msg, String icon) {
-        Context context = mContext.get();
-        if (null == context) {
-            context = App.app();
+        Context context = App.app();
+        if (null == toastView) {
+            toastView = View.inflate(context, R.layout.base_custom_toast, null);
+            toastText = toastView.findViewById(R.id.ui_base_custom_toast_text);
+            toastIcon = toastView.findViewById(R.id.ui_base_custom_toast_icon);
         }
-        View view = View.inflate(context, R.layout.base_custom_toast, null);
-        TextView text = view.findViewById(R.id.ui_base_custom_toast_text);
-        CustomTextView iconView = view.findViewById(R.id.ui_base_custom_toast_icon);
-        text.setText(Html.fromHtml(msg));
-        iconView.setText(icon);
-        iconView.setVisibility(null == icon ? View.GONE : View.VISIBLE);
-        Toast toast = new Toast(context);
+        toastText.setText(Html.fromHtml(msg));
+        toastIcon.setText(icon);
+        toastIcon.setVisibility(null == icon ? View.GONE : View.VISIBLE);
+        if (null != toast) {
+            toast.cancel();
+            toast = null;
+        }
+
+        toast = new Toast(context);
         toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(view);
+        toast.setView(toastView);
         toast.show();
         LogHelper.log(TAG, msg);
     }

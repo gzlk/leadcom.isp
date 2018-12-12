@@ -283,7 +283,7 @@ public class GroupContactPickFragment extends GroupBaseFragment {
             Member member = mAdapter.get(index);
             if (member.isSelected() && member.isLocalDeleted() && isLockable) {
                 // 如果队员是选中状态，且是前页传过来的本来已存在的成员，且当前允许锁定，则提示不能取消对其的选择状态
-                ToastHelper.make().showMsg(R.string.ui_organization_contact_picker_cannot_unpick_exists);
+                ToastHelper.helper().showMsg(R.string.ui_organization_contact_picker_cannot_unpick_exists);
             } else {
                 member.setSelected(!member.isSelected());
             }

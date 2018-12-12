@@ -122,7 +122,7 @@ public class CollectionDetailsFragment extends BaseTransparentSupportFragment {
                         collectionHolder.showContent(mCollection);
                         showCreateTime(mCollection.getCreateDate());
                     } else {
-                        ToastHelper.make().showMsg(message);
+                        ToastHelper.helper().showMsg(message);
                     }
                 } else {
                     finish();

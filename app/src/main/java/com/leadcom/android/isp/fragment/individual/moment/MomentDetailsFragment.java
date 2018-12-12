@@ -472,7 +472,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                 ImageViewerFragment.isCollected = isCollected;
                 ImageViewerFragment.open(MomentDetailsFragment.this, i, mMoment.getImage());
             } else {
-                ToastHelper.make().showMsg(R.string.ui_text_moment_details_image_index_invalid);
+                ToastHelper.helper().showMsg(R.string.ui_text_moment_details_image_index_invalid);
             }
         }
     };

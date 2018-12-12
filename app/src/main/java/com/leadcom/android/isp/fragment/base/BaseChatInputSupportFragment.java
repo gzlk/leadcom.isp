@@ -415,7 +415,7 @@ public abstract class BaseChatInputSupportFragment extends BaseSwipeRefreshSuppo
     @Override
     public void permissionGranted(String[] permissions, int requestCode) {
         if (requestCode == GRANT_RECORD_AUDIO) {
-            ToastHelper.make().showMsg(R.string.ui_text_permission_voice_recorder_allowed);
+            ToastHelper.helper().showMsg(R.string.ui_text_permission_voice_recorder_allowed);
         }
         super.permissionGranted(permissions, requestCode);
     }

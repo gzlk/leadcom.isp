@@ -1554,7 +1554,7 @@ public class DepthViewPager extends ViewGroup {
 
         /*
          * Make sure all children have been properly measured. Decor views first.
-         * Right now we cheat and make this less complicated by assuming decor
+         * Right now we cheat and helper this less complicated by assuming decor
          * views won't intersect. We will pin to edges based on gravity.
          */
         int size = getChildCount();
@@ -1807,7 +1807,7 @@ public class DepthViewPager extends ViewGroup {
         if (mItems.size() == 0) {
             if (mFirstLayout) {
                 // If we haven't been laid out yet, we probably just haven't been populated yet.
-                // Let's skip this call since it doesn't make sense in this state
+                // Let's skip this call since it doesn't helper sense in this state
                 return false;
             }
             mCalledSuper = false;

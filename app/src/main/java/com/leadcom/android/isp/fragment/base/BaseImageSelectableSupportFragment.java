@@ -201,7 +201,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     private void prepareForCrop() {
         prepareCroppedImagePath();
         if (TextUtils.isEmpty(cameraPicturePath)) {
-            ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_invalid_camera_path);
+            ToastHelper.helper().showMsg(R.string.ui_base_text_invalid_camera_path);
         } else {
             adjustWannaToImageSize();
 
@@ -291,7 +291,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
             adjustWannaToImageSize();
             if (waitingFroCompressImages.size() < 1) {
                 //throw new IllegalArgumentException("no image(s) is waiting for compress");
-                ToastHelper.make().showMsg(R.string.ui_base_text_image_no_selected);
+                ToastHelper.helper().showMsg(R.string.ui_base_text_image_no_selected);
             } else {
                 new CompressImageTask()
                         .setDebuggable(true)
@@ -328,7 +328,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                 showImageHandlingDialog(R.string.ui_base_text_uploading);
                 uploadFiles();
             } else {
-                ToastHelper.make().showMsg("压缩完了，暂时没有下一步任务");
+                ToastHelper.helper().showMsg("压缩完了，暂时没有下一步任务");
                 hideImageHandlingDialog();
             }
         }
@@ -634,7 +634,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      */
     protected void startCameraForResult() {
         if (!App.app().hasCameraFeature()) {
-            ToastHelper.make().showMsg(R.string.ui_text_permission_camera_feature);
+            ToastHelper.helper().showMsg(R.string.ui_text_permission_camera_feature);
             return;
         }
         if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -656,13 +656,13 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
                             startActivityForResult(intent, REQUEST_CAMERA);
                         } else {
-                            ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_cannot_create_image_in_dcim);
+                            ToastHelper.helper().showMsg(R.string.ui_base_text_cannot_create_image_in_dcim);
                         }
                     }
                 }
             } else {
                 // 没有SD卡
-                ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_no_sdcard_exists);
+                ToastHelper.helper().showMsg(R.string.ui_base_text_no_sdcard_exists);
             }
         }
     }
@@ -700,7 +700,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         int size = isSupportCompress ? waitingFroCompressImages.size() : getWaitingForUploadFiles().size();
         // 裁剪照片时，可以多次选择裁剪
         if (size > 1 && size >= getMaxSelectable()) {
-            ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_image_cannot_attach_more);
+            ToastHelper.helper().showMsg(R.string.ui_base_text_image_cannot_attach_more);
             return;
         }
         dialogHelper = DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {

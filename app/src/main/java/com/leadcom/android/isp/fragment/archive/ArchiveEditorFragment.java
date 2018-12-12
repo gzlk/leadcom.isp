@@ -327,7 +327,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         // 组织id默认当前首页选中的组织
         String groupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
         if (isEmpty(groupId)) {
-            ToastHelper.make().showMsg(0);
+            ToastHelper.helper().showMsg(0);
             // 不必要保存草稿
             isOpenOther = true;
             finish();
@@ -462,7 +462,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private void createActivity() {
         if (isCreating) {
-            ToastHelper.make().showMsg(R.string.ui_group_activity_editor_still_creating);
+            ToastHelper.helper().showMsg(R.string.ui_group_activity_editor_still_creating);
             return;
         }
         isCreating = true;
@@ -502,7 +502,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     mArchive = archive.getDocDraft();
                     restoreArchiveToEdit();
                 } else {
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_draft_not_exists);
+                    ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_create_draft_not_exists);
                     finish();
                 }
             }
@@ -512,7 +512,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private void restoreArchiveToEdit() {
         if (isEmpty(mArchive.getGroupId())) {
             // 草稿重新编辑时，重置组织信息
-            mArchive.setGroupId(PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), ""));
+            mArchive.setGroupId(PreferenceHelper.get(StringHelper.getString(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), Cache.cache().userId), ""));
             resetSquadInfo();
         }
         resetEditorLayout();
@@ -795,7 +795,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         // 设置模板档案的各个属性值
         if (returnAble) {
             if (mArchive.isDefaultHappenDate()) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_happen_date_null);
+                ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_template_happen_date_null);
                 return false;
             }
         }
@@ -804,7 +804,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         if (returnAble) {
             if (isEmpty(mArchive.getSite())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_site_null);
+                ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_template_site_null);
                 return false;
             }
         }
@@ -813,7 +813,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 mArchive.setParticipant(participantHolder.getValue());
             }
             if (isEmpty(mArchive.getParticipant())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_participant_null);
+                ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_template_participant_null);
                 return false;
             }
         }
@@ -822,7 +822,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         if (returnAble) {
             if (isEmpty(mArchive.getTopic())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_topic_null);
+                ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_template_topic_null);
                 return false;
             }
         }
@@ -831,23 +831,23 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         if (returnAble) {
             if (isEmpty(mArchive.getResolution())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_minute_null);
+                ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_template_minute_null);
                 return false;
             }
         }
 //            if (isEmpty(mArchive.getBranch())) {
-//                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_branch_null);
+//                ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_template_branch_null);
 //                return false;
 //            }
 //        if (returnAble) {
 //            if (isEmpty(mArchive.getProperty())) {
-//                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_property_null);
+//                ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_template_property_null);
 //                return false;
 //            }
 //        }
 //        if (returnAble) {
 //            if (isEmpty(mArchive.getCategory())) {
-//                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_category_null);
+//                ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_template_category_null);
 //                return false;
 //            }
 //        }
@@ -857,11 +857,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private boolean resetActivityParameters() {
         mArchive.setTitle(titleView.getValue());
         if (isEmpty(mArchive.getTitle())) {
-            ToastHelper.make().showMsg(R.string.ui_group_activity_editor_title_is_blank);
+            ToastHelper.helper().showMsg(R.string.ui_group_activity_editor_title_is_blank);
             return false;
         }
         if (mArchive.isDefaultHappenDate()) {
-            ToastHelper.make().showMsg(R.string.ui_group_activity_editor_happen_date_is_blank);
+            ToastHelper.helper().showMsg(R.string.ui_group_activity_editor_happen_date_is_blank);
             return false;
         } else {
             Date date = Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), mArchive.getHappenDate());
@@ -874,23 +874,23 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             }
 //            if (isDateLessThanNow(date, 0)) {
 //                String time = Utils.format("MM月dd日HH时", date);
-//                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_group_activity_editor_time_limit_less_than_now, time));
+//                ToastHelper.helper().showMsg(StringHelper.getString(R.string.ui_group_activity_editor_time_limit_less_than_now, time));
 //                return false;
 //            }
             // 去掉 24 小时时间间隔的判断
 //            if (isDateLessThanNow(date, 24)) {
-//                ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_24h_after_now);
+//                ToastHelper.helper().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_24h_after_now);
 //                return false;
 //            }
         }
         mArchive.setSite(addressHolder.getValue());
         if (isEmpty(mArchive.getSite())) {
-            ToastHelper.make().showMsg(R.string.ui_group_activity_editor_site_is_blank);
+            ToastHelper.helper().showMsg(R.string.ui_group_activity_editor_site_is_blank);
             return false;
         }
         mArchive.setParticipator(participantHolder.getValue());
         if (isEmpty(mArchive.getParticipator())) {
-            ToastHelper.make().showMsg(R.string.ui_group_activity_editor_participator_is_blank);
+            ToastHelper.helper().showMsg(R.string.ui_group_activity_editor_participator_is_blank);
             return false;
         }
         if (null != optionsAdapter) {
@@ -912,7 +912,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private void tryCreateArchive() {
         String title = titleView.getValue();
         if (isEmpty(title)) {
-            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_title_invalid);
+            ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_title_invalid);
             return;
         }
         mArchive.setTitle(title);
@@ -926,7 +926,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         if (!mArchive.isTemplateArchive()) {
             if (isEmpty(mArchive.getContent())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
+                ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
                 return;
             }
         }
@@ -943,19 +943,19 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 //                mArchive.setOwnType(Archive.Type.GROUP);
 //            }
 //            if (isEmpty(mArchive.getGroupId())) {
-//                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_null);
+//                ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_create_group_null);
 //                return;
 //            }
 //            if (mArchive.isDefaultHappenDate()) {
-//                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_happen_date_null);
+//                ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_create_happen_date_null);
 //                return;
 //            }
 //            if (isEmpty(mArchive.getProperty())) {
-//                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_property_null);
+//                ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_create_group_property_null);
 //                return;
 //            }
 //            if (isEmpty(mArchive.getCategory())) {
-//                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_category_null);
+//                ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_create_group_category_null);
 //                return;
 //            }
 //        } else {
@@ -965,12 +965,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 //        }
         // 个人档案需要标签
 //        if (isEmpty(mArchive.getGroupId()) && mArchive.getLabel().size() < 1) {
-//            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_label_null);
+//            ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_create_label_null);
 //            return;
 //        }
         String author = mArchive.isTemplateArchive() ? authorHolder.getValue() : Cache.cache().userName;
         if (isEmpty(author)) {
-            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_author_null);
+            ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_create_author_null);
             return;
         }
         mArchive.setSource(author);
@@ -1039,7 +1039,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private void createArchive() {
         if (isCreating) {
-            ToastHelper.make().showMsg(R.string.ui_group_archive_editor_still_creating);
+            ToastHelper.helper().showMsg(R.string.ui_group_archive_editor_still_creating);
             return;
         }
         isCreating = true;
@@ -1096,7 +1096,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     static boolean checkActivityDate(Date date) {
         if (isDateLessThanNow(date, 0)) {
             String time = Utils.format("MM月dd日HH时", date);
-            ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_group_activity_editor_time_limit_less_than_now, time));
+            ToastHelper.helper().showMsg(StringHelper.getString(R.string.ui_group_activity_editor_time_limit_less_than_now, time));
             return false;
         }
         return true;
@@ -1118,7 +1118,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     }
                     // 去掉必须24小时之后的间隔  2018-12-07
 //                    if (isDateLessThanNow(date, 24)) {
-//                        ToastHelper.make().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_24h_after_now);
+//                        ToastHelper.helper().showMsg(R.string.ui_group_activity_editor_time_limit_less_than_24h_after_now);
 //                        return;
 //                    }
                 }
@@ -1148,7 +1148,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     showUploading(true);
                     compressImage();
                 } else {
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_image_selected_nothing);
+                    ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_image_selected_nothing);
                 }
             }
         }
@@ -1281,7 +1281,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onUploadingFailed(int code, String message) {
             showUploading(false);
-            ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_text_archive_creator_editor_attachment_uploading_failed, code, message));
+            ToastHelper.helper().showMsg(StringHelper.getString(R.string.ui_text_archive_creator_editor_attachment_uploading_failed, code, message));
             if (null != uploadTimer) {
                 final String text = format("失败(%d)，用时 ", code) + Utils.format("mm:ss", System.currentTimeMillis() - uploadTimer.startTicker);
                 stopUploadTimer();
@@ -1347,7 +1347,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             public boolean onConfirm() {
                 String url = musicUrl.getValue();
                 if (isEmpty(url)) {
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_music_select_dialog_url_empty);
+                    ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_music_select_dialog_url_empty);
                     return false;
                 }
                 if (Utils.isUrl(url)) {
@@ -1415,7 +1415,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             public boolean onConfirm() {
                 String url = videoUrl.getValue();
                 if (isEmpty(url)) {
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_video_select_dialog_url_empty);
+                    ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_video_select_dialog_url_empty);
                     return false;
                 }
                 if (Utils.isUrl(url)) {
@@ -1451,7 +1451,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success) {
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_share_draft);
+                    ToastHelper.helper().showMsg(R.string.ui_text_archive_details_editor_setting_share_draft);
                     isOpenOther = true;
                     if (null != archive) {
                         mArchive = archive;
@@ -1496,7 +1496,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             isOpenOther = true;
             startActivityForResult(mIntent, request);
         } catch (ActivityNotFoundException e) {
-            ToastHelper.make().showMsg("您的手机没有相册应用");
+            ToastHelper.helper().showMsg("您的手机没有相册应用");
         }
     }
 
@@ -1532,11 +1532,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 String label = linkLabel.getValue();
                 String url = linkUrl.getValue();
                 if (isEmpty(label) || isEmpty(url)) {
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_link_dialog_invalid_input);
+                    ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_link_dialog_invalid_input);
                     return false;
                 }
                 if (!Utils.isUrl(url)) {
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_link_dialog_invalid_url);
+                    ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_link_dialog_invalid_url);
                     return false;
                 }
                 mEditor.insertLink(url, label);
@@ -1646,7 +1646,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private void chooseAttachment(Intent intent) {
         if (aAdapter.getItemCount() >= getMaxSelectable()) {
-            ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_archive_label_picker_picked_max, getMaxSelectable(), "附件"));
+            ToastHelper.helper().showMsg(StringHelper.getString(R.string.ui_archive_label_picker_picked_max, getMaxSelectable(), "附件"));
             return;
         }
         startActivityForResult(intent, REQUEST_ATTACHMENT);
@@ -1654,7 +1654,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private void prepareUploadAttachment() {
         if (uploadType == UP_ATTACH) {
-            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_attachment_dialog_uploading);
+            ToastHelper.helper().showMsg(R.string.ui_text_archive_creator_editor_attachment_dialog_uploading);
             return;
         }
         if (aAdapter.getItemCount() > 0) {
@@ -2095,7 +2095,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 public boolean onConfirm() {
                     String inputValue = helper.getInputValue();
                     if (!isEmpty(inputValue) && inputValue.length() < 2) {
-                        ToastHelper.make().showMsg(R.string.ui_group_activity_editor_additional_name_too_short);
+                        ToastHelper.helper().showMsg(R.string.ui_group_activity_editor_additional_name_too_short);
                         return false;
                     }
                     if (!isEmpty(inputValue) && !inputValue.equals(name) && !inputValue.equals("+")) {
@@ -2174,8 +2174,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
-            String groupId = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
-            String groupName = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current_name, R.string.pf_last_login_user_group_current_name_beta), "");
+            String groupId = PreferenceHelper.get(StringHelper.getString(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), Cache.cache().userId), "");
+            String groupName = PreferenceHelper.get(StringHelper.getString(Cache.get(R.string.pf_last_login_user_group_current_name, R.string.pf_last_login_user_group_current_name_beta), Cache.cache().userId), "");
             if (mArchive.isActivity()) {
                 GroupSubordinateSquadMemberPickerFragment.open(ArchiveEditorFragment.this, groupId, groupName, "", true,
                         mArchive.getGroupIdList(), mArchive.getGroSquMemberList());

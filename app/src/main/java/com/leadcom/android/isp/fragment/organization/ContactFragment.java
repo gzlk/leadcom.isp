@@ -39,7 +39,6 @@ import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -553,7 +552,7 @@ public class ContactFragment extends GroupBaseFragment {
                     //searching(searchingText);
                     mAdapter.remove(mbr);
                 }
-                ToastHelper.make().showMsg(message);
+                ToastHelper.helper().showMsg(message);
                 displayLoading(false);
             }
         }).groupMemberDelete(memberId);
@@ -574,7 +573,7 @@ public class ContactFragment extends GroupBaseFragment {
                     //searching(searchingText);
                     mAdapter.remove(mbr);
                 }
-                ToastHelper.make().showMsg(message);
+                ToastHelper.helper().showMsg(message);
                 displayLoading(false);
             }
         }).squadMemberDelete(memberId);
@@ -594,7 +593,7 @@ public class ContactFragment extends GroupBaseFragment {
                     // 设置成功之后重新拉取成员列表
                     fetchingRemoteMembers(mOrganizationId, mSquadId);
                 }
-                ToastHelper.make().showMsg(message);
+                ToastHelper.helper().showMsg(message);
             }
         }).groupMemberUpdate(member.getId(), toRole);
     }

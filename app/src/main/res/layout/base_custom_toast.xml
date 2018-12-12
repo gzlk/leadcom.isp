@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/ui_custom_toast_background"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingBottom="@dimen/ui_static_dp_5"
-    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-    android:paddingStart="@dimen/ui_base_dimen_margin_padding"
-    android:paddingTop="@dimen/ui_static_dp_5">
+    android:background="@android:color/transparent">
 
-    <com.hlk.hlklib.lib.view.CustomTextView
-        android:id="@+id/ui_base_custom_toast_icon"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
-        android:gravity="center"
-        android:textColor="@color/textColorLight"
-        android:textSize="@dimen/ui_base_text_size"
-        android:visibility="gone" />
+        android:layout_margin="@dimen/ui_static_dp_5"
+        android:background="@drawable/ui_custom_toast_background"
+        android:elevation="@dimen/ui_base_translationZ_small"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+        android:paddingTop="@dimen/ui_static_dp_5"
+        android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+        android:paddingBottom="@dimen/ui_static_dp_5">
 
-    <TextView
-        android:id="@+id/ui_base_custom_toast_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:text="@string/app_name"
-        android:textColor="@color/textColorLight"
-        android:textSize="@dimen/ui_base_text_size" />
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_base_custom_toast_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+            android:gravity="center"
+            android:textColor="@color/textColorLight"
+            android:textSize="@dimen/ui_base_text_size"
+            android:visibility="gone" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/ui_base_custom_toast_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="@string/app_name"
+            android:textSize="@dimen/ui_base_text_size" />
+
+    </LinearLayout>
+</RelativeLayout>

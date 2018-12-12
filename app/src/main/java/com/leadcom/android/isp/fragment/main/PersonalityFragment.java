@@ -668,7 +668,7 @@ public class PersonalityFragment extends GroupBaseFragment {
             public boolean onConfirm() {
                 String input = editableDialogHelper.getInputValue();
                 if (isEmpty(input)) {
-                    ToastHelper.make().showMsg(R.string.ui_text_personality_item_input_empty);
+                    ToastHelper.helper().showMsg(R.string.ui_text_personality_item_input_empty);
                     return false;
                 }
                 if (!input.equals(value)) {
@@ -749,7 +749,7 @@ public class PersonalityFragment extends GroupBaseFragment {
                 String title = selfPropertyName.getValue();
                 String value = selfPropertyValue.getValue();
                 if (isEmpty(title) || isEmpty(value)) {
-                    ToastHelper.make().showMsg(R.string.ui_text_user_property_self_defined_invalid);
+                    ToastHelper.helper().showMsg(R.string.ui_text_user_property_self_defined_invalid);
                     return false;
                 }
                 UserExtra extra;

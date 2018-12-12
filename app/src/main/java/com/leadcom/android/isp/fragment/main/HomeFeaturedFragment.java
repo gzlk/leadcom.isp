@@ -276,13 +276,13 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
             Archive archive = getArchiveByCover(url);
             if (null != archive) {
                 if (isEmpty(archive.getDocId()) && isEmpty(archive.getH5())) {
-                    ToastHelper.make().showMsg("docId is null");
+                    ToastHelper.helper().showMsg("docId is null");
                 } else {
                     // 打开档案详情页
                     ArchiveDetailsFragment.open(HomeFeaturedFragment.this, archive);
                 }
             } else {
-                ToastHelper.make().showMsg("无效的推荐内容");
+                ToastHelper.helper().showMsg("无效的推荐内容");
             }
         }
     };

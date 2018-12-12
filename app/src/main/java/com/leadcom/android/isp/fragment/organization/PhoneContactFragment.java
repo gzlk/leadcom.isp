@@ -165,7 +165,7 @@ public class PhoneContactFragment extends GroupBaseFragment {
     @OnMPermissionDenied(GRANT_CONTACTS)
     @OnMPermissionNeverAskAgain(GRANT_CONTACTS)
     public void onBasePermissionRequestFailed() {
-        ToastHelper.make().showMsg(R.string.ui_text_permission_contact_denied);
+        ToastHelper.helper().showMsg(R.string.ui_text_permission_contact_denied);
         MPermission.printMPermissionResult(false, Activity(), permissions);
         finish();
     }
@@ -422,7 +422,7 @@ public class PhoneContactFragment extends GroupBaseFragment {
                         sAdapter.get(index).setInvited(true);
                         sAdapter.notifyItemChanged(index);
                     }
-                    ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
+                    ToastHelper.helper().showMsg(R.string.ui_phone_contact_invite_success);
                 }
             }
         }).inviteToSquadFromPhoneContact(phone, mOrganizationId, mSquadId);
@@ -442,7 +442,7 @@ public class PhoneContactFragment extends GroupBaseFragment {
                         sAdapter.get(index).setInvited(true);
                         sAdapter.notifyItemChanged(index);
                     }
-                    ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
+                    ToastHelper.helper().showMsg(R.string.ui_phone_contact_invite_success);
                 }
             }
         }).inviteToGroupFromPhoneContact(phone, mOrganizationId);

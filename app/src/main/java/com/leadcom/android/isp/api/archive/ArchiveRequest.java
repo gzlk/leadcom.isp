@@ -16,7 +16,6 @@ import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.ArchivePushTarget;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.organization.ActivityOption;
-import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.SubMember;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -360,7 +359,7 @@ public class ArchiveRequest extends Request<Archive> {
      */
     public void push(ArrayList<String> groupIdList, String archiveId) {
         if (null == groupIdList || groupIdList.size() < 1) {
-            ToastHelper.make().showMsg(R.string.ui_text_archive_details_push_no_group);
+            ToastHelper.helper().showMsg(R.string.ui_text_archive_details_push_no_group);
         } else {
             JSONObject object = getDocId(archiveId);
             try {

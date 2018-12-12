@@ -667,7 +667,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     // 收藏的图片
                     Collection imgCol = (Collection) mAdapter.get(index);
                     if (isEmpty(imgCol.getContent())) {
-                        ToastHelper.make().showMsg(R.string.ui_individual_collection_item_image_url_empty);
+                        ToastHelper.helper().showMsg(R.string.ui_individual_collection_item_image_url_empty);
                     } else {
                         ImageViewerFragment.isCollected = true;
                         ImageViewerFragment.open(IndividualFragment.this, imgCol.getContent());
@@ -691,7 +691,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
             public boolean onConfirm() {
                 String input = editableDialogHelper.getInputValue();
                 if (isEmpty(input)) {
-                    ToastHelper.make().showMsg(R.string.ui_individual_collection_item_add_label_invalid);
+                    ToastHelper.helper().showMsg(R.string.ui_individual_collection_item_add_label_invalid);
                     return false;
                 } else {
                     tryEditCollectionLabel(input);
@@ -915,7 +915,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                         // 到说说图片详情页
                         MomentImagesFragment.open(IndividualFragment.this, moment.getId(), i);
                     } else {
-                        ToastHelper.make().showMsg(R.string.ui_text_moment_details_image_index_invalid);
+                        ToastHelper.helper().showMsg(R.string.ui_text_moment_details_image_index_invalid);
                     }
                 }
             }
@@ -966,7 +966,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 public boolean onConfirm() {
                     String input = editableDialogHelper.getInputValue();
                     if (isEmpty(input)) {
-                        ToastHelper.make().showMsg(R.string.ui_individual_collection_item_add_label_invalid);
+                        ToastHelper.helper().showMsg(R.string.ui_individual_collection_item_add_label_invalid);
                         return false;
                     } else {
                         Collection col = (Collection) mAdapter.get(index);

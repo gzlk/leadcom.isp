@@ -214,7 +214,7 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
             public void onResponse(Collection collection, boolean success, String message) {
                 super.onResponse(collection, success, message);
                 if (success) {
-                    ToastHelper.make().showMsg(message);
+                    ToastHelper.helper().showMsg(message);
                 }
             }
         }).add(images.get(selectedIndex) + "#.jpg");
@@ -250,7 +250,7 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
                     break;
             }
         } else {
-            ToastHelper.make().showMsg("分享失败，无法找到图片");
+            ToastHelper.helper().showMsg("分享失败，无法找到图片");
         }
     }
 
@@ -311,7 +311,7 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
         titleTextView.setText(null);
         //titleRightIcon.setText(R.string.ui_icon_more);
         if (images.size() < 1) {
-            ToastHelper.make().showMsg(R.string.ui_text_viewer_image_nothing);
+            ToastHelper.helper().showMsg(R.string.ui_text_viewer_image_nothing);
         } else {
             titleRightIcon.setText(R.string.ui_icon_more);
             initializeAdapter();

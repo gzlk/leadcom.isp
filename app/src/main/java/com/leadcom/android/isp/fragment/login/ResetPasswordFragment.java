@@ -53,7 +53,7 @@ public class ResetPasswordFragment extends BaseVerifyFragment {
         setCustomTitle(R.string.ui_text_reset_password_fragment_title);
         setLeftText(R.string.ui_text_reset_password_fragment_title_left_text);
         if (verifyType != VT_PASSWORD) {
-            ToastHelper.make(Activity()).showMsg(R.string.ui_text_reset_password_params_error);
+            ToastHelper.helper().showMsg(R.string.ui_text_reset_password_params_error);
             finish();
         }
     }
@@ -75,7 +75,7 @@ public class ResetPasswordFragment extends BaseVerifyFragment {
             value = "";
         }
         if (StringHelper.isEmpty(value)) {
-            ToastHelper.make().showMsg(R.string.ui_text_reset_password_input_hint);
+            ToastHelper.helper().showMsg(R.string.ui_text_reset_password_input_hint);
             return;
         }
         finishButton.setEnabled(false);
@@ -88,7 +88,7 @@ public class ResetPasswordFragment extends BaseVerifyFragment {
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success) {
-                    ToastHelper.make().showMsg(R.string.ui_text_reset_password_success);
+                    ToastHelper.helper().showMsg(R.string.ui_text_reset_password_success);
                     finishToSignIn();
                 } else {
                     finishButton.setEnabled(true);

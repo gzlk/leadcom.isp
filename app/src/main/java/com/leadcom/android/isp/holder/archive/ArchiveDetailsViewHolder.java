@@ -103,7 +103,7 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
             @Override
             public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
                 if (message.contains("未找到") || message.contains("删除")) {
-                    ToastHelper.make().showMsg(message);
+                    ToastHelper.helper().showMsg(message);
                     fragment().finish();
                     result.confirm();
                     return true;
@@ -185,7 +185,7 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
                 if (!NetworkUtil.isNetAvailable(App.app())) {
-                    ToastHelper.make().showMsg(R.string.ui_base_text_network_invalid);
+                    ToastHelper.helper().showMsg(R.string.ui_base_text_network_invalid);
                     return;
                 }
                 String downloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
@@ -225,13 +225,13 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
                 DownloadingHelper.helper().init(fragment().Activity()).setShowNotification(true).setOnTaskFailureListener(new OnTaskFailureListener() {
                     @Override
                     public void onFailure() {
-                        ToastHelper.make().showMsg(R.string.ui_system_updating_failure);
+                        ToastHelper.helper().showMsg(R.string.ui_system_updating_failure);
                     }
                 }).setOnTaskCompleteListener(new OnTaskCompleteListener() {
                     @Override
                     public void onComplete() {
                         //String downloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-                        //ToastHelper.make().showMsg(format("已下载到%s", downloadPath));
+                        //ToastHelper.helper().showMsg(format("已下载到%s", downloadPath));
                         log(format("downloaded, url: %s, local: %s, ext: %s, name: %s", url, local, extension, name));
                         FilePreviewHelper.previewFile(fragment().Activity(), local, name, extension);
                     }
