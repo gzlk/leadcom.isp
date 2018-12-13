@@ -523,16 +523,23 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * @param transparentStatusBar 是否需要状态栏透明化
      */
     public void openActivity(String fullClassName, Bundle params, int requestCode, boolean supportToolbar, boolean supportBackKey, boolean transparentStatusBar) {
-        Intent intent = new Intent(Activity(), ContainerActivity.class);
-        Bundle b = new Bundle();
-        b.putInt(ContainerActivity.REQUEST_CODE, requestCode);
-        b.putString(ContainerActivity.REQUEST_CLASS, fullClassName);
-        b.putBundle(ContainerActivity.REQUEST_BUNDLE, params);
-        b.putBoolean(ContainerActivity.REQUEST_TOOL_BAR, supportToolbar);
-        b.putBoolean(ContainerActivity.REQUEST_BACK_KEY, supportBackKey);
-        b.putBoolean(ContainerActivity.REQUEST_TRANSPARENT_STATUS_BAR, transparentStatusBar);
-        intent.putExtra(ContainerActivity.EXTRA_BUNDLE, b);
-        startActivityForResult(intent, requestCode);
+        long lifeTime = getLifeTime();
+        log(format("%s try to open new activity, live time: %s(%d ms), isAdded: %s, isStopped: %s, isDetached: %s", getClass().getSimpleName(),
+                Utils.format("mm:ss.SSS", lifeTime), lifeTime, isAdded(), isStopped, isDetached()));
+        if (isAdded() && !isStopped && !isDetached()) {
+            Intent intent = new Intent(Activity(), ContainerActivity.class);
+            Bundle b = new Bundle();
+            b.putInt(ContainerActivity.REQUEST_CODE, requestCode);
+            b.putString(ContainerActivity.REQUEST_CLASS, fullClassName);
+            b.putBundle(ContainerActivity.REQUEST_BUNDLE, params);
+            b.putBoolean(ContainerActivity.REQUEST_TOOL_BAR, supportToolbar);
+            b.putBoolean(ContainerActivity.REQUEST_BACK_KEY, supportBackKey);
+            b.putBoolean(ContainerActivity.REQUEST_TRANSPARENT_STATUS_BAR, transparentStatusBar);
+            intent.putExtra(ContainerActivity.EXTRA_BUNDLE, b);
+            startActivityForResult(intent, requestCode);
+        } else {
+            log("Could not start activity: notAdded or stopped or detached.");
+        }
     }
 
     @Override
@@ -560,6 +567,21 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
         if (null != stwb) {
             stwb.onNewInstance(intent);
         }
+    }
+
+    private long fragmentCreateTime = 0;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        fragmentCreateTime = System.currentTimeMillis();
+        super.onCreate(savedInstanceState);
+    }
+
+    /**
+     * 获取fragment的存活时间
+     */
+    public long getLifeTime() {
+        return System.currentTimeMillis() - fragmentCreateTime;
     }
 
     /**

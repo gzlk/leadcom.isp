@@ -84,11 +84,12 @@ public class Utils {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return "格式化错误";
+        return "格式错误";
     }
 
     public static String format(String fmt, Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat(fmt, Locale.getDefault());
+        //sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
         return sdf.format(null == date ? new Date() : date);
     }
 

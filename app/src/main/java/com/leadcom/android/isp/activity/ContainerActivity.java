@@ -6,6 +6,7 @@ import android.view.KeyEvent;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 
 import java.lang.reflect.Method;
@@ -29,7 +30,7 @@ public class ContainerActivity extends TitleActivity {
     private static final String STATIC_METHOD_NAME = "newInstance";
 
     private BaseFragment mFragment = null;
-    private String mClass = "", mParams = "";
+    private String mClass = "", mClassName = "", mParams = "";
     private Bundle mBundle;
     /**
      * 是否需要处理BackKey事件
@@ -49,7 +50,10 @@ public class ContainerActivity extends TitleActivity {
             // 需要处理返回按键事件时，必定是需要用户输入的
             isInputSupported = true;
         }
-        log(format("%s for %s", getClass().getSimpleName(), mClass));
+        if (!StringHelper.isEmpty(mClass)) {
+            mClassName = mClass.substring(mClass.lastIndexOf('.') + 1);
+        }
+        log(format("%s for %s", getClass().getSimpleName(), mClassName));
     }
 
     @Override
@@ -103,7 +107,7 @@ public class ContainerActivity extends TitleActivity {
 
     @Override
     protected void onDestroy() {
-        log(format("Fragment container activity for %s destroyed.", mClass));
+        log(format("Fragment container activity for %s destroyed.", mClassName));
         super.onDestroy();
     }
 
