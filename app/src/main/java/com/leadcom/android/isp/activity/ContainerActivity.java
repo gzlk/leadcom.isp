@@ -102,6 +102,12 @@ public class ContainerActivity extends TitleActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        log(format("Fragment container activity for %s destroyed.", mClass));
+        super.onDestroy();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         initializeFragment();

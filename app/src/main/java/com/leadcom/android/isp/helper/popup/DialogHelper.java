@@ -11,6 +11,7 @@ import android.view.WindowManager;
 
 import com.leadcom.android.isp.R;
 import com.hlk.hlklib.lib.view.CorneredButton;
+import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 
 import java.lang.ref.WeakReference;
@@ -25,6 +26,7 @@ import java.util.List;
  */
 public class DialogHelper {
 
+    private String TAG;
     private AlertDialog dialog;
     private boolean cancelable = true;
     private boolean adjustScreenWidth = false;
@@ -56,6 +58,7 @@ public class DialogHelper {
     }
 
     private DialogHelper(AppCompatActivity activity) {
+        TAG = getClass().getSimpleName();
         this.activity = new WeakReference<>(activity);
     }
 
@@ -97,6 +100,7 @@ public class DialogHelper {
     @SuppressWarnings("ConstantConditions")
     private void initializeDialog() {
         if (null == activity.get() || activity.get().isFinishing()) {
+            LogHelper.log(TAG, "Activity is null or finished, cannot showing dialog.");
             return;
         }
         dialog = new AlertDialog.Builder(activity.get()).create();

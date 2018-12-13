@@ -562,6 +562,23 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
         }
     }
 
+    /**
+     * fragment是否处于后台状态
+     */
+    protected boolean isStopped = false;
+
+    @Override
+    public void onStart() {
+        isStopped = false;
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        isStopped = true;
+        super.onStop();
+    }
+
     @Override
     public void onDestroy() {
         ShareToWeiBo.clear();

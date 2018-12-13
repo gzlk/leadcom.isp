@@ -29,26 +29,6 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 
 public class BaseActivityManagedApplication extends OrmApplication {
 
-    /**
-     * App是否转入后台运行
-     */
-    protected boolean isAppStayInBackground = false;
-
-    /**
-     * 设置app是否转入后台运行
-     */
-    public void setAppStayInBackground(boolean background) {
-        log("app stay in background: " + background);
-        isAppStayInBackground = background;
-    }
-
-    /**
-     * 查看app是否在后台运行
-     */
-    public boolean isAppStayInBackground() {
-        return isAppStayInBackground;
-    }
-
     private Map<String, Activity> activities = new HashMap<>();
 
     /**

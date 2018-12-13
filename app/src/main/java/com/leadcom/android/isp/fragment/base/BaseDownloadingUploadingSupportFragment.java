@@ -186,6 +186,10 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
      * 显示图片处理对话框
      */
     protected void showImageHandlingDialog() {
+        if (isStopped) {
+            // 如果fragment处于后台状态，则不需要显示dialog
+            return;
+        }
         if (null == progressDialog) {
             progressDialog = new ProgressDialog(Activity());
             progressDialog.setCanceledOnTouchOutside(false);
