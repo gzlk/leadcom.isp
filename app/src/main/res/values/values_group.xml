@@ -385,4 +385,10 @@
     <string name="ui_group_finance_list_title">缴费记账</string>
     <string name="ui_group_finance_list_loading_title">加载缴费记账列表，请稍候&#8230;</string>
     <string name="ui_group_finance_list_nothing">目前没有缴费记账记录</string>
+    <string name="ui_group_finance_user_payment_item_title">缴费支付凭证</string>
+    <string name="ui_group_finance_user_payment_item_amount">缴费金额</string>
+    <string name="ui_group_finance_user_payment_item_user">缴费人：</string>
+    <string name="ui_group_finance_user_payment_item_remark">留言：</string>
+    <string name="ui_group_finance_user_payment_item_time">缴费日期：</string>
+    <string name="ui_group_finance_user_payment_item_details">查看缴费单详情</string>
 </resources>

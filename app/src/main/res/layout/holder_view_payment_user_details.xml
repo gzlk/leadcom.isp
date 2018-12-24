@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.hlk.hlklib.lib.view.CorneredView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/ui_static_dp_5"
+        android:elevation="@dimen/ui_base_translationZ_small"
+        android:orientation="vertical"
+        app:cv_background="@color/textColorHintLightLightLight"
+        app:cv_background_active="@color/textColorHintLightLightLight"
+        app:cv_background_type="fill"
+        app:cv_border_size="@dimen/ui_static_dp_zero"
+        app:cv_corner_size="@dimen/ui_static_dp_8">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+            android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+            android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+            android:text="@string/ui_group_finance_user_payment_item_title"
+            android:textSize="@dimen/ui_base_text_size_small" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_static_dp_3"
+            android:gravity="center"
+            android:text="@string/ui_group_finance_user_payment_item_amount"
+            android:textColor="@color/textColorHint"
+            android:textSize="@dimen/ui_base_text_size_small" />
+
+        <TextView
+            android:id="@+id/ui_holder_view_payment_user_details_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_static_dp_3"
+            android:layout_marginBottom="@dimen/ui_static_dp_3"
+            android:gravity="center"
+            android:text="￥200.00"
+            android:textColor="@color/colorCaution"
+            android:textSize="@dimen/ui_base_text_size_large" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+            android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical|end"
+                android:text="@string/ui_group_finance_user_payment_item_user"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_small" />
+
+            <TextView
+                android:id="@+id/ui_holder_view_payment_user_details_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.5"
+                android:text="@string/app_name_default"
+                android:textSize="@dimen/ui_base_text_size_small" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+            android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical|end"
+                android:text="@string/ui_group_finance_user_payment_item_remark"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_small" />
+
+            <TextView
+                android:id="@+id/ui_holder_view_payment_user_details_remark"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.5"
+                android:text="@string/app_name_default"
+                android:textSize="@dimen/ui_base_text_size_small" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+            android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical|end"
+                android:text="@string/ui_group_finance_user_payment_item_time"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_small" />
+
+            <TextView
+                android:id="@+id/ui_holder_view_payment_user_details_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.5"
+                android:text="@string/app_name_default"
+                android:textSize="@dimen/ui_base_text_size_small" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ui_base_border_size_normal"
+            android:layout_marginTop="@dimen/ui_static_dp_5"
+            android:background="@color/textColorHintLight" />
+
+        <com.hlk.hlklib.lib.view.CorneredView
+            android:id="@+id/ui_holder_view_payment_user_details_more"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ui_static_dp_half"
+            android:layout_marginEnd="@dimen/ui_static_dp_half"
+            android:layout_marginBottom="@dimen/ui_static_dp_half"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="@dimen/ui_static_dp_8"
+            app:cv_background="@color/textColorHintLightLightLight"
+            app:cv_background_active="@color/textColorHintLight"
+            app:cv_background_type="fill"
+            app:cv_border_size="@dimen/ui_static_dp_zero"
+            app:cv_left_bottom_corner="@dimen/ui_static_dp_8"
+            app:cv_left_top_corner="@dimen/ui_static_dp_zero"
+            app:cv_right_bottom_corner="@dimen/ui_static_dp_8"
+            app:cv_right_top_corner="@dimen/ui_static_dp_zero">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ui_group_finance_user_payment_item_details"
+                android:textSize="@dimen/ui_base_text_size_small" />
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_icon_right" />
+        </com.hlk.hlklib.lib.view.CorneredView>
+    </com.hlk.hlklib.lib.view.CorneredView>
+
+</LinearLayout>

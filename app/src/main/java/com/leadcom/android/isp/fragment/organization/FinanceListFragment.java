@@ -10,7 +10,9 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.org.PaymentRequest;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
+import com.leadcom.android.isp.holder.organization.PaymentUserDetailsViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.organization.Payment;
@@ -58,13 +60,15 @@ public class FinanceListFragment extends GroupBaseFragment {
         isLoadingComplete(true);
         setNothingText(R.string.ui_group_finance_list_nothing);
         setLoadingText(R.string.ui_group_finance_list_loading_title);
-        setRightIcon(R.string.ui_icon_add);
-        setRightTitleClickListener(new OnTitleButtonClickListener() {
-            @Override
-            public void onClick() {
-                // 添加缴费记录
-            }
-        });
+        if (isEmpty(mUserId)) {
+            setRightIcon(R.string.ui_icon_add);
+            setRightTitleClickListener(new OnTitleButtonClickListener() {
+                @Override
+                public void onClick() {
+                    // 添加缴费记录
+                }
+            });
+        }
     }
 
     @Override
@@ -83,7 +87,7 @@ public class FinanceListFragment extends GroupBaseFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-        loadingGroupPayment();
+        loading();
     }
 
     @Override
@@ -97,13 +101,21 @@ public class FinanceListFragment extends GroupBaseFragment {
             mAdapter = new PaymentAdapter();
             mRecyclerView.setAdapter(mAdapter);
             mAdapter.setOnDataHandingListener(handingListener);
-            loadingGroupPayment();
+            loading();
         }
     }
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
         return true;
+    }
+
+    private void loading() {
+        if (isEmpty(mUserId)) {
+            loadingGroupPayment();
+        } else {
+            loadingUserPayments();
+        }
     }
 
     private void loadingGroupPayment() {
@@ -117,14 +129,54 @@ public class FinanceListFragment extends GroupBaseFragment {
                     list = new ArrayList<>();
                 }
                 Payment payment = new Payment();
+                payment.setUserId("592ade752f573530e45ab66e");
                 payment.setUserName("小果");
                 payment.setUserHeadPhoto("http://120.25.124.199:8008/group1/M00/00/01/eBk66lkruluAfabnAAIkQkp4t78087.jpg");
                 payment.setTotalPayAmount(12345.67);
+                payment.setPayDate("2018-12-12 12:12:12");
+                payment.setId(payment.getPayDate());
                 list.add(payment);
                 //mAdapter.setData(null == list ? new ArrayList<Payment>() : list);
                 mAdapter.setData(list);
             }
         }).list(mQueryId);
+    }
+
+    private void loadingUserPayments() {
+        displayLoading(true);
+        displayNothing(false);
+        PaymentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Payment>() {
+            @Override
+            public void onResponse(List<Payment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (null == list) {
+                    list = new ArrayList<>();
+                }
+                Payment payment = new Payment();
+                payment.setLocalDeleted(true);
+                payment.setUserId("592ade752f573530e45ab66e");
+                payment.setUserName("小果");
+                payment.setUserHeadPhoto("http://120.25.124.199:8008/group1/M00/00/01/eBk66lkruluAfabnAAIkQkp4t78087.jpg");
+                payment.setPayAmount(234.567);
+                payment.setPayDate("2018-12-18 12:12:12");
+                payment.setRemark("测试付款要这么多？");
+                payment.setId(payment.getPayDate());
+                list.add(payment);
+
+                payment = new Payment();
+                payment.setLocalDeleted(true);
+                payment.setUserId("592ade752f573530e45ab66e");
+                payment.setUserName("小果");
+                payment.setUserHeadPhoto("http://120.25.124.199:8008/group1/M00/00/01/eBk66lkruluAfabnAAIkQkp4t78087.jpg");
+                payment.setPayAmount(1234.567);
+                payment.setPayDate("2018-12-12 12:12:12");
+                payment.setRemark("测试付款");
+                payment.setId(payment.getPayDate());
+                list.add(payment);
+                //mAdapter.setData(null == list ? new ArrayList<Payment>() : list);
+                mAdapter.setData(list);
+            }
+        }).listByUserId(mQueryId, mUserId);
     }
 
     private RecyclerViewAdapter.OnDataHandingListener handingListener = new RecyclerViewAdapter.OnDataHandingListener() {
@@ -149,27 +201,51 @@ public class FinanceListFragment extends GroupBaseFragment {
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
-
+            if (isEmpty(mUserId)) {
+                // 打开某个用户的记账记录
+                FinanceListFragment.open(FinanceListFragment.this, mQueryId, mGroupName, mAdapter.get(index).getUserId());
+            } else {
+                // 打开某个记账记录详情，查看凭证图片
+            }
         }
     };
 
-    private class PaymentAdapter extends RecyclerViewAdapter<GroupDetailsViewHolder, Payment> {
+    private class PaymentAdapter extends RecyclerViewAdapter<BaseViewHolder, Payment> {
+
+        private static final int TP_USER = 0, TP_DETAILS = 1;
 
         @Override
-        public GroupDetailsViewHolder onCreateViewHolder(View itemView, int viewType) {
-            GroupDetailsViewHolder gdvh = new GroupDetailsViewHolder(itemView, FinanceListFragment.this);
-            gdvh.setOnViewHolderElementClickListener(elementClickListener);
-            return gdvh;
+        public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
+            switch (viewType) {
+                case TP_USER:
+                    GroupDetailsViewHolder gdvh = new GroupDetailsViewHolder(itemView, FinanceListFragment.this);
+                    gdvh.setOnViewHolderElementClickListener(elementClickListener);
+                    return gdvh;
+                case TP_DETAILS:
+                    PaymentUserDetailsViewHolder pudvh = new PaymentUserDetailsViewHolder(itemView, FinanceListFragment.this);
+                    pudvh.setOnViewHolderElementClickListener(elementClickListener);
+                    return pudvh;
+            }
+            return null;
         }
 
         @Override
         public int itemLayout(int viewType) {
-            return R.layout.holder_view_group_details;
+            return viewType == TP_USER ? R.layout.holder_view_group_details : R.layout.holder_view_payment_user_details;
         }
 
         @Override
-        public void onBindHolderOfView(GroupDetailsViewHolder holder, int position, @Nullable Payment item) {
-            holder.showContent(item);
+        public int getItemViewType(int position) {
+            return get(position).isLocalDeleted() ? TP_DETAILS : TP_USER;
+        }
+
+        @Override
+        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Payment item) {
+            if (holder instanceof GroupDetailsViewHolder) {
+                ((GroupDetailsViewHolder) holder).showContent(item);
+            } else if (holder instanceof PaymentUserDetailsViewHolder) {
+                ((PaymentUserDetailsViewHolder) holder).showContent(item);
+            }
         }
 
         @Override
