@@ -113,7 +113,16 @@ public class FinanceListFragment extends GroupBaseFragment {
             @Override
             public void onResponse(List<Payment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                mAdapter.setData(null == list ? new ArrayList<Payment>() : list);
+                if (null == list) {
+                    list = new ArrayList<>();
+                }
+                Payment payment = new Payment();
+                payment.setUserName("小果");
+                payment.setUserHeadPhoto("http://120.25.124.199:8008/group1/M00/00/01/eBk66lkruluAfabnAAIkQkp4t78087.jpg");
+                payment.setTotalPayAmount(12345.67);
+                list.add(payment);
+                //mAdapter.setData(null == list ? new ArrayList<Payment>() : list);
+                mAdapter.setData(list);
             }
         }).list(mQueryId);
     }

@@ -23,6 +23,7 @@ public class Payment extends Model {
     private String createDate;
     private String userId;
     private String userName;
+    private String userHeadPhoto;
     private String createUserId;
     private String groupId;
     private String squadId;
@@ -82,6 +83,14 @@ public class Payment extends Model {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getUserHeadPhoto() {
+        return userHeadPhoto;
+    }
+
+    public void setUserHeadPhoto(String userHeadPhoto) {
+        this.userHeadPhoto = userHeadPhoto;
     }
 
     public String getCreateUserId() {

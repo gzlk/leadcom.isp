@@ -9,6 +9,7 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
+import com.leadcom.android.isp.model.organization.Payment;
 import com.leadcom.android.isp.model.user.UserExtra;
 
 
@@ -64,6 +65,14 @@ public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
             value += extra.isShowing() ? "" : definedValues[extra.getShow()];
         }
         valueTextView.setText(value);
+    }
+
+    public void showContent(Payment payment) {
+        valueIcon.setVisibility(View.GONE);
+        imageView.setVisibility(View.VISIBLE);
+        imageView.displayImage(payment.getUserHeadPhoto(), getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
+        titleTextView.setText(payment.getUserName());
+        valueTextView.setText(format("%.2f", payment.getTotalPayAmount()));
     }
 
     @Click({R.id.ui_holder_view_simple_clickable, R.id.ui_tool_view_contact_button2})
