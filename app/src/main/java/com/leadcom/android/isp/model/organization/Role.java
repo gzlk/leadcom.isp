@@ -53,6 +53,14 @@ public class Role extends Model {
     }
 
     /**
+     * 查找当前用户是否是指定组织的财务管理员
+     */
+    public static boolean isFinanceManager(String groupId) {
+        Role role = Cache.cache().getGroupRole(groupId);
+        return null != role && role.isFinanceManager();
+    }
+
+    /**
      * 是否需要重新拉取角色列表
      */
     public static boolean roleGettable = true;
@@ -181,6 +189,13 @@ public class Role extends Model {
      */
     public boolean isManager() {
         return !isEmpty(rolCode) && rolCode.equals(Member.Code.GROUP_ROLE_CODE_MANAGER);
+    }
+
+    /**
+     * 是否财务管理员
+     */
+    public boolean isFinanceManager() {
+        return !isEmpty(rolCode) && rolCode.equals(Member.Code.GROUP_FINANCE_ROLE_CODE_MEMBER);
     }
 
     /**

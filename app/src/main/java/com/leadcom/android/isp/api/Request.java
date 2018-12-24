@@ -56,6 +56,10 @@ public abstract class Request<T> {
      */
     protected static final String ADD = "/add";
     /**
+     * 新增
+     */
+    protected static final String SAVE = "/save";
+    /**
      * 删除
      */
     protected static final String DELETE = "/delete";

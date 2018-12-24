@@ -79,6 +79,7 @@
         <item>4|活动管理||1|0xe62e</item>
         <item>5|组织档案||1|0xe670</item>
         <item>6|成员信息统计||1|0xe6a1</item>
+        <item>7|财务记账||1|0xe858</item>
     </string-array>
     <string name="ui_group_details_self_define">自定义创建栏目</string>
     <string name="ui_group_details_self_define_hint">栏目名称(最大限10字)</string>
@@ -373,4 +374,15 @@
     <string name="ui_group_member_duty_count_no_activity_squad">该支部没有参加过活动</string>
 
     <string name="ui_group_member_duty_details_title" formatted="false">%s - %s (%d)</string>
+
+    <string name="ui_group_finance_management_main_title">财务记账</string>
+    <string-array name="ui_group_finance_management_items">
+        <item>1|缴费记账||1|0xe6c2</item>
+        <item>2|支出记账||1|0xe6c3</item>
+        <item>3|我的审批||1|0xe6c1</item>
+        <item>4|收支统计||1|0xe6c0</item>
+    </string-array>
+    <string name="ui_group_finance_list_title">缴费记账</string>
+    <string name="ui_group_finance_list_loading_title">加载缴费记账列表，请稍候&#8230;</string>
+    <string name="ui_group_finance_list_nothing">目前没有缴费记账记录</string>
 </resources>

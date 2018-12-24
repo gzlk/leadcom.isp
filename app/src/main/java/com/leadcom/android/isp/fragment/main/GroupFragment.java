@@ -30,6 +30,7 @@ import com.leadcom.android.isp.fragment.individual.UserIntroductionFragment;
 import com.leadcom.android.isp.fragment.organization.ActivitiesFragment;
 import com.leadcom.android.isp.fragment.organization.ArchivesFragment;
 import com.leadcom.android.isp.fragment.organization.ContactFragment;
+import com.leadcom.android.isp.fragment.organization.FinanceManageFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
 import com.leadcom.android.isp.fragment.organization.GroupBaseFragment;
 import com.leadcom.android.isp.fragment.organization.GroupConstructFragment;
@@ -56,6 +57,7 @@ import com.leadcom.android.isp.model.common.Quantity;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Organization;
+import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
@@ -643,6 +645,14 @@ public class GroupFragment extends GroupBaseFragment {
         } else {
             dAdapter.remove(item);
         }
+        // 是否需要显示财务记账选项
+        item = new SimpleClickableItem(items[6]);
+        if (isNeedPermission && Role.isFinanceManager(group.getId())) {
+            // 管理员权限才显示记账记录
+            dAdapter.update(item);
+        } else {
+            dAdapter.remove(item);
+        }
         // 统战系的组织，只显示几个特定的项目
 //        if (!isNeedPermission && group.isTZ()) {
 //            item = new SimpleClickableItem(items[1]);
@@ -940,8 +950,10 @@ public class GroupFragment extends GroupBaseFragment {
                 MemberNatureMainFragment.open(this, group.getId(), group.getName(), false, "");
                 break;
             case 7:
+                // 财务记账
+                FinanceManageFragment.open(this, group.getId(), group.getName());
                 // 授权管理
-                GroupAuthorizeFragment.open(this, group.getId(), group.getName());
+                //GroupAuthorizeFragment.open(this, group.getId(), group.getName());
                 break;
             case 8:
                 break;
