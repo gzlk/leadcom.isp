@@ -215,11 +215,31 @@ public class GroupContactPickFragment extends GroupBaseFragment {
         if (null == mAdapter) {
             setLoadingText(R.string.ui_organization_contact_loading_text);
             mAdapter = new ContactAdapter();
+            mAdapter.setOnDataHandingListener(handingListener);
             mRecyclerView.setAdapter(mAdapter);
             displayLoading(true);
             fetchingMembers();
         }
     }
+
+    private RecyclerViewAdapter.OnDataHandingListener handingListener = new RecyclerViewAdapter.OnDataHandingListener() {
+        @Override
+        public void onStart() {
+
+        }
+
+        @Override
+        public void onProgress(int currentPage, int maxPage, int maxCount) {
+
+        }
+
+        @Override
+        public void onComplete() {
+            displayLoading(false);
+            stopRefreshing();
+            displayNothing(mAdapter.getItemCount() < 0);
+        }
+    };
 
     private void fetchingMembers() {
         // 查找本地该组织名下所有成员
@@ -268,13 +288,12 @@ public class GroupContactPickFragment extends GroupBaseFragment {
                     // 如果不在初始选中的列表里，则根据全选状态来设置选中与否
                     member.setSelected(isSelectAll);
                 }
-                mAdapter.update(member);
+                //mAdapter.update(member);
             }
             //mAdapter.update(list, false);
             //mAdapter.sort();
         }
-        displayLoading(false);
-        stopRefreshing();
+        mAdapter.setData(null == list ? new ArrayList<Member>() : list);
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
@@ -290,8 +309,22 @@ public class GroupContactPickFragment extends GroupBaseFragment {
             mAdapter.notifyItemChanged(index);
             isSelectAll = isAllSelected();
             selectAllIcon.setTextColor(getColor(isSelectAll ? R.color.colorPrimary : R.color.textColorHintLight));
+            if (isSinglePick && member.isSelected()) {
+                unSelectOthers(member.getUserId());
+            }
         }
     };
+
+    private void unSelectOthers(String userId) {
+        Iterator<Member> iterator = mAdapter.iterator();
+        while (iterator.hasNext()) {
+            Member member = iterator.next();
+            if (member.isSelected() && !member.getUserId().equals(userId)) {
+                member.setSelected(false);
+                mAdapter.update(member);
+            }
+        }
+    }
 
     private boolean isAllSelected() {
         Iterator<Member> iterator = mAdapter.iterator();

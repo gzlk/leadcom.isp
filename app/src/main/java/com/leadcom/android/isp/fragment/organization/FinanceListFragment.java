@@ -52,7 +52,7 @@ public class FinanceListFragment extends GroupBaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String title = StringHelper.getString(R.string.ui_group_finance_list_title);
+        String title = StringHelper.getString(R.string.ui_group_finance_1);
         if (!isEmpty(mGroupName)) {
             title = format("%s(%s)", title, mGroupName);
         }
@@ -66,6 +66,7 @@ public class FinanceListFragment extends GroupBaseFragment {
                 @Override
                 public void onClick() {
                     // 添加缴费记录
+                    PaymentCreatorFragment.open(FinanceListFragment.this, mQueryId, mGroupName, "");
                 }
             });
         }

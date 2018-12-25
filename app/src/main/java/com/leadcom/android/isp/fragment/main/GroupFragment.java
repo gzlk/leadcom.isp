@@ -30,8 +30,7 @@ import com.leadcom.android.isp.fragment.individual.UserIntroductionFragment;
 import com.leadcom.android.isp.fragment.organization.ActivitiesFragment;
 import com.leadcom.android.isp.fragment.organization.ArchivesFragment;
 import com.leadcom.android.isp.fragment.organization.ContactFragment;
-import com.leadcom.android.isp.fragment.organization.FinanceManageFragment;
-import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
+import com.leadcom.android.isp.fragment.organization.FinanceManagmentFragment;
 import com.leadcom.android.isp.fragment.organization.GroupBaseFragment;
 import com.leadcom.android.isp.fragment.organization.GroupConstructFragment;
 import com.leadcom.android.isp.fragment.organization.GroupCreateFragment;
@@ -951,7 +950,7 @@ public class GroupFragment extends GroupBaseFragment {
                 break;
             case 7:
                 // 财务记账
-                FinanceManageFragment.open(this, group.getId(), group.getName());
+                FinanceManagmentFragment.open(this, group.getId(), group.getName());
                 // 授权管理
                 //GroupAuthorizeFragment.open(this, group.getId(), group.getName());
                 break;

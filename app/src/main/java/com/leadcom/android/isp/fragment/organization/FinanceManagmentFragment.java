@@ -24,10 +24,10 @@ import com.leadcom.android.isp.model.organization.Role;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class FinanceManageFragment extends BaseSwipeRefreshSupportFragment {
+public class FinanceManagmentFragment extends BaseSwipeRefreshSupportFragment {
 
-    public static FinanceManageFragment newInstance(Bundle bundle) {
-        FinanceManageFragment fmf = new FinanceManageFragment();
+    public static FinanceManagmentFragment newInstance(Bundle bundle) {
+        FinanceManagmentFragment fmf = new FinanceManagmentFragment();
         fmf.setArguments(bundle);
         return fmf;
     }
@@ -36,7 +36,7 @@ public class FinanceManageFragment extends BaseSwipeRefreshSupportFragment {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putString(PARAM_SEARCHED, groupName);
-        fragment.openActivity(FinanceManageFragment.class.getName(), bundle, true, false);
+        fragment.openActivity(FinanceManagmentFragment.class.getName(), bundle, true, false);
     }
 
     private String mGroupName;
@@ -126,7 +126,7 @@ public class FinanceManageFragment extends BaseSwipeRefreshSupportFragment {
             switch (item.getIndex()) {
                 case 1:
                     // 缴费记账
-                    FinanceListFragment.open(FinanceManageFragment.this, mQueryId, mGroupName, "");
+                    FinanceListFragment.open(FinanceManagmentFragment.this, mQueryId, mGroupName, "");
                     break;
                 case 2:
                     // 支出记账
@@ -144,7 +144,7 @@ public class FinanceManageFragment extends BaseSwipeRefreshSupportFragment {
     private class ItemAdapter extends RecyclerViewAdapter<GroupDetailsViewHolder, SimpleClickableItem> {
         @Override
         public GroupDetailsViewHolder onCreateViewHolder(View itemView, int viewType) {
-            GroupDetailsViewHolder holder = new GroupDetailsViewHolder(itemView, FinanceManageFragment.this);
+            GroupDetailsViewHolder holder = new GroupDetailsViewHolder(itemView, FinanceManagmentFragment.this);
             holder.setOnViewHolderElementClickListener(elementClickListener);
             return holder;
         }

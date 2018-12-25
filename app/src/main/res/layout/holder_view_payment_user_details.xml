@@ -8,7 +8,7 @@
     <com.hlk.hlklib.lib.view.CorneredView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/ui_static_dp_5"
+        android:layout_margin="@dimen/ui_base_dimen_margin_padding"
         android:elevation="@dimen/ui_base_translationZ_small"
         android:orientation="vertical"
         app:cv_background="@color/textColorHintLightLightLight"

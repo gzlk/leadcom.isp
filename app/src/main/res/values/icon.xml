@@ -176,4 +176,9 @@
     <string name="ui_icon_group_squad">&#xe696;</string>
     <string name="ui_icon_group_archive">&#xe670;</string>
     <string name="ui_icon_group_upper">&#xe678;</string>
+    <!--财务相关-->
+    <string name="ui_icon_group_finance_1">&#xe6c2;</string>
+    <string name="ui_icon_group_finance_2">&#xe6c3;</string>
+    <string name="ui_icon_group_finance_3">&#xe6c1;</string>
+    <string name="ui_icon_group_finance_4">&#xe6c0;</string>
 </resources>

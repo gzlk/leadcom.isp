@@ -382,13 +382,26 @@
         <item>3|我的审批||1|0xe6c1</item>
         <item>4|收支统计||1|0xe6c0</item>
     </string-array>
-    <string name="ui_group_finance_list_title">缴费记账</string>
+    <string name="ui_group_finance_1">缴费记账</string>
+    <string name="ui_group_finance_2">支出记账</string>
+    <string name="ui_group_finance_3">我的审批</string>
+    <string name="ui_group_finance_4">收支统计</string>
     <string name="ui_group_finance_list_loading_title">加载缴费记账列表，请稍候&#8230;</string>
     <string name="ui_group_finance_list_nothing">目前没有缴费记账记录</string>
     <string name="ui_group_finance_user_payment_item_title">缴费支付凭证</string>
     <string name="ui_group_finance_user_payment_item_amount">缴费金额</string>
+    <string name="ui_group_finance_user_payment_item_amount_number">金额：</string>
     <string name="ui_group_finance_user_payment_item_user">缴费人：</string>
     <string name="ui_group_finance_user_payment_item_remark">留言：</string>
     <string name="ui_group_finance_user_payment_item_time">缴费日期：</string>
     <string name="ui_group_finance_user_payment_item_details">查看缴费单详情</string>
+    <string name="ui_group_finance_user_payment_create_title">新增缴费记录</string>
+    <string-array name="ui_group_finance_user_payment_create_items">
+        <item>1|缴费时间：|%s(可修改)|1|0xe6c2</item>
+        <item>2|缴费人：|%s(必填项)|1|0xe6c2</item>
+    </string-array>
+    <string name="ui_group_finance_user_payment_create_amount_hint">缴费金额(整数)</string>
+    <string name="ui_group_finance_user_payment_create_remark_hint">缴费说明</string>
+    <string name="ui_group_finance_user_payment_create_files_title">缴费凭证(最多8张)</string>
+    <string name="ui_group_finance_user_payment_create_amount_error">请输入正确的缴费金额(整数)</string>
 </resources>
