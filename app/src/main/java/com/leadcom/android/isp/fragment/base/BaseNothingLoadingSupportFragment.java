@@ -22,7 +22,9 @@ import com.hlk.hlklib.lib.inject.ViewId;
 public abstract class BaseNothingLoadingSupportFragment extends BaseLayoutSupportFragment {
 
     @ViewId(R.id.ui_tool_loading_container)
-    public LinearLayout loadingLayout;
+    public View loadingLayout;
+    @ViewId(R.id.ui_tool_loading_background)
+    public View loadingBackground;
     @ViewId(R.id.ui_tool_loading_text)
     public TextView loadingTextView;
 
@@ -32,9 +34,21 @@ public abstract class BaseNothingLoadingSupportFragment extends BaseLayoutSuppor
     public TextView nothingTextView;
 
     /**
+     * 是否显示loading界面的背景
+     */
+    protected boolean isShowLoadingBackground = false;
+
+    /**
      * 显示或隐藏loading界面
      */
     public void displayLoading(boolean show) {
+        displayLoading(show, isShowLoadingBackground);
+    }
+
+    /**
+     * 显示或隐藏loading界面，并显示或隐藏半透明背景
+     */
+    protected void displayLoading(boolean show, boolean background) {
         if (null != loadingLayout) {
             if (!show) {
                 Handler().postDelayed(new Runnable() {
@@ -44,6 +58,7 @@ public abstract class BaseNothingLoadingSupportFragment extends BaseLayoutSuppor
                     }
                 }, 200);
             } else {
+                loadingBackground.setVisibility(background ? View.VISIBLE : View.GONE);
                 loadingLayout.setVisibility(View.VISIBLE);
             }
         }
