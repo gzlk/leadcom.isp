@@ -17,6 +17,43 @@ import java.util.ArrayList;
  */
 public class Payment extends Model {
 
+    /**
+     * 财务类型
+     */
+    public interface Type {
+        /**
+         * 缴费
+         */
+        int PAYMENT = 1;
+        /**
+         * 支出
+         */
+        int EXPEND = 2;
+        /**
+         * 审核
+         */
+        int CHECK = 3;
+    }
+
+    /**
+     * 状态
+     */
+    public interface State {
+        /**
+         * 未处理
+         */
+        int NORMAL = 0;
+        /**
+         * 已同意
+         */
+        int AGREE = 1;
+        /**
+         * 已拒绝
+         */
+        int REJECT = 2;
+    }
+
+    private int type;
     private double payAmount, totalPayAmount;
     private String remark;
     private String payDate;
@@ -27,7 +64,36 @@ public class Payment extends Model {
     private String createUserId;
     private String groupId;
     private String squadId;
+
+    // 支出相关属性
+    private double expendAmount;
+    private String expendFlowerId;
+    private String expendDate;
+    private String certifierId, approverId, receiverId;
+    private int state, certifierState, approverState, receiverState;
+    private String title;
+
     private ArrayList<Attachment> image;
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public boolean isPayment() {
+        return type == Type.PAYMENT;
+    }
+
+    public boolean isExpend() {
+        return type == Type.EXPEND;
+    }
+
+    public boolean isCheck() {
+        return type == Type.CHECK;
+    }
 
     public double getPayAmount() {
         return payAmount;
@@ -115,6 +181,94 @@ public class Payment extends Model {
 
     public void setSquadId(String squadId) {
         this.squadId = squadId;
+    }
+
+    public double getExpendAmount() {
+        return expendAmount;
+    }
+
+    public void setExpendAmount(double expendAmount) {
+        this.expendAmount = expendAmount;
+    }
+
+    public String getExpendFlowerId() {
+        return expendFlowerId;
+    }
+
+    public void setExpendFlowerId(String expendFlowerId) {
+        this.expendFlowerId = expendFlowerId;
+    }
+
+    public String getExpendDate() {
+        return expendDate;
+    }
+
+    public void setExpendDate(String expendDate) {
+        this.expendDate = expendDate;
+    }
+
+    public String getCertifierId() {
+        return certifierId;
+    }
+
+    public void setCertifierId(String certifierId) {
+        this.certifierId = certifierId;
+    }
+
+    public String getApproverId() {
+        return approverId;
+    }
+
+    public void setApproverId(String approverId) {
+        this.approverId = approverId;
+    }
+
+    public String getReceiverId() {
+        return receiverId;
+    }
+
+    public void setReceiverId(String receiverId) {
+        this.receiverId = receiverId;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
+    public int getCertifierState() {
+        return certifierState;
+    }
+
+    public void setCertifierState(int certifierState) {
+        this.certifierState = certifierState;
+    }
+
+    public int getApproverState() {
+        return approverState;
+    }
+
+    public void setApproverState(int approverState) {
+        this.approverState = approverState;
+    }
+
+    public int getReceiverState() {
+        return receiverState;
+    }
+
+    public void setReceiverState(int receiverState) {
+        this.receiverState = receiverState;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public ArrayList<Attachment> getImage() {

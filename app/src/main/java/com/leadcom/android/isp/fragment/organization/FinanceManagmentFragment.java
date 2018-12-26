@@ -12,6 +12,7 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
+import com.leadcom.android.isp.model.organization.Payment;
 import com.leadcom.android.isp.model.organization.Role;
 
 /**
@@ -126,13 +127,15 @@ public class FinanceManagmentFragment extends BaseSwipeRefreshSupportFragment {
             switch (item.getIndex()) {
                 case 1:
                     // 缴费记账
-                    FinanceListFragment.open(FinanceManagmentFragment.this, mQueryId, mGroupName, "");
+                    FinanceListFragment.open(FinanceManagmentFragment.this, mQueryId, mGroupName, "", Payment.Type.PAYMENT);
                     break;
                 case 2:
                     // 支出记账
+                    FinanceListFragment.open(FinanceManagmentFragment.this, mQueryId, mGroupName, "", Payment.Type.EXPEND);
                     break;
                 case 3:
                     // 我的审批
+                    FinanceListFragment.open(FinanceManagmentFragment.this, mQueryId, mGroupName, "", Payment.Type.CHECK);
                     break;
                 case 4:
                     // 收支统计

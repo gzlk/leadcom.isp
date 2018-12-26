@@ -38,35 +38,35 @@ public class FinanceListFragment extends GroupBaseFragment {
         return flf;
     }
 
-    public static void open(BaseFragment fragment, String groupId, String groupName, String userId) {
+    public static void open(BaseFragment fragment, String groupId, String groupName, String userId, int type) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putString(PARAM_NAME, groupName);
         bundle.putString(PARAM_SEARCHED, userId);
+        bundle.putInt(PARAM_SELECTABLE, type);
         fragment.openActivity(FinanceListFragment.class.getName(), bundle, true, false);
     }
 
     private String mGroupName, mUserId;
+    private int mType;
     private PaymentAdapter mAdapter;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String title = StringHelper.getString(R.string.ui_group_finance_1);
+        String title = StringHelper.getString(mType == Payment.Type.PAYMENT ? R.string.ui_group_finance_1 : (mType == Payment.Type.EXPEND ? R.string.ui_group_finance_2 : R.string.ui_group_finance_3));
         if (!isEmpty(mGroupName)) {
             title = format("%s(%s)", title, mGroupName);
         }
         setCustomTitle(title);
         isLoadingComplete(true);
-        setNothingText(R.string.ui_group_finance_list_nothing);
-        setLoadingText(R.string.ui_group_finance_list_loading_title);
         if (isEmpty(mUserId)) {
             setRightIcon(R.string.ui_icon_add);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
                 public void onClick() {
                     // 添加缴费记录
-                    PaymentCreatorFragment.open(FinanceListFragment.this, mQueryId, mGroupName, "", "");
+                    PaymentCreatorFragment.open(FinanceListFragment.this, mType, mQueryId, mGroupName, "", "");
                 }
             });
         }
@@ -77,6 +77,7 @@ public class FinanceListFragment extends GroupBaseFragment {
         super.getParamsFromBundle(bundle);
         mGroupName = bundle.getString(PARAM_NAME, "");
         mUserId = bundle.getString(PARAM_SEARCHED, "");
+        mType = bundle.getInt(PARAM_SELECTABLE, Payment.Type.PAYMENT);
     }
 
     @Override
@@ -84,6 +85,7 @@ public class FinanceListFragment extends GroupBaseFragment {
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_NAME, mGroupName);
         bundle.putString(PARAM_SEARCHED, mUserId);
+        bundle.putInt(PARAM_SELECTABLE, mType);
     }
 
     @Override
@@ -112,10 +114,26 @@ public class FinanceListFragment extends GroupBaseFragment {
     }
 
     private void loading() {
-        if (isEmpty(mUserId)) {
-            loadingGroupPayment();
-        } else {
-            loadingUserPayments();
+        switch (mType) {
+            case Payment.Type.PAYMENT:
+                setNothingText(R.string.ui_group_finance_list_nothing);
+                setLoadingText(R.string.ui_group_finance_list_loading_title);
+                if (isEmpty(mUserId)) {
+                    loadingGroupPayment();
+                } else {
+                    loadingUserPayments();
+                }
+                break;
+            case Payment.Type.EXPEND:
+                setNothingText(R.string.ui_group_finance_list_expend_nothing);
+                setLoadingText(R.string.ui_group_finance_list_expend_loading_title);
+                loadingGroupExpend();
+                break;
+            case Payment.Type.CHECK:
+                setNothingText(R.string.ui_group_finance_list_check_nothing);
+                setLoadingText(R.string.ui_group_finance_list_check_loading_title);
+                loadingGroupUnchecked();
+                break;
         }
     }
 
@@ -129,9 +147,12 @@ public class FinanceListFragment extends GroupBaseFragment {
                 if (null == list) {
                     list = new ArrayList<>();
                 }
+                for (Payment payment : list) {
+                    payment.setType(mType);
+                }
                 mAdapter.setData(list);
             }
-        }).list(mQueryId);
+        }).listPayment(mQueryId);
     }
 
     private void loadingUserPayments() {
@@ -146,10 +167,47 @@ public class FinanceListFragment extends GroupBaseFragment {
                 }
                 for (Payment payment : list) {
                     payment.setLocalDeleted(true);
+                    payment.setType(mType);
                 }
                 mAdapter.setData(list);
             }
-        }).listByUserId(mQueryId, mUserId);
+        }).listPaymentByUserId(mQueryId, mUserId);
+    }
+
+    private void loadingGroupExpend() {
+        displayLoading(true);
+        displayNothing(false);
+        PaymentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Payment>() {
+            @Override
+            public void onResponse(List<Payment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (null == list) {
+                    list = new ArrayList<>();
+                }
+                for (Payment payment : list) {
+                    payment.setType(mType);
+                }
+                mAdapter.setData(list);
+            }
+        }).listExpend(mQueryId);
+    }
+
+    private void loadingGroupUnchecked() {
+        displayLoading(true);
+        displayNothing(false);
+        PaymentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Payment>() {
+            @Override
+            public void onResponse(List<Payment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (null == list) {
+                    list = new ArrayList<>();
+                }
+                for (Payment payment : list) {
+                    payment.setType(mType);
+                }
+                mAdapter.setData(list);
+            }
+        }).listUnchecked(mQueryId);
     }
 
     private RecyclerViewAdapter.OnDataHandingListener handingListener = new RecyclerViewAdapter.OnDataHandingListener() {
@@ -174,12 +232,19 @@ public class FinanceListFragment extends GroupBaseFragment {
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
+            Payment payment = mAdapter.get(index);
+            String id = mType == Payment.Type.PAYMENT ? payment.getId() : payment.getExpendFlowerId();
             if (isEmpty(mUserId)) {
-                // 打开某个用户的记账记录
-                FinanceListFragment.open(FinanceListFragment.this, mQueryId, mGroupName, mAdapter.get(index).getUserId());
+                if (payment.isPayment()) {
+                    // 打开某个用户的记账记录
+                    FinanceListFragment.open(FinanceListFragment.this, mQueryId, mGroupName, payment.getUserId(), mType);
+                } else if (payment.isExpend()) {
+                    // 打开查看支出申请详情
+                    PaymentCreatorFragment.open(FinanceListFragment.this, mType, mQueryId, mGroupName, "", id);
+                }
             } else {
                 // 打开某个记账记录详情，查看凭证图片
-                PaymentCreatorFragment.open(FinanceListFragment.this, mQueryId, mGroupName, "", mAdapter.get(index).getId());
+                PaymentCreatorFragment.open(FinanceListFragment.this, mType, mQueryId, mGroupName, "", id);
             }
         }
     };

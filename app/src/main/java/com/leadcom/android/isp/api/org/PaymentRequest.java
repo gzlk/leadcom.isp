@@ -40,6 +40,14 @@ public class PaymentRequest extends Request<Payment> {
         return format("/pay%s", action);
     }
 
+    private String expend(String action) {
+        return format("/expend%s", action);
+    }
+
+    private String check(String action) {
+        return format("/unChecked%s", action);
+    }
+
     @Override
     protected Class<Payment> getType() {
         return Payment.class;
@@ -60,16 +68,16 @@ public class PaymentRequest extends Request<Payment> {
     /**
      * 添加缴费记录
      */
-    public void add(Payment payment) {
+    public void addPayment(Payment payment) {
         directlySave = false;
         JSONObject object = new JSONObject();
         try {
             object.put("groupId", payment.getGroupId())
+                    .put("squadId", payment.getSquadId())
+                    .put("userId", payment.getUserId())
                     .put("payAmount", payment.getPayAmount())
                     .put("payDate", payment.getPayDate())
                     .put("remark", payment.getRemark())
-                    .put("squadId", payment.getSquadId())
-                    .put("userId", payment.getUserId())
                     .put("image", new JSONArray(Attachment.getJson(payment.getImage())));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -77,7 +85,7 @@ public class PaymentRequest extends Request<Payment> {
         executeHttpRequest(getRequest(SinglePayment.class, url(SAVE), object.toString(), HttpMethods.Post));
     }
 
-    public void find(String paymentId) {
+    public void findPayment(String paymentId) {
         directlySave = false;
         executeHttpRequest(getRequest(SinglePayment.class, format("%s?id=%s", url("/getById"), paymentId), "", HttpMethods.Get));
     }
@@ -85,7 +93,7 @@ public class PaymentRequest extends Request<Payment> {
     /**
      * 查询组织的缴费记录列表
      */
-    public void list(String groupId) {
+    public void listPayment(String groupId) {
         directlySave = false;
         executeHttpRequest(getRequest(ListPayment.class, format("%s?groupId=%s", url(LIST), groupId), "", HttpMethods.Get));
     }
@@ -93,8 +101,63 @@ public class PaymentRequest extends Request<Payment> {
     /**
      * 查询组织用户的缴费记录列表
      */
-    public void listByUserId(String groupId, String userId) {
+    public void listPaymentByUserId(String groupId, String userId) {
         directlySave = false;
         executeHttpRequest(getRequest(ListPayment.class, format("%s?groupId=%s&userId=%s", url("/getPayFlowerByUserId"), groupId, userId), "", HttpMethods.Get));
+    }
+
+    /**
+     * 添加支出记录
+     */
+    public void addExpend(Payment payment) {
+        directlySave = false;
+        JSONObject object = new JSONObject();
+        try {
+            object.put("groupId", payment.getGroupId())
+                    .put("squadId", payment.getSquadId())
+                    .put("userId", payment.getUserId())
+                    .put("expendAmount", payment.getExpendAmount())
+                    .put("expendDate", payment.getExpendDate())
+                    .put("receiverId", payment.getReceiverId())
+                    .put("certifierId", payment.getCertifierId())
+                    .put("approverId", payment.getApproverId())
+                    .put("remark", payment.getRemark())
+                    .put("image", new JSONArray(Attachment.getJson(payment.getImage())));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        executeHttpRequest(getRequest(SinglePayment.class, expend(SAVE), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 查询支出列表
+     */
+    public void findExpend(String expendId) {
+        directlySave = false;
+        executeHttpRequest(getRequest(SinglePayment.class, format("%s?id=%s", expend("/selectById"), expendId), "", HttpMethods.Get));
+    }
+
+    /**
+     * 查询已审批的支出列表
+     */
+    public void listExpend(String groupId) {
+        directlySave = false;
+        executeHttpRequest(getRequest(ListPayment.class, format("%s?groupId=%s", expend(LIST), groupId), "", HttpMethods.Get));
+    }
+
+    /**
+     * 更新支出状态
+     */
+    public void updateExpend(String expendId, int state) {
+        directlySave = false;
+        executeHttpRequest(getRequest(ListPayment.class, format("%s?id=%s&state=%d", expend("/updateState"), expendId, state), "", HttpMethods.Get));
+    }
+
+    /**
+     * 查询待审批列表
+     */
+    public void listUnchecked(String groupId) {
+        directlySave = false;
+        executeHttpRequest(getRequest(ListPayment.class, format("%s?groupId=%s", check(LIST), groupId), "", HttpMethods.Get));
     }
 }

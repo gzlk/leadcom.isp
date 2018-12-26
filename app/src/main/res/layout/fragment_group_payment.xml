@@ -56,6 +56,7 @@
                 android:paddingBottom="@dimen/ui_static_dp_3">
 
                 <TextView
+                    android:id="@+id/ui_group_payment_remark_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/ui_group_finance_user_payment_item_remark" />
@@ -89,6 +90,21 @@
             <include
                 android:id="@+id/ui_group_payment_user"
                 layout="@layout/holder_view_simple_clickable" />
+
+            <include
+                android:id="@+id/ui_group_payment_reference"
+                layout="@layout/holder_view_simple_clickable"
+                android:visibility="gone" />
+
+            <include
+                android:id="@+id/ui_group_payment_approver"
+                layout="@layout/holder_view_simple_clickable"
+                android:visibility="gone" />
+
+            <include
+                android:id="@+id/ui_group_payment_receiver"
+                layout="@layout/holder_view_simple_clickable"
+                android:visibility="gone" />
 
             <View
                 android:layout_width="match_parent"
