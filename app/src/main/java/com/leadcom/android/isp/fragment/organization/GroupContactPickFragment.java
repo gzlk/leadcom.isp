@@ -343,6 +343,7 @@ public class GroupContactPickFragment extends GroupBaseFragment {
         public ContactViewHolder onCreateViewHolder(View itemView, int viewType) {
             ContactViewHolder holder = new ContactViewHolder(itemView, GroupContactPickFragment.this);
             holder.showPicker(true);
+            holder.showAsSinglePicker(isSinglePick);
             holder.addOnViewHolderClickListener(onViewHolderClickListener);
             return holder;
         }

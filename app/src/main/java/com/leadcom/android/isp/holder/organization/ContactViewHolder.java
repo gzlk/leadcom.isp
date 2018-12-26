@@ -64,6 +64,7 @@ public class ContactViewHolder extends BaseViewHolder {
     private boolean buttonInviteVisible = false;
     private boolean pickerVisible = false;
     private boolean phoneVisible = false;
+    private boolean isSinglePicker = false;
     private int imageSize;
 
     public ContactViewHolder(View itemView, BaseFragment fragment) {
@@ -206,6 +207,7 @@ public class ContactViewHolder extends BaseViewHolder {
         params.width = getDimension(R.dimen.ui_static_dp_20) * leftBlankTimes;
         leftBlank.setLayoutParams(params);
 
+        iconPicker.setText(!isSinglePicker ? R.string.ui_icon_select_solid : (member.isSelected() ? R.string.ui_icon_radio_selected : R.string.ui_icon_radio_unselected));
         iconPicker.setVisibility(pickerVisible ? View.VISIBLE : View.GONE);
         iconPicker.setTextColor(getColor(member.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
     }
@@ -228,6 +230,13 @@ public class ContactViewHolder extends BaseViewHolder {
 
     public void showPicker(boolean shown) {
         pickerVisible = shown;
+    }
+
+    /**
+     * 是否显示为单一选择方式
+     */
+    public void showAsSinglePicker(boolean asSingle) {
+        isSinglePicker = asSingle;
     }
 
     private int leftBlankTimes = 1;
