@@ -11,10 +11,12 @@
     android:gravity="center"
     android:visibility="gone">
 
-    <View
+    <RelativeLayout
         android:id="@+id/ui_tool_loading_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:alpha="0"
+        android:animateLayoutChanges="true"
         android:background="@color/transparent_20"
         android:visibility="gone" />
 

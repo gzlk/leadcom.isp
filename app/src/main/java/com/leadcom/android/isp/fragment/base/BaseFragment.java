@@ -953,7 +953,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     }
 
     /**
-     * 将yyyy-MM-dd HH:mm:ss的时间格式化成yyyy年mm月dd日 hh时mm分
+     * 将yyyy-MM-dd HH:mm:ss的时间格式化成yyyy年mm月dd日 HH时mm分
      */
     public String formatDateTime(String date) {
         return formatDate(date, R.string.ui_base_text_date_time_format_chs_min);

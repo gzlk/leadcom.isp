@@ -54,19 +54,20 @@ public class FinanceListFragment extends GroupBaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        isShowLoadingBackground = true;
         String title = StringHelper.getString(mType == Payment.Type.PAYMENT ? R.string.ui_group_finance_1 : (mType == Payment.Type.EXPEND ? R.string.ui_group_finance_2 : R.string.ui_group_finance_3));
         if (!isEmpty(mGroupName)) {
             title = format("%s(%s)", title, mGroupName);
         }
         setCustomTitle(title);
         isLoadingComplete(true);
-        if (isEmpty(mUserId)) {
+        if (isEmpty(mUserId) && (mType == Payment.Type.PAYMENT || mType == Payment.Type.EXPEND)) {
             setRightIcon(R.string.ui_icon_add);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
                 public void onClick() {
                     // 添加缴费记录
-                    PaymentCreatorFragment.open(FinanceListFragment.this, mType, mQueryId, mGroupName, "", "");
+                    FinanceCreatorFragment.open(FinanceListFragment.this, mType, mQueryId, mGroupName, "", "");
                 }
             });
         }
@@ -186,7 +187,20 @@ public class FinanceListFragment extends GroupBaseFragment {
                 }
                 for (Payment payment : list) {
                     payment.setType(mType);
+                    payment.setLocalDeleted(true);
                 }
+                Payment payment = new Payment();
+                payment.setTitle("xxx支出单");
+                payment.setExpendDate("2018-12-20 00:00:00");
+                payment.setExpendFlowerId(payment.getExpendDate());
+                payment.setType(mType);
+                list.add(payment);
+                payment = new Payment();
+                payment.setTitle("yyy支出单");
+                payment.setExpendDate("2018-12-30 00:00:01");
+                payment.setExpendFlowerId(payment.getExpendDate());
+                payment.setType(mType);
+                list.add(payment);
                 mAdapter.setData(list);
             }
         }).listExpend(mQueryId);
@@ -204,7 +218,22 @@ public class FinanceListFragment extends GroupBaseFragment {
                 }
                 for (Payment payment : list) {
                     payment.setType(mType);
+                    payment.setLocalDeleted(true);
                 }
+                Payment payment = new Payment();
+                payment.setTitle("xxx支出单");
+                payment.setExpendDate("2018-12-20 00:00:00");
+                payment.setExpendFlowerId(payment.getExpendDate());
+                payment.setState(Payment.State.NORMAL);
+                payment.setType(mType);
+                list.add(payment);
+                payment = new Payment();
+                payment.setTitle("yyy支出单");
+                payment.setExpendDate("2018-12-30 00:00:01");
+                payment.setExpendFlowerId(payment.getExpendDate());
+                payment.setState(Payment.State.NORMAL);
+                payment.setType(mType);
+                list.add(payment);
                 mAdapter.setData(list);
             }
         }).listUnchecked(mQueryId);
@@ -240,11 +269,11 @@ public class FinanceListFragment extends GroupBaseFragment {
                     FinanceListFragment.open(FinanceListFragment.this, mQueryId, mGroupName, payment.getUserId(), mType);
                 } else if (payment.isExpend()) {
                     // 打开查看支出申请详情
-                    PaymentCreatorFragment.open(FinanceListFragment.this, mType, mQueryId, mGroupName, "", id);
+                    FinanceCreatorFragment.open(FinanceListFragment.this, mType, mQueryId, mGroupName, "", id);
                 }
             } else {
                 // 打开某个记账记录详情，查看凭证图片
-                PaymentCreatorFragment.open(FinanceListFragment.this, mType, mQueryId, mGroupName, "", id);
+                FinanceCreatorFragment.open(FinanceListFragment.this, mType, mQueryId, mGroupName, "", id);
             }
         }
     };

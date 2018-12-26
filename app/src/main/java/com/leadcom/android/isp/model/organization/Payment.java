@@ -53,6 +53,22 @@ public class Payment extends Model {
         int REJECT = 2;
     }
 
+    public String getStateText(int state) {
+        switch (state) {
+            case State.AGREE:
+                return "已同意";
+            case State.NORMAL:
+                return "未处理";
+            case State.REJECT:
+                return "已拒绝";
+        }
+        return "";
+    }
+
+    public String getColoredStateText(int state) {
+        return format("<font color=\"#db7763\">(%s)</font>", getStateText(state));
+    }
+
     private int type;
     private double payAmount, totalPayAmount;
     private String remark;
@@ -69,8 +85,8 @@ public class Payment extends Model {
     private double expendAmount;
     private String expendFlowerId;
     private String expendDate;
-    private String certifierId, approverId, receiverId;
-    private int state, certifierState, approverState, receiverState;
+    private String certifierId, approverId, receiverId, certifierName, approverName, receiverName;
+    private int state, status, certifierState, approverState, receiverState;
     private String title;
 
     private ArrayList<Attachment> image;
@@ -215,12 +231,28 @@ public class Payment extends Model {
         this.certifierId = certifierId;
     }
 
+    public String getCertifierName() {
+        return certifierName;
+    }
+
+    public void setCertifierName(String certifierName) {
+        this.certifierName = certifierName;
+    }
+
     public String getApproverId() {
         return approverId;
     }
 
     public void setApproverId(String approverId) {
         this.approverId = approverId;
+    }
+
+    public String getApproverName() {
+        return approverName;
+    }
+
+    public void setApproverName(String approverName) {
+        this.approverName = approverName;
     }
 
     public String getReceiverId() {
@@ -231,12 +263,28 @@ public class Payment extends Model {
         this.receiverId = receiverId;
     }
 
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
     public int getState() {
         return state;
     }
 
     public void setState(int state) {
         this.state = state;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public int getCertifierState() {

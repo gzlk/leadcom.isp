@@ -57,7 +57,7 @@ import java.util.Iterator;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class PaymentCreatorFragment extends BaseImageSelectableSupportFragment {
+public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
 
     private static final String PARAM_TYPE = "pcf_param_type";
     private static final String PARAM_NAME = "pcf_param_name";
@@ -65,8 +65,8 @@ public class PaymentCreatorFragment extends BaseImageSelectableSupportFragment {
     private static final String PARAM_PAYMENT = "pcf_param_payment";
     private static final String PARAM_CHOOSE = "pcf_param_choose";
 
-    public static PaymentCreatorFragment newInstance(Bundle bundle) {
-        PaymentCreatorFragment pcf = new PaymentCreatorFragment();
+    public static FinanceCreatorFragment newInstance(Bundle bundle) {
+        FinanceCreatorFragment pcf = new FinanceCreatorFragment();
         pcf.setArguments(bundle);
         return pcf;
     }
@@ -78,7 +78,7 @@ public class PaymentCreatorFragment extends BaseImageSelectableSupportFragment {
         bundle.putString(PARAM_NAME, groupName);
         bundle.putString(PARAM_SQUAD, squadId);
         bundle.putString(PARAM_PAYMENT, paymentId);
-        fragment.openActivity(PaymentCreatorFragment.class.getName(), bundle, REQUEST_CREATE, true, true);
+        fragment.openActivity(FinanceCreatorFragment.class.getName(), bundle, REQUEST_CREATE, true, true);
     }
 
     @ViewId(R.id.ui_group_payment_amount)
@@ -115,7 +115,12 @@ public class PaymentCreatorFragment extends BaseImageSelectableSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setCustomTitle(R.string.ui_group_finance_user_payment_create_title);
+        String title = StringHelper.getString(mPayment.isPayment() ? R.string.ui_group_finance_user_payment_create_title_payment : R.string.ui_group_finance_user_payment_create_title_expend);
+        if (!isEmpty(mPaymentId)) {
+            assert title != null;
+            title = title.replace("添加", "");
+        }
+        setCustomTitle(title);
 
         isShowLoadingBackground = true;
         // 压缩图片
@@ -144,11 +149,12 @@ public class PaymentCreatorFragment extends BaseImageSelectableSupportFragment {
             imageClearView.setVisibility(View.GONE);
         }
         // 显示或隐藏相关选项
-        userView.setVisibility(mPayment.isPayment() ? View.VISIBLE : View.GONE);
-        referenceView.setVisibility(!mPayment.isPayment() ? View.VISIBLE : View.GONE);
-        approverView.setVisibility(!mPayment.isPayment() ? View.VISIBLE : View.GONE);
-        receiverView.setVisibility(!mPayment.isPayment() ? View.VISIBLE : View.GONE);
-        remarkTitle.setText(mPayment.isPayment() ? R.string.ui_group_finance_user_payment_item_remark : R.string.ui_group_finance_user_payment_item_remark_expend);
+        boolean isPayment = mPayment.isPayment();
+        userView.setVisibility(isPayment ? View.VISIBLE : View.GONE);
+        referenceView.setVisibility(!isPayment ? View.VISIBLE : View.GONE);
+        approverView.setVisibility(!isPayment ? View.VISIBLE : View.GONE);
+        receiverView.setVisibility(!isPayment ? View.VISIBLE : View.GONE);
+        remarkTitle.setText(isPayment ? R.string.ui_group_finance_user_payment_item_remark : R.string.ui_group_finance_user_payment_item_remark_expend);
     }
 
     private void tryCreatePayment() {
@@ -199,6 +205,7 @@ public class PaymentCreatorFragment extends BaseImageSelectableSupportFragment {
                     resultData(payment.getId());
                 } else {
                     displayLoading(false);
+                    isCreating = false;
                 }
             }
         });
@@ -238,6 +245,7 @@ public class PaymentCreatorFragment extends BaseImageSelectableSupportFragment {
         @Override
         public void onUploadingFailed(int code, String message) {
             ToastHelper.helper().showMsg(StringHelper.getString(R.string.ui_text_archive_creator_editor_attachment_uploading_failed, code, message));
+            isCreating = false;
             displayLoading(false);
         }
     };
@@ -292,7 +300,7 @@ public class PaymentCreatorFragment extends BaseImageSelectableSupportFragment {
                 case 6:// 收款人
                     // 选择缴费人
                     chooseType = index;
-                    GroupContactPickFragment.open(PaymentCreatorFragment.this, mQueryId, false, true, null);
+                    GroupContactPickFragment.open(FinanceCreatorFragment.this, mQueryId, false, true, null);
                     break;
             }
         }
@@ -311,7 +319,7 @@ public class PaymentCreatorFragment extends BaseImageSelectableSupportFragment {
                     mPayment.setExpendDate(time);
                     timeHolder.showContent(format(items[mPayment.isPayment() ? 0 : 2], formatDate(time) + "(可修改)"));
                 }
-            }).show(PaymentCreatorFragment.this, true, true, true, true, mPayment.getPayDate());
+            }).show(FinanceCreatorFragment.this, true, true, true, true, mPayment.getPayDate());
         }
     };
 
@@ -327,19 +335,22 @@ public class PaymentCreatorFragment extends BaseImageSelectableSupportFragment {
                     if (chooseType == 2) {
                         mPayment.setUserId(member.getUserId());
                         mPayment.setUserName(member.getUserName());
-                        userHolder.showContent(format(items[chooseType - 1], mPayment.getUserName() + "(必填项)"));
+                        userHolder.showContent(format(items[1], mPayment.getUserName() + "(必填项)"));
                     } else if (chooseType == 4) {
                         // 证明人
                         mPayment.setCertifierId(member.getUserId());
-                        referHolder.showContent(format(items[3], member.getUserName() + "(必填项)"));
+                        mPayment.setCertifierName(member.getUserName());
+                        referHolder.showContent(format(items[3], mPayment.getCertifierName() + "(必填项)"));
                     } else if (chooseType == 5) {
                         // 审批人
                         mPayment.setApproverId(member.getUserId());
-                        referHolder.showContent(format(items[4], member.getUserName() + "(必填项)"));
+                        mPayment.setApproverName(member.getUserName());
+                        apprHolder.showContent(format(items[4], mPayment.getApproverName() + "(必填项)"));
                     } else if (chooseType == 6) {
                         // 收款人
                         mPayment.setReceiverId(member.getUserId());
-                        referHolder.showContent(format(items[5], member.getUserName() + "(必填项)"));
+                        mPayment.setReceiverName(member.getUserName());
+                        recvrHolder.showContent(format(items[5], mPayment.getReceiverName() + "(必填项)"));
                     }
                 }
                 break;
@@ -360,7 +371,7 @@ public class PaymentCreatorFragment extends BaseImageSelectableSupportFragment {
             userHolder.showContent(format(items[1], mPayment.getUserName()));
         }
         if (null == referHolder) {
-            referHolder = new SimpleClickableViewHolder(receiverView, this);
+            referHolder = new SimpleClickableViewHolder(referenceView, this);
             referHolder.addOnViewHolderClickListener(clickListener);
             referHolder.showContent(format(items[3], "选择证明人(必填项)"));
         }
@@ -389,27 +400,42 @@ public class PaymentCreatorFragment extends BaseImageSelectableSupportFragment {
 
     private void loadingPaymentDetails() {
         displayLoading(true);
-        PaymentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Payment>() {
+        PaymentRequest request = PaymentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Payment>() {
+
+            private String getState(int state) {
+                return mPayment.getColoredStateText(state);
+            }
+
             @Override
             public void onResponse(Payment payment, boolean success, String message) {
                 super.onResponse(payment, success, message);
                 displayLoading(false);
                 if (success) {
                     mPayment = payment;
+                    mPayment.setType(mType);
                     for (Attachment attachment : mPayment.getImage()) {
                         imageAdapter.add(attachment);
                     }
-                    timeHolder.showContent(format(items[0], formatDate(mPayment.getPayDate())));
+                    timeHolder.showContent(format(items[mPayment.isPayment() ? 0 : 2], formatDate(mPayment.getPayDate())));
                     userHolder.showContent(format(items[1], mPayment.getUserName()));
+                    referHolder.showContent(format(items[3], mPayment.getCertifierName() + getState(mPayment.getCertifierState())));
+                    apprHolder.showContent(format(items[4], mPayment.getApproverName() + getState(mPayment.getApproverState())));
+                    recvrHolder.showContent(format(items[5], mPayment.getReceiverName() + getState(mPayment.getReceiverState())));
                     amountView.setText(String.valueOf(mPayment.getPayAmount()));
                     amountView.setFocusable(false);
+                    amountView.setLongClickable(false);
                     remarkView.setValue(mPayment.getRemark());
                     remarkView.setEditable(false);
                 } else {
                     finish();
                 }
             }
-        }).findPayment(mPaymentId);
+        });
+        if (mPayment.isPayment()) {
+            request.findPayment(mPaymentId);
+        } else {
+            request.findExpend(mPaymentId);
+        }
     }
 
     @Override
@@ -523,7 +549,7 @@ public class PaymentCreatorFragment extends BaseImageSelectableSupportFragment {
             if (Utils.isUrl(url)) {
                 ImageViewerFragment.isCollected = true;
                 // 如果是以上传了的图片则调用imageViewer预览
-                ImageViewerFragment.open(PaymentCreatorFragment.this, url);
+                ImageViewerFragment.open(FinanceCreatorFragment.this, url);
             } else {
                 // 相册预览
                 startGalleryPreview(waitingFroCompressImages.indexOf(url));
@@ -617,13 +643,13 @@ public class PaymentCreatorFragment extends BaseImageSelectableSupportFragment {
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
             gotSize();
             if (viewType == VT_IMAGE) {
-                ImageViewHolder holder = new ImageViewHolder(itemView, PaymentCreatorFragment.this);
+                ImageViewHolder holder = new ImageViewHolder(itemView, FinanceCreatorFragment.this);
                 holder.addOnDeleteClickListener(imageDeleteClickListener);
                 holder.addOnImageClickListener(imagePreviewClickListener);
                 holder.setImageSize(width, height);
                 return holder;
             } else {
-                return new AttacherItemViewHolder(itemView, PaymentCreatorFragment.this)
+                return new AttacherItemViewHolder(itemView, FinanceCreatorFragment.this)
                         .setSize(width, height).setOnViewHolderClickListener(imagePickClickListener);
             }
         }

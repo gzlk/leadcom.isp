@@ -73,12 +73,14 @@ public class PaymentRequest extends Request<Payment> {
         JSONObject object = new JSONObject();
         try {
             object.put("groupId", payment.getGroupId())
-                    .put("squadId", payment.getSquadId())
                     .put("userId", payment.getUserId())
                     .put("payAmount", payment.getPayAmount())
                     .put("payDate", payment.getPayDate())
                     .put("remark", payment.getRemark())
                     .put("image", new JSONArray(Attachment.getJson(payment.getImage())));
+            if (!isEmpty(payment.getSquadId())) {
+                object.put("squadId", payment.getSquadId());
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -114,7 +116,6 @@ public class PaymentRequest extends Request<Payment> {
         JSONObject object = new JSONObject();
         try {
             object.put("groupId", payment.getGroupId())
-                    .put("squadId", payment.getSquadId())
                     .put("userId", payment.getUserId())
                     .put("expendAmount", payment.getExpendAmount())
                     .put("expendDate", payment.getExpendDate())
@@ -123,6 +124,9 @@ public class PaymentRequest extends Request<Payment> {
                     .put("approverId", payment.getApproverId())
                     .put("remark", payment.getRemark())
                     .put("image", new JSONArray(Attachment.getJson(payment.getImage())));
+            if (!isEmpty(payment.getSquadId())) {
+                object.put("squadId", payment.getSquadId());
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

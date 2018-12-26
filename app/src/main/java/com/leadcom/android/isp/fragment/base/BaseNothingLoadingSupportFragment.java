@@ -1,5 +1,7 @@
 package com.leadcom.android.isp.fragment.base;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.text.Html;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -45,19 +47,31 @@ public abstract class BaseNothingLoadingSupportFragment extends BaseLayoutSuppor
         displayLoading(show, isShowLoadingBackground);
     }
 
+    private static final int DURATION = 200;
+
     /**
      * 显示或隐藏loading界面，并显示或隐藏半透明背景
      */
     protected void displayLoading(boolean show, boolean background) {
         if (null != loadingLayout) {
             if (!show) {
+                if (background) {
+                    loadingBackground.animate().alpha(0).setDuration(DURATION).setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            loadingBackground.setVisibility(View.GONE);
+                        }
+                    }).start();
+                }
                 Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         loadingLayout.setVisibility(View.GONE);
                     }
-                }, 200);
+                }, DURATION);
             } else {
+                loadingBackground.setAlpha(1);
                 loadingBackground.setVisibility(background ? View.VISIBLE : View.GONE);
                 loadingLayout.setVisibility(View.VISIBLE);
             }

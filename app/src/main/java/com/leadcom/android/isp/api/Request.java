@@ -230,13 +230,17 @@ public abstract class Request<T> {
         String baseUrl = format("%s/%s", App.app().isNormalApi() ? BaseApi.URL : BaseApi.URL1, BaseApi.API_VER);
         final String url = format("%s%s", baseUrl, action);
         final long start = Utils.timestamp();
+        if (!Cache.isReleasable()) {
+            // 打印url请求记录
+            log(format("try to fetching http resources: \nhost: %s\naction: %s\naccessToken: %s, terminalType: android\nbody: %s", baseUrl, action, accessToken, (isEmpty(body) ? "null" : body)));
+        }
         OnHttpListener<Api<T>> listener = new OnHttpListener<Api<T>>() {
 
             @Override
             public void onSucceed(Api<T> data, Response<Api<T>> response) {
                 super.onSucceed(data, response);
                 long end = Utils.timestamp();
-                log(format("\nurl(%s): %s\naccessToken: %s, terminalType: android\n%ssuccess: %s(%s,%s, time used: %dms)\nraw: %s", methods, url, accessToken,
+                log(format("http respond: \nurl(%s): %s\naccessToken: %s, terminalType: android\n%ssuccess: %s(%s,%s, time used: %dms)\nraw: %s", methods, url, accessToken,
                         (isEmpty(body) ? "" : format("body: %s\n", body)), (null == data ? "null" : data.success()),
                         (null == data ? "null" : data.getCode()), (null == data ? "null" : data.getMsg()), (end - start), response.getRawString()));
                 if (null != data) {
@@ -337,8 +341,8 @@ public abstract class Request<T> {
             public void onFailed(int code, String message) {
                 super.onFailed(code, message);
                 long end = Utils.timestamp();
-                log(format("url(%s): %s\naccessToken: %s, terminalType: android%s\nsuccess: failed(time used: %dms)", methods, url, accessToken,
-                        (isEmpty(body) ? "" : format("\nbody: %s\n", body)), (end - start)));
+                log(format("url(%s): %s\naccessToken: %s, terminalType: android\n%ssuccess: failed(time used: %dms)", methods, url, accessToken,
+                        (isEmpty(body) ? "" : format("body: %s\n", body)), (end - start)));
                 fireFailedListenerEvents("");
             }
         };

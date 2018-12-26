@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.holder.home;
 
+import android.text.Html;
 import android.view.View;
 
 import com.hlk.hlklib.lib.inject.Click;
@@ -69,7 +70,7 @@ public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
 
     public void showContent(Payment payment) {
         valueIcon.setVisibility(View.GONE);
-        imageView.setVisibility(payment.isPayment() ? View.VISIBLE : View.GONE);
+        imageView.setVisibility(View.VISIBLE);
         String header = payment.getUserHeadPhoto();
         if (isEmpty(header) || header.length() < 20) {
             header = "drawable://" + R.drawable.img_default_user_header;
@@ -80,7 +81,7 @@ public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
             valueTextView.setText(format("%.2f", payment.getTotalPayAmount()));
         } else {
             titleTextView.setText(payment.getTitle());
-            valueTextView.setText(fragment().formatDateTime(payment.getExpendDate()));
+            valueTextView.setText(Html.fromHtml(fragment().formatDate(payment.getExpendDate(), "yyyy年MM月dd日 HH:mm") + payment.getColoredStateText(payment.getState())));
         }
     }
 

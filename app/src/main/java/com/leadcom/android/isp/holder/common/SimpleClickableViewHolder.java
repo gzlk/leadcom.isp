@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.holder.common;
 
+import android.text.Html;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
@@ -159,7 +160,7 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
                 valueIcon.setVisibility(View.VISIBLE);
             }
         } else {
-            valueTextView.setText(value);
+            valueTextView.setText(Html.fromHtml(value));
             if (null != valueIcon) {
                 valueIcon.setVisibility(View.GONE);
             }

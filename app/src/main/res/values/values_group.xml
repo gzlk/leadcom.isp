@@ -400,7 +400,8 @@
     <string name="ui_group_finance_user_payment_item_remark_expend">事由：</string>
     <string name="ui_group_finance_user_payment_item_time">缴费日期：</string>
     <string name="ui_group_finance_user_payment_item_details">查看缴费单详情</string>
-    <string name="ui_group_finance_user_payment_create_title">新增缴费记录</string>
+    <string name="ui_group_finance_user_payment_create_title_payment">添加缴费记录</string>
+    <string name="ui_group_finance_user_payment_create_title_expend">添加支出记录</string>
     <string-array name="ui_group_finance_user_payment_create_items">
         <item>1|缴费时间：|%s|1|0xe6c2</item>
         <item>2|缴费人：|%s|1|0xe6c2</item>
@@ -412,11 +413,11 @@
     <string name="ui_group_finance_user_payment_create_amount_hint">缴费金额(整数)</string>
     <string name="ui_group_finance_user_payment_create_remark_hint">费用说明</string>
     <string name="ui_group_finance_user_payment_create_files_title">缴费凭证(最多8张)</string>
-    <string name="ui_group_finance_user_payment_create_files_title1">缴费凭证</string>
+    <string name="ui_group_finance_user_payment_create_files_title1">凭证</string>
     <string name="ui_group_finance_user_payment_create_amount_error">请输入正确的缴费金额(整数)</string>
-    <string name="ui_group_finance_user_payment_create_reference_error">请输入正确的缴费金额(整数)</string>
-    <string name="ui_group_finance_user_payment_create_approver_error">请输入正确的缴费金额(整数)</string>
-    <string name="ui_group_finance_user_payment_create_receiver_error">请输入正确的缴费金额(整数)</string>
-    <string name="ui_group_finance_user_payment_creating">请稍候&#8230;</string>
+    <string name="ui_group_finance_user_payment_create_reference_error">请选择证明人</string>
+    <string name="ui_group_finance_user_payment_create_approver_error">请选择审核人</string>
+    <string name="ui_group_finance_user_payment_create_receiver_error">请选择收款人</string>
+    <string name="ui_group_finance_user_payment_creating">正在等待网络请求，请稍候&#8230;</string>
     <string name="ui_group_finance_user_payment_fetch_failed">获取缴费记录失败</string>
 </resources>
