@@ -397,11 +397,14 @@
     <string name="ui_group_finance_user_payment_item_details">查看缴费单详情</string>
     <string name="ui_group_finance_user_payment_create_title">新增缴费记录</string>
     <string-array name="ui_group_finance_user_payment_create_items">
-        <item>1|缴费时间：|%s(可修改)|1|0xe6c2</item>
-        <item>2|缴费人：|%s(必填项)|1|0xe6c2</item>
+        <item>1|缴费时间：|%s|1|0xe6c2</item>
+        <item>2|缴费人：|%s|1|0xe6c2</item>
     </string-array>
     <string name="ui_group_finance_user_payment_create_amount_hint">缴费金额(整数)</string>
     <string name="ui_group_finance_user_payment_create_remark_hint">缴费说明</string>
     <string name="ui_group_finance_user_payment_create_files_title">缴费凭证(最多8张)</string>
+    <string name="ui_group_finance_user_payment_create_files_title1">缴费凭证</string>
     <string name="ui_group_finance_user_payment_create_amount_error">请输入正确的缴费金额(整数)</string>
+    <string name="ui_group_finance_user_payment_creating">请稍候&#8230;</string>
+    <string name="ui_group_finance_user_payment_fetch_failed">获取缴费记录失败</string>
 </resources>

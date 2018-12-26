@@ -70,7 +70,11 @@ public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
     public void showContent(Payment payment) {
         valueIcon.setVisibility(View.GONE);
         imageView.setVisibility(View.VISIBLE);
-        imageView.displayImage(payment.getUserHeadPhoto(), getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
+        String header = payment.getUserHeadPhoto();
+        if (isEmpty(header) || header.length() < 20) {
+            header = "drawable://" + R.drawable.img_default_user_header;
+        }
+        imageView.displayImage(header, getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
         titleTextView.setText(payment.getUserName());
         valueTextView.setText(format("%.2f", payment.getTotalPayAmount()));
     }

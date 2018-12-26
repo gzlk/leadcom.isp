@@ -9,6 +9,7 @@ import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.organization.Payment;
 import com.litesuits.http.request.param.HttpMethods;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,26 +60,33 @@ public class PaymentRequest extends Request<Payment> {
     /**
      * 添加缴费记录
      */
-    public void save(Payment payment) {
+    public void add(Payment payment) {
+        directlySave = false;
         JSONObject object = new JSONObject();
         try {
             object.put("groupId", payment.getGroupId())
                     .put("payAmount", payment.getPayAmount())
                     .put("payDate", payment.getPayDate())
                     .put("remark", payment.getRemark())
-                    .put("squadId", checkNull(payment.getSquadId()))
+                    .put("squadId", payment.getSquadId())
                     .put("userId", payment.getUserId())
-                    .put("image", Attachment.getJson(payment.getImage()));
+                    .put("image", new JSONArray(Attachment.getJson(payment.getImage())));
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        executeHttpRequest(getRequest(ListPayment.class, url(SAVE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SinglePayment.class, url(SAVE), object.toString(), HttpMethods.Post));
+    }
+
+    public void find(String paymentId) {
+        directlySave = false;
+        executeHttpRequest(getRequest(SinglePayment.class, format("%s?id=%s", url("/getById"), paymentId), "", HttpMethods.Get));
     }
 
     /**
      * 查询组织的缴费记录列表
      */
     public void list(String groupId) {
+        directlySave = false;
         executeHttpRequest(getRequest(ListPayment.class, format("%s?groupId=%s", url(LIST), groupId), "", HttpMethods.Get));
     }
 
@@ -86,6 +94,7 @@ public class PaymentRequest extends Request<Payment> {
      * 查询组织用户的缴费记录列表
      */
     public void listByUserId(String groupId, String userId) {
+        directlySave = false;
         executeHttpRequest(getRequest(ListPayment.class, format("%s?groupId=%s&userId=%s", url("/getPayFlowerByUserId"), groupId, userId), "", HttpMethods.Get));
     }
 }

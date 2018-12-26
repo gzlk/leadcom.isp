@@ -2390,7 +2390,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public int itemLayout(int viewType) {
-            return viewType == VT_IMAGE ? R.layout.holder_view_image : R.layout.holder_view_attach_item;
+            return viewType == VT_IMAGE ? R.layout.holder_view_image_deletable : R.layout.holder_view_attach_item;
         }
 
         @Override

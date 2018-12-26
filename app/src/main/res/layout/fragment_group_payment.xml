@@ -1,138 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/ui_base_dimen_margin_padding"
-            android:paddingTop="@dimen/ui_static_dp_3"
-            android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-            android:paddingBottom="@dimen/ui_static_dp_3">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ui_group_finance_user_payment_item_amount_number" />
-
-            <com.hlk.hlklib.lib.view.CorneredEditText
-                android:id="@+id/ui_group_payment_amount"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/ui_group_finance_user_payment_create_amount_hint"
-                android:padding="@dimen/ui_static_dp_8"
-                android:singleLine="true"
-                app:cet_active_border="@color/colorBorderActive"
-                app:cet_corner_size="@dimen/ui_static_dp_5"
-                app:cet_max_length="10"
-                app:cet_normal_border="@color/textColorHintLightLight"
-                app:cet_value_extract_regex="@string/regex_normal_input_filter_num_only"
-                app:cet_value_verify_regex="@string/regex_verify_money_verify" />
-
-        </LinearLayout>
-
-        <include layout="@layout/tool_view_half_line_horizontal" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/ui_base_dimen_margin_padding"
-            android:paddingTop="@dimen/ui_static_dp_3"
-            android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-            android:paddingBottom="@dimen/ui_static_dp_3">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ui_group_finance_user_payment_item_remark" />
-
-            <com.hlk.hlklib.lib.view.ClearEditText
-                android:id="@+id/ui_group_payment_remark"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:cet_edit_active_border="@color/colorBorderActive"
-                app:cet_edit_corner_size="@dimen/ui_static_dp_5"
-                app:cet_edit_count_input="true"
-                app:cet_edit_count_input_text_color="@color/textColorHint"
-                app:cet_edit_count_input_text_size="@dimen/ui_base_text_size_tiny"
-                app:cet_edit_hint="@string/ui_group_finance_user_payment_create_remark_hint"
-                app:cet_edit_max_lines="4"
-                app:cet_edit_maximum_height="@dimen/ui_static_dp_80"
-                app:cet_edit_minimum_height="@dimen/ui_static_dp_60"
-                app:cet_edit_normal_border="@color/textColorHintLightLight"
-                app:cet_edit_padding="@dimen/ui_static_dp_8"
-                app:cet_edit_value_max_length="100" />
-
-        </LinearLayout>
-
-        <include layout="@layout/tool_view_half_line_horizontal" />
-
-        <include
-            android:id="@+id/ui_group_payment_time"
-            layout="@layout/holder_view_simple_clickable" />
-
-        <include
-            android:id="@+id/ui_group_payment_user"
-            layout="@layout/holder_view_simple_clickable" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/ui_static_dp_2"
-            android:background="@color/windowBackground" />
-
-        <LinearLayout
-            android:id="@+id/ui_archive_creator_rich_editor_template_images_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
-                android:layout_marginTop="@dimen/ui_static_dp_5"
-                android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
-                android:layout_marginBottom="@dimen/ui_static_dp_5"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+                android:paddingTop="@dimen/ui_static_dp_3"
+                android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+                android:paddingBottom="@dimen/ui_static_dp_3">
 
                 <TextView
-                    android:id="@+id/ui_archive_creator_rich_editor_attachment_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ui_group_finance_user_payment_item_amount_number" />
+
+                <com.hlk.hlklib.lib.view.CorneredEditText
+                    android:id="@+id/ui_group_payment_amount"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/ui_group_finance_user_payment_create_files_title" />
+                    android:hint="@string/ui_group_finance_user_payment_create_amount_hint"
+                    android:padding="@dimen/ui_static_dp_8"
+                    android:singleLine="true"
+                    app:cet_active_border="@color/colorBorderActive"
+                    app:cet_corner_size="@dimen/ui_static_dp_5"
+                    app:cet_max_length="10"
+                    app:cet_normal_border="@color/textColorHintLightLight"
+                    app:cet_value_extract_regex="@string/regex_normal_input_filter_num_only"
+                    app:cet_value_verify_regex="@string/regex_verify_money_verify" />
 
-                <com.hlk.hlklib.lib.view.CustomTextView
-                    android:id="@+id/ui_archive_creator_rich_editor_template_images_clear"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:rotation="45"
-                    android:text="@string/ui_icon_add"
-                    android:textColor="@color/textColorHint"
-                    app:ctv_active_color="@color/colorPrimary"
-                    app:ctv_normal_color="@color/textColorHint" />
             </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/ui_archive_creator_rich_editor_template_images"
+            <include layout="@layout/tool_view_half_line_horizontal" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
-                android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding" />
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+                android:paddingTop="@dimen/ui_static_dp_3"
+                android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+                android:paddingBottom="@dimen/ui_static_dp_3">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ui_group_finance_user_payment_item_remark" />
+
+                <com.hlk.hlklib.lib.view.ClearEditText
+                    android:id="@+id/ui_group_payment_remark"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:cet_edit_active_border="@color/colorBorderActive"
+                    app:cet_edit_corner_size="@dimen/ui_static_dp_5"
+                    app:cet_edit_count_input="true"
+                    app:cet_edit_count_input_text_color="@color/textColorHint"
+                    app:cet_edit_count_input_text_size="@dimen/ui_base_text_size_tiny"
+                    app:cet_edit_hint="@string/ui_group_finance_user_payment_create_remark_hint"
+                    app:cet_edit_max_lines="4"
+                    app:cet_edit_maximum_height="@dimen/ui_static_dp_80"
+                    app:cet_edit_minimum_height="@dimen/ui_static_dp_60"
+                    app:cet_edit_normal_border="@color/textColorHintLightLight"
+                    app:cet_edit_padding="@dimen/ui_static_dp_8"
+                    app:cet_edit_value_max_length="100" />
+
+            </LinearLayout>
+
+            <include layout="@layout/tool_view_half_line_horizontal" />
+
+            <include
+                android:id="@+id/ui_group_payment_time"
+                layout="@layout/holder_view_simple_clickable" />
+
+            <include
+                android:id="@+id/ui_group_payment_user"
+                layout="@layout/holder_view_simple_clickable" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/ui_static_dp_2"
+                android:background="@color/windowBackground" />
+
+            <LinearLayout
+                android:id="@+id/ui_archive_creator_rich_editor_template_images_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                    android:layout_marginTop="@dimen/ui_static_dp_5"
+                    android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+                    android:layout_marginBottom="@dimen/ui_static_dp_5"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/ui_archive_creator_rich_editor_attachment_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/ui_group_finance_user_payment_create_files_title" />
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_archive_creator_rich_editor_template_images_clear"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:rotation="45"
+                        android:text="@string/ui_icon_add"
+                        android:textColor="@color/textColorHint"
+                        app:ctv_active_color="@color/colorPrimary"
+                        app:ctv_normal_color="@color/textColorHint" />
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/ui_archive_creator_rich_editor_template_images"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                    android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.NestedScrollView>
+
+    <include layout="@layout/tool_view_loading" />
+</RelativeLayout>

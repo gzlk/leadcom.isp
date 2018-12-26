@@ -948,7 +948,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     public String formatDate(String date, String toFormat) {
         if (isEmpty(date)) return "";
         // 增加秒的格式化内容，避免ios不同的格式化公式
-        String ss = (date.length() < 19) ? ":00" : "";
+        String ss = date.length() <= 10 ? " 00:00:00" : ((date.length() < 19) ? ":00" : "");
         return Utils.format(date + ss, StringHelper.getString(R.string.ui_base_text_date_time_format), toFormat);
     }
 
@@ -966,7 +966,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
         if (isEmpty(time)) return "";
         int len = time.length();
         // 增加秒的格式化内容，避免ios不同的格式化公式
-        String ss = (len <= 10) ? " 00:00:10" : ((time.length() < 19) ? ":00" : "");
+        String ss = (len <= 10) ? " 00:00:00" : ((time.length() < 19) ? ":00" : "");
         return Utils.formatTimeAgo(StringHelper.getString(R.string.ui_base_text_date_time_format), time + ss);
     }
 

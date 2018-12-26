@@ -38,6 +38,10 @@ public class PaymentUserDetailsViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Payment payment) {
+        String header = payment.getUserHeadPhoto();
+        if (isEmpty(header) || header.length() < 20) {
+            header = "drawable://" + R.drawable.img_default_user_header;
+        }
         amountView.setText(format("￥%.2f", payment.getPayAmount()));
         nameView.setText(payment.getUserName());
         remarkView.setText(payment.getRemark());

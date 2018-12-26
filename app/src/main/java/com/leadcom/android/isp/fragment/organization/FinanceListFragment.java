@@ -66,7 +66,7 @@ public class FinanceListFragment extends GroupBaseFragment {
                 @Override
                 public void onClick() {
                     // 添加缴费记录
-                    PaymentCreatorFragment.open(FinanceListFragment.this, mQueryId, mGroupName, "");
+                    PaymentCreatorFragment.open(FinanceListFragment.this, mQueryId, mGroupName, "", "");
                 }
             });
         }
@@ -129,15 +129,6 @@ public class FinanceListFragment extends GroupBaseFragment {
                 if (null == list) {
                     list = new ArrayList<>();
                 }
-                Payment payment = new Payment();
-                payment.setUserId("592ade752f573530e45ab66e");
-                payment.setUserName("小果");
-                payment.setUserHeadPhoto("http://120.25.124.199:8008/group1/M00/00/01/eBk66lkruluAfabnAAIkQkp4t78087.jpg");
-                payment.setTotalPayAmount(12345.67);
-                payment.setPayDate("2018-12-12 12:12:12");
-                payment.setId(payment.getPayDate());
-                list.add(payment);
-                //mAdapter.setData(null == list ? new ArrayList<Payment>() : list);
                 mAdapter.setData(list);
             }
         }).list(mQueryId);
@@ -153,28 +144,9 @@ public class FinanceListFragment extends GroupBaseFragment {
                 if (null == list) {
                     list = new ArrayList<>();
                 }
-                Payment payment = new Payment();
-                payment.setLocalDeleted(true);
-                payment.setUserId("592ade752f573530e45ab66e");
-                payment.setUserName("小果");
-                payment.setUserHeadPhoto("http://120.25.124.199:8008/group1/M00/00/01/eBk66lkruluAfabnAAIkQkp4t78087.jpg");
-                payment.setPayAmount(234.567);
-                payment.setPayDate("2018-12-18 12:12:12");
-                payment.setRemark("测试付款要这么多？");
-                payment.setId(payment.getPayDate());
-                list.add(payment);
-
-                payment = new Payment();
-                payment.setLocalDeleted(true);
-                payment.setUserId("592ade752f573530e45ab66e");
-                payment.setUserName("小果");
-                payment.setUserHeadPhoto("http://120.25.124.199:8008/group1/M00/00/01/eBk66lkruluAfabnAAIkQkp4t78087.jpg");
-                payment.setPayAmount(1234.567);
-                payment.setPayDate("2018-12-12 12:12:12");
-                payment.setRemark("测试付款");
-                payment.setId(payment.getPayDate());
-                list.add(payment);
-                //mAdapter.setData(null == list ? new ArrayList<Payment>() : list);
+                for (Payment payment : list) {
+                    payment.setLocalDeleted(true);
+                }
                 mAdapter.setData(list);
             }
         }).listByUserId(mQueryId, mUserId);
@@ -207,6 +179,7 @@ public class FinanceListFragment extends GroupBaseFragment {
                 FinanceListFragment.open(FinanceListFragment.this, mQueryId, mGroupName, mAdapter.get(index).getUserId());
             } else {
                 // 打开某个记账记录详情，查看凭证图片
+                PaymentCreatorFragment.open(FinanceListFragment.this, mQueryId, mGroupName, "", mAdapter.get(index).getId());
             }
         }
     };
