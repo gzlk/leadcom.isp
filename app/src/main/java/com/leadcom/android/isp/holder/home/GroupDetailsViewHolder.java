@@ -80,8 +80,9 @@ public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
             titleTextView.setText(payment.getUserName());
             valueTextView.setText(format("%.2f", payment.getTotalPayAmount()));
         } else {
-            titleTextView.setText(payment.getTitle());
-            valueTextView.setText(Html.fromHtml(fragment().formatDate(payment.getExpendDate(), "yyyy年MM月dd日 HH:mm") + payment.getColoredStateText(payment.getState())));
+            header = payment.getTitle();
+            titleTextView.setText(isEmpty(header) ? "无标题" : header);
+            valueTextView.setText(Html.fromHtml(fragment().formatDate(payment.getExpendDate(), R.string.ui_base_text_date_time_format_hhmm) + payment.getColoredStateText(payment.getState())));
         }
     }
 

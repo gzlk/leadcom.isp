@@ -154,7 +154,7 @@ public class PaymentRequest extends Request<Payment> {
      */
     public void updateExpend(String expendId, int state) {
         directlySave = false;
-        executeHttpRequest(getRequest(ListPayment.class, format("%s?id=%s&state=%d", expend("/updateState"), expendId, state), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SinglePayment.class, format("%s?id=%s&state=%d", expend("/updateState"), expendId, state), "", HttpMethods.Get));
     }
 
     /**

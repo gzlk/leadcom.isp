@@ -14,6 +14,7 @@ import com.hlk.hlklib.layoutmanager.CustomGridLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
+import com.hlk.hlklib.lib.view.CorneredButton;
 import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
@@ -25,7 +26,6 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseImageSelectableSupportFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DateTimeHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
@@ -41,11 +41,12 @@ import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.organization.Payment;
 import com.leadcom.android.isp.model.organization.SubMember;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-
+import java.util.Locale;
 
 /**
  * <b>功能描述：</b>缴费记录创建页面<br />
@@ -64,6 +65,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
     private static final String PARAM_SQUAD = "pcf_param_squad";
     private static final String PARAM_PAYMENT = "pcf_param_payment";
     private static final String PARAM_CHOOSE = "pcf_param_choose";
+    private static final String PARAM_USER = "pcf_param_user";
 
     public static FinanceCreatorFragment newInstance(Bundle bundle) {
         FinanceCreatorFragment pcf = new FinanceCreatorFragment();
@@ -71,20 +73,25 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
         return pcf;
     }
 
-    public static void open(BaseFragment fragment, int type, String groupId, String groupName, String squadId, String paymentId) {
+    public static void open(BaseFragment fragment, int type, String groupId, String groupName, String squadId, String paymentId, String userId) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putInt(PARAM_TYPE, type);
         bundle.putString(PARAM_NAME, groupName);
         bundle.putString(PARAM_SQUAD, squadId);
         bundle.putString(PARAM_PAYMENT, paymentId);
+        bundle.putString(PARAM_USER, userId);
         fragment.openActivity(FinanceCreatorFragment.class.getName(), bundle, REQUEST_CREATE, true, true);
     }
 
+    @ViewId(R.id.ui_group_payment_amount_text)
+    private TextView amountText;
     @ViewId(R.id.ui_group_payment_amount)
     private CorneredEditText amountView;
     @ViewId(R.id.ui_group_payment_remark_title)
     private TextView remarkTitle;
+    @ViewId(R.id.ui_group_payment_remark_text)
+    private TextView remarkText;
     @ViewId(R.id.ui_group_payment_remark)
     private ClearEditText remarkView;
     @ViewId(R.id.ui_group_payment_time)
@@ -97,25 +104,33 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
     private View approverView;
     @ViewId(R.id.ui_group_payment_receiver)
     private View receiverView;
+    @ViewId(R.id.ui_archive_creator_rich_editor_template_images_layout)
+    private View attachmentsView;
     @ViewId(R.id.ui_archive_creator_rich_editor_attachment_title)
     private TextView attachmentsTitle;
     @ViewId(R.id.ui_archive_creator_rich_editor_template_images_clear)
     private View imageClearView;
     @ViewId(R.id.ui_archive_creator_rich_editor_template_images)
     private RecyclerView templateRecyclerView;
+    @ViewId(R.id.ui_group_payment_amount_controls)
+    private View controlView;
+    @ViewId(R.id.ui_group_payment_amount_agree)
+    private CorneredButton agreeButton;
+    @ViewId(R.id.ui_group_payment_amount_agree)
+    private CorneredButton rejectButton;
 
     private ImageAdapter imageAdapter;
     private Payment mPayment;
     private int mType;
     private SimpleClickableViewHolder timeHolder, userHolder, referHolder, apprHolder, recvrHolder;
-    private String mGroupName, mSquadId, mPaymentId;
-    private String[] items;
+    private String mGroupName, mSquadId, mPaymentId, mUserId;
+    private String[] items, warnings;
     private boolean isCreating = false;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String title = StringHelper.getString(mPayment.isPayment() ? R.string.ui_group_finance_user_payment_create_title_payment : R.string.ui_group_finance_user_payment_create_title_expend);
+        String title = StringHelper.getString(mPayment.isPayment() ? R.string.ui_group_finance_user_payment_create_title_payment : (mPayment.isExpend() ? R.string.ui_group_finance_user_payment_create_title_expend : R.string.ui_group_finance_user_payment_create_title_check));
         if (!isEmpty(mPaymentId)) {
             assert title != null;
             title = title.replace("添加", "");
@@ -135,8 +150,9 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
         setOnFileUploadingListener(uploadingListener);
         amountView.setInputTypePassword(false);
         items = StringHelper.getStringArray(R.array.ui_group_finance_user_payment_create_items);
-
-        if (isEmpty(mPaymentId)) {
+        warnings = StringHelper.getStringArray(R.array.ui_group_finace_user_payment_create_user_control);
+        boolean isEmptyId = isEmpty(mPaymentId);
+        if (isEmptyId) {
             setRightText(R.string.ui_base_text_commit);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
@@ -144,11 +160,18 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                     tryCreatePayment();
                 }
             });
+            attachmentsView.setVisibility(View.VISIBLE);
         } else {
             attachmentsTitle.setText(R.string.ui_group_finance_user_payment_create_files_title1);
             imageClearView.setVisibility(View.GONE);
         }
         // 显示或隐藏相关选项
+        amountText.setVisibility(isEmptyId ? View.GONE : View.VISIBLE);
+        amountView.setVisibility(isEmptyId ? View.VISIBLE : View.GONE);
+        remarkText.setVisibility(isEmptyId ? View.GONE : View.VISIBLE);
+        remarkView.setVisibility(isEmptyId ? View.VISIBLE : View.GONE);
+        //controlView.setVisibility(isEmptyId ? View.GONE : (mPayment.isCheck() ? View.VISIBLE : View.GONE));
+
         boolean isPayment = mPayment.isPayment();
         userView.setVisibility(isPayment ? View.VISIBLE : View.GONE);
         referenceView.setVisibility(!isPayment ? View.VISIBLE : View.GONE);
@@ -160,7 +183,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
     private void tryCreatePayment() {
         String string = amountView.getValue();
         if (isEmpty(string)) {
-            ToastHelper.helper().showMsg(R.string.ui_group_finance_user_payment_create_amount_error);
+            showWarningText(R.string.ui_group_finance_user_payment_create_amount_error);
             return;
         }
         mPayment.setPayAmount(Double.valueOf(string));
@@ -168,22 +191,23 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
         mPayment.setRemark(remarkView.getValue());
         if (mPayment.isExpend()) {
             if (isEmpty(mPayment.getCertifierId())) {
-                ToastHelper.helper().showMsg(R.string.ui_group_finance_user_payment_create_reference_error);
+                showWarningText(R.string.ui_group_finance_user_payment_create_reference_error);
                 return;
             }
             if (isEmpty(mPayment.getApproverId())) {
-                ToastHelper.helper().showMsg(R.string.ui_group_finance_user_payment_create_approver_error);
+                showWarningText(R.string.ui_group_finance_user_payment_create_approver_error);
                 return;
             }
             if (isEmpty(mPayment.getReceiverId())) {
-                ToastHelper.helper().showMsg(R.string.ui_group_finance_user_payment_create_receiver_error);
+                showWarningText(R.string.ui_group_finance_user_payment_create_receiver_error);
                 return;
             }
         }
         if (isCreating) {
-            ToastHelper.helper().showMsg(R.string.ui_group_finance_user_payment_creating);
+            showWarningText(R.string.ui_group_finance_user_payment_creating_waiting);
             return;
         }
+        showWarningText(0);
         isCreating = true;
         if (waitingFroCompressImages.size() > 0) {
             setLoadingText(R.string.ui_base_text_uploading);
@@ -206,6 +230,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                 } else {
                     displayLoading(false);
                     isCreating = false;
+                    showWarningText(R.string.ui_group_finance_user_payment_creating_failed);
                 }
             }
         });
@@ -244,7 +269,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
 
         @Override
         public void onUploadingFailed(int code, String message) {
-            ToastHelper.helper().showMsg(StringHelper.getString(R.string.ui_text_archive_creator_editor_attachment_uploading_failed, code, message));
+            showWarningText(StringHelper.getString(R.string.ui_text_archive_creator_editor_attachment_uploading_failed, code, message));
             isCreating = false;
             displayLoading(false);
         }
@@ -263,6 +288,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
         mSquadId = bundle.getString(PARAM_SQUAD, "");
         mPaymentId = bundle.getString(PARAM_PAYMENT, "");
         chooseType = bundle.getInt(PARAM_CHOOSE, 0);
+        mUserId = bundle.getString(PARAM_USER, "");
         mPayment = (Payment) bundle.getSerializable(PARAM_JSON);
         tryCreateEmptyPayment();
     }
@@ -274,6 +300,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
             mPayment.setId(mPaymentId);
             // 默认当前日期为缴费日期，可以修改
             mPayment.setPayDate(Utils.formatDateOfNow("yyyy-MM-dd 00:00:00"));
+            mPayment.setExpendDate(mPayment.getPayDate());
             mPayment.setUserId(Cache.cache().userId);
             mPayment.setUserName(Cache.cache().userName);
             mPayment.setGroupId(mQueryId);
@@ -323,6 +350,10 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
         }
     };
 
+    private boolean isEquals(String text1, String text2) {
+        return !isEmpty(text1) && !isEmpty(text2) && text1.equals(text2);
+    }
+
     @Override
     public void onActivityResult(int requestCode, Intent data) {
         switch (requestCode) {
@@ -337,16 +368,56 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                         mPayment.setUserName(member.getUserName());
                         userHolder.showContent(format(items[1], mPayment.getUserName() + "(必填项)"));
                     } else if (chooseType == 4) {
+                        if (isEquals(member.getUserId(), mPayment.getUserId())) {
+                            showWarningText(warnings[0]);
+                            return;
+                        }
+                        if (isEquals(member.getUserId(), mPayment.getApproverId())) {
+                            showWarningText(warnings[1]);
+                            return;
+                        }
+                        if (isEquals(member.getUserId(), mPayment.getReceiverId())) {
+                            showWarningText(warnings[2]);
+                            return;
+                        }
+                        showWarningText(0);
                         // 证明人
                         mPayment.setCertifierId(member.getUserId());
                         mPayment.setCertifierName(member.getUserName());
                         referHolder.showContent(format(items[3], mPayment.getCertifierName() + "(必填项)"));
                     } else if (chooseType == 5) {
                         // 审批人
+                        if (isEquals(member.getUserId(), mPayment.getCertifierId())) {
+                            showWarningText(warnings[0]);
+                            return;
+                        }
+                        if (isEquals(member.getUserId(), mPayment.getUserId())) {
+                            showWarningText(warnings[1]);
+                            return;
+                        }
+                        if (isEquals(member.getUserId(), mPayment.getReceiverId())) {
+                            showWarningText(warnings[2]);
+                            return;
+                        }
+
+                        showWarningText(0);
                         mPayment.setApproverId(member.getUserId());
                         mPayment.setApproverName(member.getUserName());
                         apprHolder.showContent(format(items[4], mPayment.getApproverName() + "(必填项)"));
                     } else if (chooseType == 6) {
+                        if (isEquals(member.getUserId(), mPayment.getCertifierId())) {
+                            showWarningText(warnings[0]);
+                            return;
+                        }
+                        if (isEquals(member.getUserId(), mPayment.getApproverId())) {
+                            showWarningText(warnings[1]);
+                            return;
+                        }
+                        if (isEquals(member.getUserId(), mPayment.getUserId())) {
+                            showWarningText(warnings[2]);
+                            return;
+                        }
+                        showWarningText(0);
                         // 收款人
                         mPayment.setReceiverId(member.getUserId());
                         mPayment.setReceiverName(member.getUserName());
@@ -360,10 +431,12 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
 
     @Override
     public void doingInResume() {
+        boolean isEmptyId = isEmpty(mPaymentId);
         if (null == timeHolder) {
             timeHolder = new SimpleClickableViewHolder(timeView, this);
             timeHolder.addOnViewHolderClickListener(clickListener);
-            timeHolder.showContent(format(items[mPayment.isPayment() ? 0 : 2], formatDate(mPayment.getPayDate())));
+            boolean isPayment = mPayment.isPayment();
+            timeHolder.showContent(format(items[isPayment ? 0 : 2], formatDate(isPayment ? mPayment.getPayDate() : mPayment.getExpendDate())) + (isEmptyId ? "(可修改)" : ""));
         }
         if (null == userHolder) {
             userHolder = new SimpleClickableViewHolder(userView, this);
@@ -373,17 +446,17 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
         if (null == referHolder) {
             referHolder = new SimpleClickableViewHolder(referenceView, this);
             referHolder.addOnViewHolderClickListener(clickListener);
-            referHolder.showContent(format(items[3], "选择证明人(必填项)"));
+            referHolder.showContent(format(items[3], (isEmptyId ? "选择证明人(必填项)" : "")));
         }
         if (null == apprHolder) {
             apprHolder = new SimpleClickableViewHolder(approverView, this);
             apprHolder.addOnViewHolderClickListener(clickListener);
-            apprHolder.showContent(format(items[4], "选择审批人(必填项)"));
+            apprHolder.showContent(format(items[4], (isEmptyId ? "选择审批人(必填项)" : "")));
         }
         if (null == recvrHolder) {
             recvrHolder = new SimpleClickableViewHolder(receiverView, this);
             recvrHolder.addOnViewHolderClickListener(clickListener);
-            recvrHolder.showContent(format(items[5], "选择收款人(必填项)"));
+            recvrHolder.showContent(format(items[5], (isEmptyId ? "选择收款人(必填项)" : "")));
         }
         if (null == imageAdapter) {
             // 模板档案的图片
@@ -413,19 +486,22 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                 if (success) {
                     mPayment = payment;
                     mPayment.setType(mType);
+                    attachmentsView.setVisibility(mPayment.getImage().size() > 0 ? View.VISIBLE : View.GONE);
                     for (Attachment attachment : mPayment.getImage()) {
                         imageAdapter.add(attachment);
                     }
-                    timeHolder.showContent(format(items[mPayment.isPayment() ? 0 : 2], formatDate(mPayment.getPayDate())));
+                    boolean isPayment = mPayment.isPayment();
+                    timeHolder.showContent(format(items[isPayment ? 0 : 2], formatDate(isPayment ? mPayment.getPayDate() : mPayment.getExpendDate())));
                     userHolder.showContent(format(items[1], mPayment.getUserName()));
                     referHolder.showContent(format(items[3], mPayment.getCertifierName() + getState(mPayment.getCertifierState())));
                     apprHolder.showContent(format(items[4], mPayment.getApproverName() + getState(mPayment.getApproverState())));
                     recvrHolder.showContent(format(items[5], mPayment.getReceiverName() + getState(mPayment.getReceiverState())));
-                    amountView.setText(String.valueOf(mPayment.getPayAmount()));
-                    amountView.setFocusable(false);
-                    amountView.setLongClickable(false);
-                    remarkView.setValue(mPayment.getRemark());
-                    remarkView.setEditable(false);
+                    double amount = isPayment ? mPayment.getPayAmount() : mPayment.getExpendAmount();
+                    amountText.setText(NumberFormat.getCurrencyInstance(Locale.CHINA).format(amount));
+                    remarkText.setText(mPayment.getRemark());
+                    if (mPayment.isCheck() && mPayment.getStatus() < Payment.State.AGREE && mUserId.equals(Cache.cache().userId)) {
+                        controlView.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     finish();
                 }
@@ -451,6 +527,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
         bundle.putString(PARAM_SQUAD, mSquadId);
         bundle.putString(PARAM_PAYMENT, mPaymentId);
         bundle.putInt(PARAM_CHOOSE, chooseType);
+        bundle.putString(PARAM_USER, mUserId);
         bundle.putSerializable(PARAM_JSON, mPayment);
     }
 
@@ -459,7 +536,9 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
 
     }
 
-    @Click({R.id.ui_archive_creator_rich_editor_template_images_clear})
+    @Click({R.id.ui_archive_creator_rich_editor_template_images_clear,
+            R.id.ui_group_payment_amount_agree,
+            R.id.ui_group_payment_amount_disagree})
     private void viewClick(View view) {
         switch (view.getId()) {
             case R.id.ui_archive_creator_rich_editor_template_images_clear:
@@ -467,7 +546,53 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                     warningClearSelectedImages();
                 }
                 break;
+            case R.id.ui_group_payment_amount_agree:
+                // 同意
+                warningUpdateExpend(Payment.State.AGREE);
+                break;
+            case R.id.ui_group_payment_amount_disagree:
+                // 拒绝
+                warningUpdateExpend(Payment.State.REJECT);
+                break;
         }
+    }
+
+    private void warningUpdateExpend(final int state) {
+        agreeButton.setEnabled(false);
+        rejectButton.setEnabled(false);
+        String text = format("<font color=\"#%s\">%s</font>", (state == Payment.State.AGREE ? "3eb135" : "fe4848"), mPayment.getUnhandledStateText(state));
+        String title = StringHelper.getString(R.string.ui_group_finance_user_payment_approve_warning, text);
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                updateExpend(state);
+                return true;
+            }
+        }).setOnDialogCancelListener(new DialogHelper.OnDialogCancelListener() {
+            @Override
+            public void onCancel() {
+                agreeButton.setEnabled(true);
+                rejectButton.setEnabled(true);
+            }
+        }).setTitleText(title).setConfirmText(R.string.ui_base_text_continue).setCancelText(R.string.ui_base_text_cancel).show();
+    }
+
+    private void updateExpend(final int state) {
+        setLoadingText(R.string.ui_group_finance_user_payment_approving);
+        displayLoading(true);
+        PaymentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Payment>() {
+            @Override
+            public void onResponse(Payment payment, boolean success, String message) {
+                super.onResponse(payment, success, message);
+                displayLoading(false);
+                if (success) {
+                    resultData(mPaymentId);
+                } else {
+                    agreeButton.setEnabled(true);
+                    rejectButton.setEnabled(true);
+                }
+            }
+        }).updateExpend(mPaymentId, state);
     }
 
     private void warningClearSelectedImages() {

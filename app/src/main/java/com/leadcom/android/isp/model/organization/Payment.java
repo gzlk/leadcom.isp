@@ -53,7 +53,22 @@ public class Payment extends Model {
         int REJECT = 2;
     }
 
-    public String getStateText(int state) {
+    /**
+     * 获取未处理状态的文字描述
+     */
+    public String getUnhandledStateText(int state) {
+        switch (state) {
+            case State.AGREE:
+                return "同意";
+            case State.NORMAL:
+                return "不处理";
+            case State.REJECT:
+                return "拒绝";
+        }
+        return "";
+    }
+
+    private String getStateText(int state) {
         switch (state) {
             case State.AGREE:
                 return "已同意";

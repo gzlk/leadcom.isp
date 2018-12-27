@@ -402,6 +402,7 @@
     <string name="ui_group_finance_user_payment_item_details">查看缴费单详情</string>
     <string name="ui_group_finance_user_payment_create_title_payment">添加缴费记录</string>
     <string name="ui_group_finance_user_payment_create_title_expend">添加支出记录</string>
+    <string name="ui_group_finance_user_payment_create_title_check">审核</string>
     <string-array name="ui_group_finance_user_payment_create_items">
         <item>1|缴费时间：|%s|1|0xe6c2</item>
         <item>2|缴费人：|%s|1|0xe6c2</item>
@@ -410,14 +411,25 @@
         <item>5|审批人：|%s|1|0xe6c2</item>
         <item>6|收款人：|%s|1|0xe6c2</item>
     </string-array>
-    <string name="ui_group_finance_user_payment_create_amount_hint">缴费金额(整数)</string>
-    <string name="ui_group_finance_user_payment_create_remark_hint">费用说明</string>
+    <string name="ui_group_finance_user_payment_create_amount_hint">费用金额(整数)</string>
+    <string name="ui_group_finance_user_payment_create_remark_hint">输入费用说明</string>
     <string name="ui_group_finance_user_payment_create_files_title">缴费凭证(最多8张)</string>
     <string name="ui_group_finance_user_payment_create_files_title1">凭证</string>
-    <string name="ui_group_finance_user_payment_create_amount_error">请输入正确的缴费金额(整数)</string>
+    <string name="ui_group_finance_user_payment_create_amount_error">请输入正确的费用金额(整数)</string>
     <string name="ui_group_finance_user_payment_create_reference_error">请选择证明人</string>
     <string name="ui_group_finance_user_payment_create_approver_error">请选择审核人</string>
     <string name="ui_group_finance_user_payment_create_receiver_error">请选择收款人</string>
-    <string name="ui_group_finance_user_payment_creating">正在等待网络请求，请稍候&#8230;</string>
+    <string name="ui_group_finance_user_payment_creating">正在处理，请稍候&#8230;</string>
+    <string name="ui_group_finance_user_payment_creating_waiting">正在等待网络请求，请稍候&#8230;</string>
+    <string name="ui_group_finance_user_payment_creating_failed">操作失败，请重试&#8230;</string>
+    <string name="ui_group_finance_user_payment_approve_warning">
+        <![CDATA[您正在审核这个费用支出单，确定要 %s 吗？]]>
+    </string>
+    <string name="ui_group_finance_user_payment_approving">处理审核请求，请稍候&#8230;</string>
     <string name="ui_group_finance_user_payment_fetch_failed">获取缴费记录失败</string>
+    <string-array name="ui_group_finace_user_payment_create_user_control">
+        <item>证明人不能是您自己。</item>
+        <item>审核人不能是您自己。</item>
+        <item>收款人不能是您自己。</item>
+    </string-array>
 </resources>
