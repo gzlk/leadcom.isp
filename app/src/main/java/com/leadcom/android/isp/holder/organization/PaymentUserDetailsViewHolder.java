@@ -11,6 +11,10 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.model.organization.Payment;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 /**
  * <b>功能描述：</b>用户的缴费记录凭证<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -32,17 +36,15 @@ public class PaymentUserDetailsViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_payment_user_details_time)
     private TextView timeView;
 
+    private static NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.CHINA);
+
     public PaymentUserDetailsViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
     }
 
     public void showContent(Payment payment) {
-        String header = payment.getUserHeadPhoto();
-        if (isEmpty(header) || header.length() < 20) {
-            header = "drawable://" + R.drawable.img_default_user_header;
-        }
-        amountView.setText(format("￥%.2f", payment.getPayAmount()));
+        amountView.setText(numberFormat.format(payment.getPayAmount()));
         nameView.setText(payment.getUserName());
         remarkView.setText(payment.getRemark());
         timeView.setText(fragment().formatDate(payment.getPayDate()));
