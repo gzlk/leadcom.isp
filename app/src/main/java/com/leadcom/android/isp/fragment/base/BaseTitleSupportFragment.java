@@ -156,4 +156,18 @@ public abstract class BaseTitleSupportFragment extends BaseFragment {
     public void setRightTitleClickListener(OnTitleButtonClickListener l) {
         ((TitleActivity) Activity()).setRightTitleClickListener(l);
     }
+
+    /**
+     * 显示警示信息
+     */
+    public void showWarningText(int resId) {
+        ((TitleActivity) Activity()).showWarningText(resId);
+    }
+
+    /**
+     * 显示警示信息
+     */
+    public void showWarningText(String text) {
+        ((TitleActivity) Activity()).showWarningText(text);
+    }
 }

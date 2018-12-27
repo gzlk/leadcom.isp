@@ -82,7 +82,7 @@ public abstract class BaseNothingLoadingSupportFragment extends BaseLayoutSuppor
      * 设置loading提示内容
      */
     public void setLoadingText(int text) {
-        if (null != loadingTextView) {
+        if (null != loadingTextView && 0 != text) {
             loadingTextView.setText(text);
         }
     }
@@ -110,7 +110,7 @@ public abstract class BaseNothingLoadingSupportFragment extends BaseLayoutSuppor
      * 设置nothing提示内容
      */
     public void setNothingText(int text) {
-        if (null != nothingTextView) {
+        if (null != nothingTextView && 0 != text) {
             nothingTextView.setText(text);
         }
     }

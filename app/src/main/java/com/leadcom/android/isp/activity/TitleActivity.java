@@ -60,6 +60,12 @@ public class TitleActivity extends BaseActivity {
     @ViewId(R.id.ui_ui_custom_title_text_sub)
     public TextView mSubTitle;
 
+    // 提醒框
+    @ViewId(R.id.activity_warning_view)
+    public View warningView;
+    @ViewId(R.id.activity_warning_text)
+    public TextView warningText;
+
     /**
      * 是否支持Toolbar
      */
@@ -485,5 +491,28 @@ public class TitleActivity extends BaseActivity {
             tryBindViews();
         }
         mRightClick = l;
+    }
+
+    public void showWarningText(int resId) {
+        if (resId == 0)
+            setWarningTextString(null);
+        else
+            showWarningText(getString(resId));
+    }
+
+    public void showWarningText(String text) {
+        if (null == warningText) {
+            tryBindViews();
+        }
+        setWarningTextString(text);
+    }
+
+    private void setWarningTextString(String text) {
+        if (null != warningText) {
+            warningText.setText(text);
+        }
+        if (null != warningView) {
+            warningView.setVisibility(StringHelper.isEmpty(text) ? View.GONE : View.VISIBLE);
+        }
     }
 }

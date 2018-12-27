@@ -534,7 +534,7 @@ public class MainActivity extends TitleActivity {
         FragmentTransaction transaction = manager.beginTransaction();
         if (!fragment.isAdded() && null == f) {
             log("fragment " + tag + " is now add to fragment manager.");
-            transaction.add(R.id.ui_fragment_main_frame_layout, fragment, tag);
+            transaction.add(R.id.activity_content_container, fragment, tag);
         } else {
             if (null != f && fragment != f) {
                 log(format("reset(show) fragment %s to %s by tag %s", fragment.toString(), f.toString(), tag));
