@@ -354,6 +354,9 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
             if (id.equals("-")) {
                 id = "";
             }
+            if (!searchSquad.equals(id)) {
+                searchSquad = id;
+            }
             // 重置其他已选中的
             Iterator<Squad> iterator = sAdapter.iterator();
             while (iterator.hasNext()) {
@@ -363,7 +366,7 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
                     sAdapter.update(s);
                 }
             }
-            if (squad.isSelected() && !searchSquad.equals(id)) {
+            if (squad.isSelected()) {
                 fetchingPaymentCollection();
             }
         }
