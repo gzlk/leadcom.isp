@@ -6,6 +6,7 @@
     <dimen name="ui_base_text_size_large">@dimen/ui_static_sp_22</dimen>
     <dimen name="ui_base_text_size_big">@dimen/ui_static_sp_18</dimen>
     <dimen name="ui_base_text_size_small">@dimen/ui_static_sp_14</dimen>
+    <dimen name="ui_base_text_size_short_big">@dimen/ui_static_sp_13</dimen>
     <dimen name="ui_base_text_size_short">@dimen/ui_static_sp_12</dimen>
     <dimen name="ui_base_text_size_little">@dimen/ui_static_sp_10</dimen>
     <dimen name="ui_base_text_size_tiny">@dimen/ui_static_sp_08</dimen>

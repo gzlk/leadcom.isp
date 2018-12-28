@@ -14,7 +14,9 @@ import android.text.StaticLayout;
 import android.text.TextDirectionHeuristic;
 import android.text.TextDirectionHeuristics;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.widget.TextView;
 
 import java.lang.reflect.Method;
@@ -241,5 +243,28 @@ public class TextViewUtils {
             Log.w(TAG, "Failed to retrieve TextView#" + methodName + "() method", ex);
             return null;
         }
+    }
+
+    /**
+     * 固定宽度的情况下，自适应文本字体大小
+     */
+    public static float adjustTextViewSize(TextView tv, int maxWidth, String text) {
+        int availableWidth = maxWidth - tv.getPaddingLeft() - tv.getPaddingRight() - 10;
+
+        if (availableWidth <= 0 || TextUtils.isEmpty(text)) {
+            return tv.getPaint().getTextSize();
+        }
+
+        TextPaint textPaintClone = new TextPaint(tv.getPaint());
+        // note that Paint text size works in px not sp
+        float trySize = textPaintClone.getTextSize();
+
+        while (textPaintClone.measureText(text) > availableWidth) {
+            trySize--;
+            textPaintClone.setTextSize(trySize);
+        }
+
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, trySize);
+        return trySize;
     }
 }

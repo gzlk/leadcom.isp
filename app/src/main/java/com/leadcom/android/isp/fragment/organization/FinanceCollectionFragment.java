@@ -22,6 +22,7 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.DateTimePicker;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
+import com.leadcom.android.isp.holder.organization.FinanceCollectionViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
 import com.leadcom.android.isp.holder.organization.SquadViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
@@ -90,11 +91,14 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        isShowLoadingBackground = true;
         String title = StringHelper.getString(R.string.ui_group_finance_4);
         if (!isEmpty(mGroupName)) {
             title = format("%s(%s)", title, mGroupName);
         }
         setCustomTitle(title);
+        setNothingText(R.string.ui_group_finance_collection_nothing);
+        setLoadingText(R.string.ui_group_finance_collection_loading);
         dateTimePicker = DateTimePicker.picker().setSelectionType(true, false, false, false, false, false)
                 .setSelectedTitleFormat("yyyy年").setOnDateTimePickedListener(new DateTimePicker.OnDateTimePickedListener() {
                     @Override
@@ -109,7 +113,7 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
                         searchYear = "";
                         fetchingPaymentCollection();
                     }
-                });
+                }).setCancelText(R.string.ui_base_text_all);
         initializeChooserPosition();
     }
 
@@ -315,6 +319,8 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
     }
 
     private void fetchingPaymentCollection() {
+        displayLoading(true);
+        displayNothing(false);
         PaymentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Payment>() {
             @Override
             public void onResponse(List<Payment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -331,6 +337,9 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
                 int cnt = null == list ? 0 : list.size();
                 remotePageNumber += cnt < pageSize ? 0 : 1;
                 isLoadingComplete(cnt < pageSize);
+                stopRefreshing();
+                displayLoading(false);
+                displayNothing(mAdapter.getItemCount() <= 0);
             }
         }).collectPayment(mQueryId, searchSquad, searchYear, remotePageNumber);
     }
@@ -341,9 +350,9 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
             Squad squad = sAdapter.get(index);
             squad.setSelected(!squad.isSelected());
             sAdapter.update(squad);
-            searchSquad = squad.isSelected() ? squad.getId() : "";
-            if (searchSquad.equals("-")) {
-                searchSquad = "";
+            String id = squad.isSelected() ? squad.getId() : "";
+            if (id.equals("-")) {
+                id = "";
             }
             // 重置其他已选中的
             Iterator<Squad> iterator = sAdapter.iterator();
@@ -354,7 +363,7 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
                     sAdapter.update(s);
                 }
             }
-            if (squad.isSelected()) {
+            if (squad.isSelected() && !searchSquad.equals(id)) {
                 fetchingPaymentCollection();
             }
         }
@@ -366,6 +375,7 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
             SquadViewHolder svh = new SquadViewHolder(itemView, FinanceCollectionFragment.this);
             svh.setOnViewHolderElementClickListener(elementClickListener);
             svh.showPicker(true);
+            svh.setUnSelectedColor(R.color.transparent_00);
             return svh;
         }
 
@@ -389,22 +399,23 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
         if (null == mAdapter) {
             mAdapter = new PaymentAdapter();
             mRecyclerView.setAdapter(mAdapter);
+            fetchingPaymentCollection();
         }
     }
 
-    private class PaymentAdapter extends RecyclerViewAdapter<GroupDetailsViewHolder, Payment> {
+    private class PaymentAdapter extends RecyclerViewAdapter<FinanceCollectionViewHolder, Payment> {
         @Override
-        public GroupDetailsViewHolder onCreateViewHolder(View itemView, int viewType) {
-            return new GroupDetailsViewHolder(itemView, FinanceCollectionFragment.this);
+        public FinanceCollectionViewHolder onCreateViewHolder(View itemView, int viewType) {
+            return new FinanceCollectionViewHolder(itemView, FinanceCollectionFragment.this);
         }
 
         @Override
         public int itemLayout(int viewType) {
-            return R.layout.holder_view_group_details;
+            return R.layout.holder_view_finance_collect_item;
         }
 
         @Override
-        public void onBindHolderOfView(GroupDetailsViewHolder holder, int position, @Nullable Payment item) {
+        public void onBindHolderOfView(FinanceCollectionViewHolder holder, int position, @Nullable Payment item) {
             holder.showContent(item);
         }
 

@@ -432,4 +432,9 @@
         <item>审核人不能是您自己。</item>
         <item>收款人不能是您自己。</item>
     </string-array>
+    <string name="ui_group_finance_collection_title_1">缴费</string>
+    <string name="ui_group_finance_collection_title_2">支出</string>
+    <string name="ui_group_finance_collection_title_3">余额</string>
+    <string name="ui_group_finance_collection_loading">加载账务记录，请稍候&#8230;</string>
+    <string name="ui_group_finance_collection_nothing">暂时没有更多账务记录</string>
 </resources>

@@ -39,6 +39,7 @@ public class DateTimePicker {
 
     // 默认选择了时间之后显示title的格式
     private String selectedDateFormat = "yyyy-MM-dd";
+    private String cancelText = StringHelper.getString(R.string.ui_text_home_archive_search_clear_time);
     private boolean[] mType = new boolean[]{true, true, true, false, false, false};
     private boolean resetTypes = false;
 
@@ -54,7 +55,7 @@ public class DateTimePicker {
 
     private void initializePickerView() {
         Calendar start = Calendar.getInstance(Locale.getDefault());
-        start.set(2015, 0, 1);
+        start.set(start.get(Calendar.YEAR) - 3, 0, 1);
         Calendar end = Calendar.getInstance(Locale.getDefault());
         end.set(end.get(Calendar.YEAR), 11, 1);
         if (null == builder) {
@@ -87,6 +88,7 @@ public class DateTimePicker {
                             timePickerView.returnData();
                         }
                     });
+                    ((TextView) root.findViewById(R.id.timepicker_cancel)).setText(cancelText);
                     resetTitle(root);
                 }
 
@@ -121,6 +123,16 @@ public class DateTimePicker {
             resetTypes = true;
         }
         mType = new boolean[]{year, month, day, hour, minute, second};
+        return this;
+    }
+
+    public DateTimePicker setCancelText(int resId) {
+        cancelText = StringHelper.getString(resId);
+        return this;
+    }
+
+    public DateTimePicker setCancelText(String text) {
+        cancelText = text;
         return this;
     }
 

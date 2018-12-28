@@ -47,6 +47,7 @@ public class SquadViewHolder extends BaseViewHolder {
 
     private boolean showPicker = false;
     private boolean showBlank = false;
+    private int unSelectedColor = R.color.textColorHintLight;
 
     public SquadViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -71,6 +72,10 @@ public class SquadViewHolder extends BaseViewHolder {
         showBlank = shown;
     }
 
+    public void setUnSelectedColor(int colorRes) {
+        unSelectedColor = colorRes;
+    }
+
     public void showContent(Squad squad, String searchingText) {
         String name = squad.getName();
         if (!isEmpty(name)) {
@@ -84,7 +89,7 @@ public class SquadViewHolder extends BaseViewHolder {
         }
         if (null != picker) {
             // 小组中成员是否被全选中
-            picker.setTextColor(getColor(squad.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
+            picker.setTextColor(getColor(squad.isSelected() ? R.color.colorPrimary : unSelectedColor));
         }
 
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) blankView.getLayoutParams();

@@ -86,7 +86,68 @@
         android:layout_below="@+id/ui_group_payment_collection_functions"
         android:layout_marginTop="@dimen/ui_base_border_size_normal">
 
-        <include layout="@layout/tool_view_recycler_view_swipe_refreshable" />
+        <LinearLayout
+            android:id="@+id/ui_group_payment_collection_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_base_border_size_normal"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+                android:paddingTop="@dimen/ui_static_dp_3"
+                android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+                android:paddingBottom="@dimen/ui_static_sp_03">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="@dimen/ui_static_dp_50"
+                    android:maxLength="3"
+                    android:minWidth="@dimen/ui_static_dp_50" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|end"
+                    android:text="@string/ui_group_finance_collection_title_1"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|end"
+                    android:text="@string/ui_group_finance_collection_title_2"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|end"
+                    android:text="@string/ui_group_finance_collection_title_3"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+            </LinearLayout>
+
+            <include layout="@layout/tool_view_half_line_horizontal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/ui_group_payment_collection_title">
+
+            <include layout="@layout/tool_view_recycler_view_swipe_refreshable" />
+
+        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/ui_group_payment_collection_content_background"

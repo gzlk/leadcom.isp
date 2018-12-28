@@ -63,6 +63,10 @@
     <dimen name="ui_static_dp_280">280dp</dimen>
     <dimen name="ui_static_dp_300">300dp</dimen>
 
+    <dimen name="ui_static_sp_01">1sp</dimen>
+    <dimen name="ui_static_sp_02">2sp</dimen>
+    <dimen name="ui_static_sp_03">3sp</dimen>
+    <dimen name="ui_static_sp_04">4sp</dimen>
     <dimen name="ui_static_sp_06">6sp</dimen>
     <dimen name="ui_static_sp_07">7sp</dimen>
     <dimen name="ui_static_sp_08">8sp</dimen>
