@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -193,7 +194,7 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
     private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
 
         @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
             // 如果用户设置了不需要加载更多，则此时直接不用处理后续的判断
             if (!supportLoadingMore) {
@@ -203,6 +204,7 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
 
                 RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
+                assert lm != null;
                 int totalItemCount = lm.getItemCount();
                 int lastVisibleItem;
 

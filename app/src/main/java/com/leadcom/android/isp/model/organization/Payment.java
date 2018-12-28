@@ -104,6 +104,9 @@ public class Payment extends Model {
     private int state, status, certifierState, approverState, receiverState;
     private String title;
 
+    // 统计相关属性
+    private double totalExpendAmount, usableAmount;
+
     private ArrayList<Attachment> image;
 
     public int getType() {
@@ -332,6 +335,22 @@ public class Payment extends Model {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public double getTotalExpendAmount() {
+        return totalExpendAmount;
+    }
+
+    public void setTotalExpendAmount(double totalExpendAmount) {
+        this.totalExpendAmount = totalExpendAmount;
+    }
+
+    public double getUsableAmount() {
+        return usableAmount;
+    }
+
+    public void setUsableAmount(double usableAmount) {
+        this.usableAmount = usableAmount;
     }
 
     public ArrayList<Attachment> getImage() {

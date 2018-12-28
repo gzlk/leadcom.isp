@@ -166,8 +166,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     // 网络框架改为 Square 的 retrofit，逐步淘汰 litehttp
-    //implementation 'com.squareup.okhttp3:okhttp:3.10.0'
-    //implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
 
     // richeditor
     implementation(name: 'richeditor-release', ext: 'aar')

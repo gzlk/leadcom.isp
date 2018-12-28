@@ -29,7 +29,7 @@ public class PaymentRequest extends Request<Payment> {
         return new PaymentRequest();
     }
 
-    private static class ListPayment extends PageQuery<Payment> {
+    private static class PagePayment extends PageQuery<Payment> {
     }
 
     private static class SinglePayment extends SingleQuery<Payment> {
@@ -95,17 +95,32 @@ public class PaymentRequest extends Request<Payment> {
     /**
      * 查询组织的缴费记录列表
      */
-    public void listPayment(String groupId) {
+    public void listPayment(String groupId, int pageNumber) {
         directlySave = false;
-        executeHttpRequest(getRequest(ListPayment.class, format("%s?groupId=%s", url(LIST), groupId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(PagePayment.class, format("%s?groupId=%s%s", url(LIST), groupId, page(pageNumber)), "", HttpMethods.Get));
     }
 
     /**
      * 查询组织用户的缴费记录列表
      */
-    public void listPaymentByUserId(String groupId, String userId) {
+    public void listPaymentByUserId(String groupId, String userId, int pageNumber) {
         directlySave = false;
-        executeHttpRequest(getRequest(ListPayment.class, format("%s?groupId=%s&userId=%s", url("/getPayFlowerByUserId"), groupId, userId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(PagePayment.class, format("%s?groupId=%s&userId=%s%s", url("/getPayFlowerByUserId"), groupId, userId, page(pageNumber)), "", HttpMethods.Get));
+    }
+
+    /**
+     * 查询统计结果
+     */
+    public void collectPayment(String groupId, String squadId, String date, int pageNumber) {
+        directlySave = false;
+        String url = format("%s?groupId=%s%s", url("/query"), groupId, page(pageNumber));
+        if (!isEmpty(squadId)) {
+            url = format("%s&squadId=%s", url, squadId);
+        }
+        if (!isEmpty(date)) {
+            url = format("%s&dateString=%s", url, date);
+        }
+        executeHttpRequest(getRequest(PagePayment.class, url, "", HttpMethods.Get));
     }
 
     /**
@@ -144,9 +159,9 @@ public class PaymentRequest extends Request<Payment> {
     /**
      * 查询已审批的支出列表
      */
-    public void listExpend(String groupId) {
+    public void listExpend(String groupId, int pageNumber) {
         directlySave = false;
-        executeHttpRequest(getRequest(ListPayment.class, format("%s?groupId=%s", expend(LIST), groupId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(PagePayment.class, format("%s?groupId=%s%s", expend(LIST), groupId, page(pageNumber)), "", HttpMethods.Get));
     }
 
     /**
@@ -160,8 +175,8 @@ public class PaymentRequest extends Request<Payment> {
     /**
      * 查询待审批列表
      */
-    public void listUnchecked(String groupId) {
+    public void listUnchecked(String groupId, int pageNumber) {
         directlySave = false;
-        executeHttpRequest(getRequest(ListPayment.class, format("%s?groupId=%s", check(LIST), groupId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(PagePayment.class, format("%s?groupId=%s%s", check(LIST), groupId, page(pageNumber)), "", HttpMethods.Get));
     }
 }

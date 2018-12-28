@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/ui_group_payment_collection_functions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/ui_base_border_size_normal"
+        android:background="@android:color/white"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/ui_group_payment_collection_functions_0"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:minHeight="@dimen/ui_base_dimen_button_height"
+            android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+            android:paddingEnd="@dimen/ui_base_dimen_margin_padding">
+
+            <TextView
+                android:id="@+id/ui_group_payment_collection_functions_0_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/ui_static_dp_5"
+                android:paddingBottom="@dimen/ui_static_dp_5"
+                android:text="@string/ui_text_archive_searching_selector_1" />
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/ui_group_payment_collection_functions_0_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/ui_static_dp_3"
+                android:animateLayoutChanges="true"
+                android:rotation="90"
+                android:text="@string/ui_icon_triangle"
+                android:textSize="@dimen/ui_base_text_size_tiny" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ui_group_payment_collection_functions_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:minHeight="@dimen/ui_base_dimen_button_height">
+
+            <TextView
+                android:id="@+id/ui_group_payment_collection_functions_1_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/ui_static_dp_5"
+                android:paddingBottom="@dimen/ui_static_dp_5"
+                android:text="@string/ui_text_archive_searching_selector_3" />
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/ui_group_payment_collection_functions_1_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/ui_static_dp_3"
+                android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+                android:animateLayoutChanges="true"
+                android:rotation="90"
+                android:text="@string/ui_icon_triangle"
+                android:textSize="@dimen/ui_base_text_size_tiny" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_base_border_size_normal"
+        android:layout_below="@+id/ui_group_payment_collection_functions"
+        android:background="@color/windowBackground" />
+
+    <RelativeLayout
+        android:id="@+id/ui_group_payment_collection_content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ui_group_payment_collection_functions"
+        android:layout_marginTop="@dimen/ui_base_border_size_normal">
+
+        <include layout="@layout/tool_view_recycler_view_swipe_refreshable" />
+
+        <RelativeLayout
+            android:id="@+id/ui_group_payment_collection_content_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0"
+            android:animateLayoutChanges="true"
+            android:background="@color/transparent_40"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone" />
+
+        <FrameLayout
+            android:id="@+id/ui_group_payment_collection_time_picker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0"
+            android:animateLayoutChanges="true" />
+
+        <LinearLayout
+            android:id="@+id/ui_group_payment_collection_group_squads_picker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/ui_group_payment_collection_group_squads"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/windowBackground" />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

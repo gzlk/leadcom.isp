@@ -103,6 +103,14 @@ public abstract class Request<T> {
     protected static final int MAX_PAGE_SIZE = 1000;
     protected static final String SUMMARY = format("abstrSize=%d&abstrRow=%d", 100, 5);
 
+    protected static String page(int pageNumber) {
+        return format("&pageNumber=%d", pageNumber);
+    }
+
+    protected static String page(int pageNumber, int pageSize) {
+        return format("&pageNumber=%d&pageSize=%d", pageNumber, pageSize);
+    }
+
     /**
      * 组合url
      */

@@ -18,7 +18,6 @@ import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.organization.Payment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -92,12 +91,14 @@ public class FinanceListFragment extends GroupBaseFragment {
 
     @Override
     protected void onSwipeRefreshing() {
+        remotePageNumber = 1;
+        setSupportLoadingMore(true);
         loading();
     }
 
     @Override
     protected void onLoadingMore() {
-
+        loading();
     }
 
     @Override
@@ -105,7 +106,6 @@ public class FinanceListFragment extends GroupBaseFragment {
         if (null == mAdapter) {
             mAdapter = new PaymentAdapter();
             mRecyclerView.setAdapter(mAdapter);
-            mAdapter.setOnDataHandingListener(handingListener);
             loading();
         }
     }
@@ -155,15 +155,14 @@ public class FinanceListFragment extends GroupBaseFragment {
             @Override
             public void onResponse(List<Payment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (null == list) {
-                    list = new ArrayList<>();
+                if (success && null != list) {
+                    for (Payment payment : list) {
+                        payment.setType(mType);
+                    }
                 }
-                for (Payment payment : list) {
-                    payment.setType(mType);
-                }
-                mAdapter.setData(list);
+                handlePagePayment(list);
             }
-        }).listPayment(mQueryId);
+        }).listPayment(mQueryId, remotePageNumber);
     }
 
     private void loadingUserPayments() {
@@ -173,16 +172,15 @@ public class FinanceListFragment extends GroupBaseFragment {
             @Override
             public void onResponse(List<Payment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (null == list) {
-                    list = new ArrayList<>();
+                if (success && null != list) {
+                    for (Payment payment : list) {
+                        payment.setLocalDeleted(true);
+                        payment.setType(mType);
+                    }
                 }
-                for (Payment payment : list) {
-                    payment.setLocalDeleted(true);
-                    payment.setType(mType);
-                }
-                mAdapter.setData(list);
+                handlePagePayment(list);
             }
-        }).listPaymentByUserId(mQueryId, mUserId);
+        }).listPaymentByUserId(mQueryId, mUserId, remotePageNumber);
     }
 
     private void loadingGroupExpend() {
@@ -192,15 +190,14 @@ public class FinanceListFragment extends GroupBaseFragment {
             @Override
             public void onResponse(List<Payment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (null == list) {
-                    list = new ArrayList<>();
+                if (success && null != list) {
+                    for (Payment payment : list) {
+                        payment.setType(mType);
+                    }
                 }
-                for (Payment payment : list) {
-                    payment.setType(mType);
-                }
-                mAdapter.setData(list);
+                handlePagePayment(list);
             }
-        }).listExpend(mQueryId);
+        }).listExpend(mQueryId, remotePageNumber);
     }
 
     private void loadingGroupUnchecked() {
@@ -210,35 +207,30 @@ public class FinanceListFragment extends GroupBaseFragment {
             @Override
             public void onResponse(List<Payment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (null == list) {
-                    list = new ArrayList<>();
+                if (success && null != list) {
+                    for (Payment payment : list) {
+                        payment.setType(mType);
+                    }
                 }
-                for (Payment payment : list) {
-                    payment.setType(mType);
-                }
-                mAdapter.setData(list);
+                handlePagePayment(list);
             }
-        }).listUnchecked(mQueryId);
+        }).listUnchecked(mQueryId, remotePageNumber);
     }
 
-    private RecyclerViewAdapter.OnDataHandingListener handingListener = new RecyclerViewAdapter.OnDataHandingListener() {
-        @Override
-        public void onStart() {
-
+    private void handlePagePayment(List<Payment> list) {
+        if (remotePageNumber <= 1) {
+            mAdapter.clear();
         }
-
-        @Override
-        public void onProgress(int currentPage, int maxPage, int maxCount) {
-
+        int cnt = null == list ? 0 : list.size();
+        remotePageNumber += cnt >= remotePageSize ? 1 : 0;
+        if (null != list) {
+            mAdapter.update(list);
         }
-
-        @Override
-        public void onComplete() {
-            displayLoading(false);
-            displayNothing(mAdapter.getItemCount() <= 0);
-            stopRefreshing();
-        }
-    };
+        displayLoading(false);
+        displayNothing(mAdapter.getItemCount() <= 0);
+        stopRefreshing();
+        isLoadingComplete(cnt < remotePageSize);
+    }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override

@@ -139,6 +139,7 @@ public class FinanceManagmentFragment extends BaseSwipeRefreshSupportFragment {
                     break;
                 case 4:
                     // 收支统计
+                    FinanceCollectionFragment.open(FinanceManagmentFragment.this, mQueryId, mGroupName, "");
                     break;
             }
         }

@@ -70,7 +70,7 @@ public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
 
     public void showContent(Payment payment) {
         valueIcon.setVisibility(View.GONE);
-        imageView.setVisibility(View.VISIBLE);
+        imageView.setVisibility(payment.isLocalDeleted() ? View.GONE : View.VISIBLE);
         String header = payment.getUserHeadPhoto();
         if (isEmpty(header) || header.length() < 20) {
             header = "drawable://" + R.drawable.img_default_user_header;
