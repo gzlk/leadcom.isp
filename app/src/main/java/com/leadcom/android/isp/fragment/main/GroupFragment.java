@@ -56,7 +56,6 @@ import com.leadcom.android.isp.model.common.Quantity;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Organization;
-import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
@@ -641,14 +640,6 @@ public class GroupFragment extends GroupBaseFragment {
                 //    dAdapter.remove(item);
                 //}
             }
-        } else {
-            dAdapter.remove(item);
-        }
-        // 是否需要显示财务记账选项
-        item = new SimpleClickableItem(items[6]);
-        if (isNeedPermission && Role.isFinanceManager(group.getId())) {
-            // 管理员权限才显示记账记录
-            dAdapter.update(item);
         } else {
             dAdapter.remove(item);
         }

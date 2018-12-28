@@ -17,6 +17,7 @@ import com.leadcom.android.isp.holder.organization.PaymentUserDetailsViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.organization.Payment;
+import com.leadcom.android.isp.model.organization.Role;
 
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class FinanceListFragment extends GroupBaseFragment {
         }
         setCustomTitle(title);
         isLoadingComplete(true);
-        if (isEmpty(mUserId) && (mType == Payment.Type.PAYMENT || mType == Payment.Type.EXPEND)) {
+        if (isEmpty(mUserId) && Role.isFinanceManager(mQueryId) && (mType == Payment.Type.PAYMENT || mType == Payment.Type.EXPEND)) {
             setRightIcon(R.string.ui_icon_add);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
