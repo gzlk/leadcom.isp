@@ -22,6 +22,7 @@ import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.layoutmanager.CustomStaggeredGridLayoutManager;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -395,15 +396,11 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
     /**
      * 远程页大小
      */
-    protected int remotePageSize = 0;
+    protected int remotePageSize = Request.PAGE_SIZE;
     /**
      * 远程总条数
      */
     protected int remoteTotalCount = 0;
-    /**
-     * 每页大小
-     */
-    protected static int PAGE_SIZE = 10;
 
     /**
      * 默认刷新时间间隔，10分钟

@@ -196,7 +196,7 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
                                 member.setSquadId(squad.getId());
                                 mAdapter.add(member);
                                 count++;
-                                if (count >= PAGE_SIZE && squad.getGroActivityMemberList().size() > PAGE_SIZE) {
+                                if (count >= remotePageSize && squad.getGroActivityMemberList().size() > remotePageSize) {
                                     Model model = new Model();
                                     model.setId(LOADING + squad.getSquadId());
                                     model.setCollapseStatus(count);
@@ -211,7 +211,7 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
                         for (Member member : archive.getDtoList()) {
                             mAdapter.add(member);
                             count++;
-                            if (count >= PAGE_SIZE && archive.getDtoList().size() > PAGE_SIZE) {
+                            if (count >= remotePageSize && archive.getDtoList().size() > remotePageSize) {
                                 Model model = new Model();
                                 model.setId(LOADING);
                                 model.setCollapseStatus(count);
@@ -303,13 +303,13 @@ public class ActivityCollectionDetailsFragment extends GroupBaseFragment {
         for (int i = model.getCollapseStatus(); i < size; i++) {
             mAdapter.add(members.get(i), index + modelIndex);
             index++;
-            if (index >= PAGE_SIZE) {
+            if (index >= remotePageSize) {
                 // 超出一页，再等待下一次列取
                 model.setCollapseStatus(index + model.getCollapseStatus());
                 break;
             }
         }
-        if (index < PAGE_SIZE) {
+        if (index < remotePageSize) {
             // 一页未满但已经没有了
             //model.setCollapseStatus(index + model.getCollapseStatus());
             //model.setSelected(true);

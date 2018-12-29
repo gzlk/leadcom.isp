@@ -41,7 +41,8 @@ public class DateTimePicker {
     private String selectedDateFormat = "yyyy-MM-dd";
     private String cancelText = StringHelper.getString(R.string.ui_text_home_archive_search_clear_time);
     private boolean[] mType = new boolean[]{true, true, true, false, false, false};
-    private boolean resetTypes = false;
+    private boolean hasReseatedTypes = false, hasReseatedRang = false;
+    private Calendar start, end;
 
     /**
      * 设置标题显示格式，默认为yyyy
@@ -53,66 +54,81 @@ public class DateTimePicker {
 
     private TimePickerBuilder builder;
 
-    private void initializePickerView() {
-        Calendar start = Calendar.getInstance(Locale.getDefault());
-        start.set(start.get(Calendar.YEAR) - 3, 0, 1);
-        Calendar end = Calendar.getInstance(Locale.getDefault());
-        end.set(end.get(Calendar.YEAR), 11, 1);
-        if (null == builder) {
-            builder = new TimePickerBuilder(decorView.getContext(), new OnTimeSelectListener() {
-                @Override
-                public void onTimeSelect(Date date, View v) {
-                    if (null != timePickerTitle) {
-                        timePickerTitle.setText(Utils.format(selectedDateFormat, date));
-                    }
-                    if (null != onDateTimePickedListener) {
-                        onDateTimePickedListener.onPicked(date);
-                    }
+    private TimePickerBuilder getBuilder() {
+        return new TimePickerBuilder(decorView.getContext(), new OnTimeSelectListener() {
+            @Override
+            public void onTimeSelect(Date date, View v) {
+                if (null != timePickerTitle) {
+                    timePickerTitle.setText(Utils.format(selectedDateFormat, date));
                 }
-            }).setLayoutRes(R.layout.tool_view_custom_time_picker, new CustomListener() {
-                @Override
-                public void customLayout(final View root) {
-                    root.findViewById(R.id.timepicker_cancel).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (null != onDateTimePickedListener) {
-                                onDateTimePickedListener.onReset();
-                            }
-                            resetTitle(root);
-                        }
-                    });
-                    root.findViewById(R.id.timepicker_confirm).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // 确定时间
-                            timePickerView.returnData();
-                        }
-                    });
-                    ((TextView) root.findViewById(R.id.timepicker_cancel)).setText(cancelText);
-                    resetTitle(root);
+                if (null != onDateTimePickedListener) {
+                    onDateTimePickedListener.onPicked(date);
                 }
+            }
+        }).setLayoutRes(R.layout.tool_view_custom_time_picker, new CustomListener() {
+            @Override
+            public void customLayout(final View root) {
+                root.findViewById(R.id.timepicker_cancel).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (null != onDateTimePickedListener) {
+                            onDateTimePickedListener.onReset();
+                        }
+                        resetTitle(root);
+                    }
+                });
+                root.findViewById(R.id.timepicker_confirm).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // 确定时间
+                        timePickerView.returnData();
+                    }
+                });
+                ((TextView) root.findViewById(R.id.timepicker_cancel)).setText(cancelText);
+                resetTitle(root);
+            }
 
-                private void resetTitle(View root) {
-                    if (null == timePickerTitle) {
-                        timePickerTitle = root.findViewById(R.id.timepicker_title);
-                    }
-                    timePickerTitle.setText("");
+            private void resetTitle(View root) {
+                if (null == timePickerTitle) {
+                    timePickerTitle = root.findViewById(R.id.timepicker_title);
                 }
-            }).setType(mType)
-                    .setDecorView(decorView)
-                    .setOutSideCancelable(false).setDividerColor(ContextCompat.getColor(decorView.getContext(), R.color.textColorHint))
-                    .setContentTextSize(Utility.ConvertPx(decorView.getResources().getDimensionPixelOffset(R.dimen.ui_base_text_size)))
-                    .setRangDate(start, Calendar.getInstance())
-                    .setDate(Calendar.getInstance(Locale.getDefault()))
-                    .isCenterLabel(false);
+                timePickerTitle.setText("");
+            }
+        }).setType(mType)
+                .setDecorView(decorView)
+                .setOutSideCancelable(false).setDividerColor(ContextCompat.getColor(decorView.getContext(), R.color.textColorHint))
+                .setContentTextSize(Utility.ConvertPx(decorView.getResources().getDimensionPixelOffset(R.dimen.ui_base_text_size)))
+                .setDate(Calendar.getInstance(Locale.getDefault()))
+                .isCenterLabel(false);
+    }
+
+    private void initializePickerView() {
+        if (null == builder || (hasReseatedRang || hasReseatedTypes)) {
+            // 生成新的builder
+            builder = getBuilder();
         }
-        if (resetTypes) {
+        if (hasReseatedRang) {
+            builder.setRangDate(start, end);
+        }
+        if (hasReseatedTypes) {
             builder = builder.setType(mType);
         }
-        if (null == timePickerView) {
+        if (null == timePickerView || hasReseatedTypes || hasReseatedRang) {
             timePickerView = builder.build();
+            hasReseatedTypes = false;
+            hasReseatedRang = false;
         }
         timePickerView.setKeyBackCancelable(false);
+    }
+
+    /**
+     * 设置时间选择范围
+     */
+    public DateTimePicker setRangDate(Calendar start, Calendar end) {
+        this.start = start;
+        this.end = end;
+        hasReseatedRang = true;
+        return this;
     }
 
     /**
@@ -120,7 +136,7 @@ public class DateTimePicker {
      */
     public DateTimePicker setSelectionType(boolean year, boolean month, boolean day, boolean hour, boolean minute, boolean second) {
         if (year != mType[0] || month != mType[1] || day != mType[2] || hour != mType[3] || minute != mType[4] || second != mType[5]) {
-            resetTypes = true;
+            hasReseatedTypes = true;
         }
         mType = new boolean[]{year, month, day, hour, minute, second};
         return this;
@@ -138,7 +154,7 @@ public class DateTimePicker {
 
     public void show(ViewGroup decorView) {
         this.decorView = decorView;
-        if (null == timePickerView) {
+        if (null == timePickerView || hasReseatedTypes) {
             initializePickerView();
         }
         timePickerView.show();

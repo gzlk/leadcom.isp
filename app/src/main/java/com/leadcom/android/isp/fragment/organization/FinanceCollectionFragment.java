@@ -21,14 +21,11 @@ import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.DateTimePicker;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.holder.organization.FinanceCollectionViewHolder;
-import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
 import com.leadcom.android.isp.holder.organization.SquadViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.organization.Payment;
 import com.leadcom.android.isp.model.organization.Squad;
-import com.tencent.mm.opensdk.modelpay.PayReq;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -69,20 +66,36 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
     private TextView function1Text;
     @ViewId(R.id.ui_group_payment_collection_functions_1_icon)
     private CustomTextView function1Icon;
+    @ViewId(R.id.ui_group_payment_collection_time_picker_layout)
+    private View timePickerRoot;
     @ViewId(R.id.ui_group_payment_collection_time_picker)
-    private FrameLayout timePickerRoot;
+    private FrameLayout timePickerView;
     @ViewId(R.id.ui_group_payment_collection_group_squads_picker)
     private View squadPickerRoot;
     @ViewId(R.id.ui_group_payment_collection_group_squads)
     private RecyclerView squadsView;
     @ViewId(R.id.ui_group_payment_collection_content_background)
     private View selectorBackground;
+    // 时间选择器相关
+    @ViewId(R.id.ui_group_payment_collection_time_picker_title_all_icon)
+    private CustomTextView allIcon;
+    @ViewId(R.id.ui_group_payment_collection_time_picker_title_all_text)
+    private TextView allText;
+    @ViewId(R.id.ui_group_payment_collection_time_picker_title_year_icon)
+    private CustomTextView yearIcon;
+    @ViewId(R.id.ui_group_payment_collection_time_picker_title_year_text)
+    private TextView yearText;
+    @ViewId(R.id.ui_group_payment_collection_time_picker_title_year_month_icon)
+    private CustomTextView monthIcon;
+    @ViewId(R.id.ui_group_payment_collection_time_picker_title_year_month_text)
+    private TextView monthText;
 
     private String mGroupName;
 
     private static final int TYPE_NONE = 0, TYPE_DATE = 1, TYPE_SQUAD = 2;
     private String searchYear = "", searchSquad = "";
     private int function = TYPE_NONE;
+    private boolean hasYear = false, hasMonth = false;
 
     private DateTimePicker dateTimePicker;
     private SquadAdapter sAdapter;
@@ -103,7 +116,7 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
                 .setSelectedTitleFormat("yyyy年").setOnDateTimePickedListener(new DateTimePicker.OnDateTimePickedListener() {
                     @Override
                     public void onPicked(Date date) {
-                        searchYear = Utils.format("yyyy", date);
+                        searchYear = Utils.format(("yyyy" + (hasMonth ? "-MM" : "")), date);
                         //hideChooser();
                         fetchingPaymentCollection();
                     }
@@ -113,7 +126,7 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
                         searchYear = "";
                         fetchingPaymentCollection();
                     }
-                }).setCancelText(R.string.ui_base_text_all);
+                }).setCancelText(null);
         initializeChooserPosition();
     }
 
@@ -159,7 +172,10 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
 
     @Click({R.id.ui_group_payment_collection_functions_0,
             R.id.ui_group_payment_collection_functions_1,
-            R.id.ui_group_payment_collection_content_background})
+            R.id.ui_group_payment_collection_content_background,
+            R.id.ui_group_payment_collection_time_picker_title_all,
+            R.id.ui_group_payment_collection_time_picker_title_year,
+            R.id.ui_group_payment_collection_time_picker_title_year_month})
     private void viewClick(View view) {
         switch (view.getId()) {
             case R.id.ui_group_payment_collection_content_background:
@@ -181,6 +197,40 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
                     hideChooser();
                 }
                 break;
+            case R.id.ui_group_payment_collection_time_picker_title_all:
+                // 选择所有时间
+                boolean refresh = false;
+                if (hasYear) {
+                    hasYear = false;
+                    refresh = true;
+                }
+                if (hasMonth) {
+                    hasMonth = false;
+                    refresh = true;
+                }
+                resetTimePickerTitle();
+                if (refresh) {
+                    fetchingPaymentCollection();
+                }
+                break;
+            case R.id.ui_group_payment_collection_time_picker_title_year:
+                // 选择了年
+                hasYear = !hasYear;
+                if (!hasYear) {
+                    // 如果没有选中年，则也没有月，则直接是全选状态
+                    hasMonth = false;
+                }
+                resetTimePickerTitle();
+                break;
+            case R.id.ui_group_payment_collection_time_picker_title_year_month:
+                // 选择了月份
+                hasMonth = !hasMonth;
+                if (hasMonth) {
+                    // 有月份必须要有年份
+                    hasYear = true;
+                }
+                resetTimePickerTitle();
+                break;
         }
     }
 
@@ -189,10 +239,11 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
             @Override
             public void run() {
                 if (null != dateTimePicker) {
-                    dateTimePicker.show(timePickerRoot);
+                    dateTimePicker.show(timePickerView);
                 }
                 hideChooser();
                 resetFunction();
+                resetTimePickerTitle();
             }
         });
     }
@@ -294,6 +345,29 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
         function1Icon.setTextColor(function == TYPE_SQUAD ? color1 : color2);
     }
 
+    private void resetTimePickerTitle() {
+        int color1 = getColor(R.color.colorPrimary), color2 = getColor(R.color.textColorHint), color3 = getColor(R.color.textColorHintLight);
+
+        boolean none = !hasYear && !hasMonth;
+        allIcon.setTextColor(none ? color1 : color3);
+        allText.setTextColor(none ? color1 : color2);
+        timePickerView.setVisibility(none ? View.GONE : View.VISIBLE);
+
+        yearIcon.setTextColor(hasYear ? color1 : color3);
+        yearIcon.setText(hasYear ? R.string.ui_icon_checkbox_checked : R.string.ui_icon_checkbox_unchecked);
+        yearText.setTextColor(hasYear ? color1 : color2);
+
+        monthIcon.setTextColor(hasMonth ? color1 : color3);
+        monthIcon.setText(hasMonth ? R.string.ui_icon_checkbox_checked : R.string.ui_icon_checkbox_unchecked);
+        monthText.setTextColor(hasMonth ? color1 : color2);
+
+        if (null != dateTimePicker && !none) {
+            dateTimePicker.setSelectedTitleFormat(hasMonth ? "yyyy年MM月" : "yyyy年");
+            dateTimePicker.setSelectionType(hasYear, hasMonth, false, false, false, false);
+            dateTimePicker.show(timePickerView);
+        }
+    }
+
     private void initializeSquadAdapter() {
         if (null == sAdapter) {
             sAdapter = new SquadAdapter();
@@ -301,7 +375,7 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
             squadsView.setAdapter(sAdapter);
             Squad squad = new Squad();
             squad.setId("-");
-            squad.setName("全部小组");
+            squad.setName("所有支部");
             squad.setSelected(true);
             sAdapter.add(squad);
             fetchingRemoteSquads(mQueryId);

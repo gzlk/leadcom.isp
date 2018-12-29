@@ -119,8 +119,16 @@ public class FinanceListFragment extends GroupBaseFragment {
     @Override
     public void onActivityResult(int requestCode, Intent data) {
         if (requestCode == REQUEST_CREATE) {
-            // 创建、修改状态操作完毕之后，拉取列表
-            loading();
+            if (mType == Payment.Type.CHECK) {
+                // 表示审批完毕
+                String id = getResultedData(data);
+                if (!isEmpty(id)) {
+                    mAdapter.remove(id);
+                }
+            } else {
+                // 创建、修改状态操作完毕之后，拉取列表
+                loading();
+            }
         }
         super.onActivityResult(requestCode, data);
     }

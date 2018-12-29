@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/ui_static_dp_5"
                 android:paddingBottom="@dimen/ui_static_dp_5"
-                android:text="@string/ui_text_archive_searching_selector_3" />
+                android:text="@string/ui_group_finance_collection_title_00" />
 
             <com.hlk.hlklib.lib.view.CustomTextView
                 android:id="@+id/ui_group_payment_collection_functions_1_icon"
@@ -91,6 +91,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/ui_base_border_size_normal"
+            android:background="@color/windowBackground"
             android:orientation="vertical">
 
             <LinearLayout
@@ -110,7 +111,9 @@
                     android:layout_height="wrap_content"
                     android:maxWidth="@dimen/ui_static_dp_50"
                     android:maxLength="3"
-                    android:minWidth="@dimen/ui_static_dp_50" />
+                    android:minWidth="@dimen/ui_static_dp_50"
+                    android:text="@string/ui_group_finance_collection_title_0"
+                    android:textSize="@dimen/ui_base_text_size_small" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -137,7 +140,6 @@
                     android:textSize="@dimen/ui_base_text_size_small" />
             </LinearLayout>
 
-            <include layout="@layout/tool_view_half_line_horizontal" />
         </LinearLayout>
 
         <LinearLayout
@@ -160,12 +162,103 @@
             android:focusable="true"
             android:visibility="gone" />
 
-        <FrameLayout
-            android:id="@+id/ui_group_payment_collection_time_picker"
+        <LinearLayout
+            android:id="@+id/ui_group_payment_collection_time_picker_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:alpha="0"
-            android:animateLayoutChanges="true" />
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/windowBackground"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/ui_group_payment_collection_time_picker_title_all"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="@dimen/ui_static_dp_5">
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_group_payment_collection_time_picker_title_all_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/ui_static_dp_3"
+                        android:text="@string/ui_icon_select_solid"
+                        android:textColor="@color/textColorHintLight" />
+
+                    <TextView
+                        android:id="@+id/ui_group_payment_collection_time_picker_title_all_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ui_base_text_all"
+                        android:textColor="@color/textColorHint"
+                        android:textSize="@dimen/ui_base_text_size_small" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ui_group_payment_collection_time_picker_title_year"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="@dimen/ui_static_dp_5">
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_group_payment_collection_time_picker_title_year_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/ui_static_dp_3"
+                        android:text="@string/ui_icon_checkbox_checked"
+                        android:textColor="@color/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/ui_group_payment_collection_time_picker_title_year_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ui_group_finance_collection_title_4"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/ui_base_text_size_small" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ui_group_payment_collection_time_picker_title_year_month"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="@dimen/ui_static_dp_5">
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_group_payment_collection_time_picker_title_year_month_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/ui_static_dp_3"
+                        android:text="@string/ui_icon_checkbox_unchecked"
+                        android:textColor="@color/textColorHintLight" />
+
+                    <TextView
+                        android:id="@+id/ui_group_payment_collection_time_picker_title_year_month_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ui_group_finance_collection_title_5"
+                        android:textColor="@color/textColorHint"
+                        android:textSize="@dimen/ui_base_text_size_small" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/ui_group_payment_collection_time_picker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ui_group_payment_collection_group_squads_picker"

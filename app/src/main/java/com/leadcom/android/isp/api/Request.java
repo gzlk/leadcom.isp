@@ -48,7 +48,7 @@ public abstract class Request<T> {
     /**
      * 默认多页查询时页大小
      */
-    protected static final int PAGE_SIZE = 10;
+    public static final int PAGE_SIZE = 10;
 
     protected static final String URL = format("%s/%s", BaseApi.URL, BaseApi.API_VER);
     /**
