@@ -188,9 +188,9 @@ public class ContactViewHolder extends BaseViewHolder {
 
         managerView.setText(member.isGroupManager() || member.isFinanceManager() ? R.string.ui_icon_group_manager :
                 (member.isArchiveManager() ? R.string.ui_icon_archive_manager :
-                        (member.isSquadManager() ? R.string.ui_icon_group_manager : R.string.ui_icon_group_manager)));
+                        (member.isSquadManager() || member.isSquadFinanceManager() ? R.string.ui_icon_group_manager : R.string.ui_icon_group_manager)));
         managerView.setTextColor(getColor(member.isGroupManager() ? R.color.color_dfc371 : R.color.colorPrimary));
-        managerView.setVisibility((member.isGroupManager() || member.isFinanceManager() || member.isArchiveManager() || member.isSquadManager()) ? View.VISIBLE : View.INVISIBLE);
+        managerView.setVisibility((member.isGroupManager() || member.isFinanceManager() || member.isArchiveManager() || member.isSquadManager() || member.isSquadFinanceManager()) ? View.VISIBLE : View.INVISIBLE);
 
         buttonInvite.setVisibility(buttonInviteVisible ? (isMe ? View.GONE : View.VISIBLE) : View.GONE);
         lockFlag.setVisibility(member.isLocalDeleted() ? View.VISIBLE : View.GONE);

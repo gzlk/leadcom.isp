@@ -62,7 +62,7 @@ public class FinanceListFragment extends GroupBaseFragment {
             title = format("%s(%s)", title, mGroupName);
         }
         setCustomTitle(title);
-        if (isEmpty(mUserId) && Role.isFinanceManager(mQueryId) && (mType == Payment.Type.PAYMENT || mType == Payment.Type.EXPEND)) {
+        if (isEmpty(mUserId) && (Role.isFinanceManager(mQueryId) || Role.isSquadFinanceManager(mQueryId)) && (mType == Payment.Type.PAYMENT || mType == Payment.Type.EXPEND)) {
             setRightIcon(R.string.ui_icon_add);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override

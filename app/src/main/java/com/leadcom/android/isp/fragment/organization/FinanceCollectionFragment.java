@@ -376,7 +376,7 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
             squadsView.setAdapter(sAdapter);
             Squad squad = new Squad();
             squad.setId("-");
-            squad.setName("所有支部");
+            squad.setName("本组织");
             squad.setSelected(true);
             sAdapter.add(squad);
             fetchingRemoteSquads(mQueryId);

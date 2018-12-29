@@ -420,7 +420,7 @@
         <item>审批负责人</item>
         <item>选择收款人</item>
     </string-array>
-    <string name="ui_group_finance_user_payment_create_amount_hint">费用金额(整数)</string>
+    <string name="ui_group_finance_user_payment_create_amount_hint">费用金额(精确到分)</string>
     <string name="ui_group_finance_user_payment_create_remark_hint">输入费用说明</string>
     <string name="ui_group_finance_user_payment_create_files_title">凭证(最多8张)</string>
     <string name="ui_group_finance_user_payment_create_files_title1">凭证</string>

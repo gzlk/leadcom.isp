@@ -110,8 +110,9 @@ public class FinanceManagmentFragment extends BaseSwipeRefreshSupportFragment {
 
     private void showItems() {
         boolean isFinanceManager = Role.isFinanceManager(mQueryId);
+        boolean isSquadFinanceManager = Role.isSquadFinanceManager(mQueryId);
         for (String string : items) {
-            if (!isFinanceManager && string.startsWith("4|")) {
+            if ((!isFinanceManager || !isSquadFinanceManager) && string.startsWith("4|")) {
                 // 不是管理员不允许查看收支统计项目
                 continue;
             }
