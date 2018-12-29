@@ -387,6 +387,13 @@ public class Member extends Leaguer {
     }
 
     /**
+     * 是否是管理员兼财务
+     */
+    public boolean isFinanceManager() {
+        return null != getGroRole() && getGroRole().isFinanceManager();
+    }
+
+    /**
      * 是否小组管理员
      */
     public boolean isSquadManager() {
