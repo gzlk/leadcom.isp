@@ -46,11 +46,15 @@ public class ToastHelper {
     }
 
     public void showMsg(int text, int icon) {
-        showMsg(StringHelper.getString(text), StringHelper.getString(icon));
+        showMsg(StringHelper.getString(text), (0 == icon ? null : StringHelper.getString(icon)));
     }
 
     public void showMsg(String msg) {
         showMsg(msg, null);
+    }
+
+    public void showMsg(String msg, int icon) {
+        showMsg(msg, (0 == icon ? null : StringHelper.getString(icon)));
     }
 
     public void showMsg(final String msg, final String icon) {

@@ -162,7 +162,7 @@ public class BaseActivityManagedApplication extends OrmApplication {
         } else {
             log("press again to exit.");
             String text = getString(R.string.ui_base_text_press_again_to_exit);
-            ToastHelper.helper().showMsg(text);
+            ToastHelper.helper().showMsg(text, R.string.ui_icon_caution_oval);
             mPressAgainToExit.doExitInOneSecond();
         }
     }
