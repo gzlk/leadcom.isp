@@ -108,6 +108,8 @@ public class Model extends BaseModel {
     private boolean isSelected;
     @Ignore
     private int collapseStatus;
+    @Ignore
+    private boolean singleSelectable;
 
     //@NotNull
     //@PrimaryKey(AssignType.BY_MYSELF)
@@ -199,6 +201,14 @@ public class Model extends BaseModel {
      */
     public void setSelected(boolean selected) {
         this.isSelected = selected;
+    }
+
+    public boolean isSingleSelectable() {
+        return singleSelectable;
+    }
+
+    public void setSingleSelectable(boolean singleSelectable) {
+        this.singleSelectable = singleSelectable;
     }
 
     @Override

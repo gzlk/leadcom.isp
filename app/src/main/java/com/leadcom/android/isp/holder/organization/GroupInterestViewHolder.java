@@ -222,6 +222,7 @@ public class GroupInterestViewHolder extends BaseViewHolder {
         coverView.displayImage(cover, getDimension(R.dimen.ui_static_dp_35), false, false);
         coverView.setVisibility(selectable ? View.GONE : View.VISIBLE);
         selector.setVisibility(selectable ? View.VISIBLE : View.GONE);
+        selector.setVisibility(group.isSingleSelectable() ? View.INVISIBLE : selector.getVisibility());
         selector.setTextColor(getColor(group.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
         String name = group.getGroupName();
         if (isEmpty(name)) {

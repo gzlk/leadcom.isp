@@ -289,6 +289,18 @@ public class Payment extends Model {
         this.receiverName = receiverName;
     }
 
+    /**
+     * 指定用户是否可以更改支出申请的状态
+     */
+    public boolean isStateHandleable(String userId) {
+        if (isEmpty(userId)) {
+            return false;
+        } else if (userId.equals(certifierId) || userId.equals(approverId) || userId.equals(receiverId)) {
+            return true;
+        }
+        return false;
+    }
+
     public int getState() {
         return state;
     }

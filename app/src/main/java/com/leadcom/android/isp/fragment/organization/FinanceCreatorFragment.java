@@ -301,8 +301,10 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
             // 默认当前日期为缴费日期，可以修改
             mPayment.setPayDate(Utils.formatDateOfNow("yyyy-MM-dd 00:00:00"));
             mPayment.setExpendDate(mPayment.getPayDate());
-            mPayment.setUserId(Cache.cache().userId);
-            mPayment.setUserName(Cache.cache().userName);
+            if (isEmpty(mPaymentId)) {
+                mPayment.setUserId(Cache.cache().userId);
+                mPayment.setUserName(Cache.cache().userName);
+            }
             mPayment.setGroupId(mQueryId);
             mPayment.setSquadId(mSquadId);
         }
@@ -310,6 +312,9 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
 
     private int chooseType;
     private OnViewHolderClickListener clickListener = new OnViewHolderClickListener() {
+
+        private String[] title = StringHelper.getStringArray(R.array.ui_group_finance_user_payment_create_user_select_title);
+
         @Override
         public void onClick(int index) {
             if (!isEmpty(mPaymentId)) {
@@ -327,7 +332,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                 case 6:// 收款人
                     // 选择缴费人
                     chooseType = index;
-                    GroupContactPickFragment.open(FinanceCreatorFragment.this, mQueryId, false, true, null);
+                    GroupSubordinateSquadMemberPickerFragment.open(FinanceCreatorFragment.this, mQueryId, mGroupName, title[index], false, true, null, null);
                     break;
             }
         }
@@ -357,6 +362,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
     @Override
     public void onActivityResult(int requestCode, Intent data) {
         switch (requestCode) {
+            case REQUEST_SELECT:
             case REQUEST_MEMBER:
                 // 组织成员选择返回了
                 String json = getResultedData(data);
@@ -368,16 +374,15 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                         mPayment.setUserName(member.getUserName());
                         userHolder.showContent(format(items[1], mPayment.getUserName() + "(必填项)"));
                     } else if (chooseType == 4) {
-                        if (isEquals(member.getUserId(), mPayment.getUserId())) {
+                        // 证明人
+                        if (isEquals(member.getUserId(), mPayment.getApproverId())) {
+                            // 证明人和审核人不能相同
                             showWarningText(warnings[0]);
                             return;
                         }
-                        if (isEquals(member.getUserId(), mPayment.getApproverId())) {
-                            showWarningText(warnings[1]);
-                            return;
-                        }
                         if (isEquals(member.getUserId(), mPayment.getReceiverId())) {
-                            showWarningText(warnings[2]);
+                            // 证明人和收款人不能相同
+                            showWarningText(warnings[1]);
                             return;
                         }
                         showWarningText(0);
@@ -387,16 +392,19 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                         referHolder.showContent(format(items[3], mPayment.getCertifierName() + "(必填项)"));
                     } else if (chooseType == 5) {
                         // 审批人
-                        if (isEquals(member.getUserId(), mPayment.getCertifierId())) {
-                            showWarningText(warnings[0]);
-                            return;
-                        }
                         if (isEquals(member.getUserId(), mPayment.getUserId())) {
-                            showWarningText(warnings[1]);
+                            // 审核人不能是自己
+                            showWarningText(warnings[2]);
+                            break;
+                        }
+                        if (isEquals(member.getUserId(), mPayment.getCertifierId())) {
+                            // 审核人和证明人不能是同一人
+                            showWarningText(warnings[3]);
                             return;
                         }
                         if (isEquals(member.getUserId(), mPayment.getReceiverId())) {
-                            showWarningText(warnings[2]);
+                            // 审核人和收款人不能是同一人
+                            showWarningText(warnings[4]);
                             return;
                         }
 
@@ -405,16 +413,15 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                         mPayment.setApproverName(member.getUserName());
                         apprHolder.showContent(format(items[4], mPayment.getApproverName() + "(必填项)"));
                     } else if (chooseType == 6) {
+                        // 收款人
                         if (isEquals(member.getUserId(), mPayment.getCertifierId())) {
-                            showWarningText(warnings[0]);
+                            // 收款人和证明人不能相同
+                            showWarningText(warnings[5]);
                             return;
                         }
                         if (isEquals(member.getUserId(), mPayment.getApproverId())) {
-                            showWarningText(warnings[1]);
-                            return;
-                        }
-                        if (isEquals(member.getUserId(), mPayment.getUserId())) {
-                            showWarningText(warnings[2]);
+                            // 收款人和审核人不能相同
+                            showWarningText(warnings[6]);
                             return;
                         }
                         showWarningText(0);
@@ -499,7 +506,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                     double amount = isPayment ? mPayment.getPayAmount() : mPayment.getExpendAmount();
                     amountText.setText(NumberFormat.getCurrencyInstance(Locale.CHINA).format(amount));
                     remarkText.setText(mPayment.getRemark());
-                    if (mPayment.isCheck() && mPayment.getStatus() < Payment.State.AGREE && mUserId.equals(Cache.cache().userId)) {
+                    if (mPayment.isCheck() && mPayment.getStatus() < Payment.State.AGREE && mPayment.isStateHandleable(Cache.cache().userId)) {
                         controlView.setVisibility(View.VISIBLE);
                     }
                 } else {

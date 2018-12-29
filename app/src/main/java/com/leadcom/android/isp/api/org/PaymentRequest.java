@@ -95,25 +95,25 @@ public class PaymentRequest extends Request<Payment> {
     /**
      * 查询组织的缴费记录列表
      */
-    public void listPayment(String groupId, int pageNumber) {
+    public void listPayment(String groupId, int pageNumber, int pageSize) {
         directlySave = false;
-        executeHttpRequest(getRequest(PagePayment.class, format("%s?groupId=%s%s", url(LIST), groupId, page(pageNumber)), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(PagePayment.class, format("%s?groupId=%s%s", url(LIST), groupId, page(pageNumber, pageSize)), "", HttpMethods.Get));
     }
 
     /**
      * 查询组织用户的缴费记录列表
      */
-    public void listPaymentByUserId(String groupId, String userId, int pageNumber) {
+    public void listPaymentByUserId(String groupId, String userId, int pageNumber, int pageSize) {
         directlySave = false;
-        executeHttpRequest(getRequest(PagePayment.class, format("%s?groupId=%s&userId=%s%s", url("/getPayFlowerByUserId"), groupId, userId, page(pageNumber)), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(PagePayment.class, format("%s?groupId=%s&userId=%s%s", url("/getPayFlowerByUserId"), groupId, userId, page(pageNumber, pageSize)), "", HttpMethods.Get));
     }
 
     /**
      * 查询统计结果
      */
-    public void collectPayment(String groupId, String squadId, String date, int pageNumber) {
+    public void collectPayment(String groupId, String squadId, String date, int pageNumber, int pageSize) {
         directlySave = false;
-        String url = format("%s?groupId=%s%s", url("/query"), groupId, page(pageNumber));
+        String url = format("%s?groupId=%s%s", url("/query"), groupId, page(pageNumber, pageSize));
         if (!isEmpty(squadId)) {
             url = format("%s&squadId=%s", url, squadId);
         }
@@ -131,7 +131,7 @@ public class PaymentRequest extends Request<Payment> {
         JSONObject object = new JSONObject();
         try {
             object.put("groupId", payment.getGroupId())
-                    .put("userId", payment.getUserId())
+                    //.put("userId", payment.getUserId())
                     .put("expendAmount", payment.getExpendAmount())
                     .put("expendDate", payment.getExpendDate())
                     .put("receiverId", payment.getReceiverId())
@@ -159,9 +159,9 @@ public class PaymentRequest extends Request<Payment> {
     /**
      * 查询已审批的支出列表
      */
-    public void listExpend(String groupId, int pageNumber) {
+    public void listExpend(String groupId, int pageNumber, int pageSize) {
         directlySave = false;
-        executeHttpRequest(getRequest(PagePayment.class, format("%s?groupId=%s%s", expend(LIST), groupId, page(pageNumber)), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(PagePayment.class, format("%s?groupId=%s%s", expend(LIST), groupId, page(pageNumber, pageSize)), "", HttpMethods.Get));
     }
 
     /**
@@ -175,8 +175,8 @@ public class PaymentRequest extends Request<Payment> {
     /**
      * 查询待审批列表
      */
-    public void listUnchecked(String groupId, int pageNumber) {
+    public void listUnchecked(String groupId, int pageNumber, int pageSize) {
         directlySave = false;
-        executeHttpRequest(getRequest(PagePayment.class, format("%s?groupId=%s%s", check(LIST), groupId, page(pageNumber)), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(PagePayment.class, format("%s?groupId=%s%s", check(LIST), groupId, page(pageNumber, pageSize)), "", HttpMethods.Get));
     }
 }

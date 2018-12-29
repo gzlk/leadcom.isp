@@ -105,6 +105,7 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isShowLoadingBackground = true;
+        remotePageSize = 20;
         String title = StringHelper.getString(R.string.ui_group_finance_4);
         if (!isEmpty(mGroupName)) {
             title = format("%s(%s)", title, mGroupName);
@@ -415,7 +416,7 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() <= 0);
             }
-        }).collectPayment(mQueryId, searchSquad, searchYear, remotePageNumber);
+        }).collectPayment(mQueryId, searchSquad, searchYear, remotePageNumber, remotePageSize);
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {

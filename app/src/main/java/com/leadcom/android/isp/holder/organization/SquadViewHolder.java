@@ -35,7 +35,7 @@ public class SquadViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_group_squad_picker)
     private CustomTextView picker;
     @ViewId(R.id.ui_holder_view_group_squad_logo)
-    private CustomTextView logo;
+    private View logo;
     @ViewId(R.id.ui_holder_view_group_squad_name)
     private TextView nameView;
     @ViewId(R.id.ui_holder_view_group_squad_members)
@@ -90,6 +90,7 @@ public class SquadViewHolder extends BaseViewHolder {
         if (null != picker) {
             // 小组中成员是否被全选中
             picker.setTextColor(getColor(squad.isSelected() ? R.color.colorPrimary : unSelectedColor));
+            picker.setVisibility(squad.isSingleSelectable() ? View.INVISIBLE : picker.getVisibility());
         }
 
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) blankView.getLayoutParams();

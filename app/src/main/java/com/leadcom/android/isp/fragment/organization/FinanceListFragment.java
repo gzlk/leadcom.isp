@@ -56,12 +56,12 @@ public class FinanceListFragment extends GroupBaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isShowLoadingBackground = true;
+        remotePageSize = 20;
         String title = StringHelper.getString(mType == Payment.Type.PAYMENT ? R.string.ui_group_finance_1 : (mType == Payment.Type.EXPEND ? R.string.ui_group_finance_2 : R.string.ui_group_finance_3));
         if (!isEmpty(mGroupName)) {
             title = format("%s(%s)", title, mGroupName);
         }
         setCustomTitle(title);
-        isLoadingComplete(true);
         if (isEmpty(mUserId) && Role.isFinanceManager(mQueryId) && (mType == Payment.Type.PAYMENT || mType == Payment.Type.EXPEND)) {
             setRightIcon(R.string.ui_icon_add);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
@@ -169,9 +169,9 @@ public class FinanceListFragment extends GroupBaseFragment {
                         payment.setType(mType);
                     }
                 }
-                handlePagePayment(list);
+                handlePagePayment(list, pageSize);
             }
-        }).listPayment(mQueryId, remotePageNumber);
+        }).listPayment(mQueryId, remotePageNumber, remotePageSize);
     }
 
     private void loadingUserPayments() {
@@ -187,9 +187,9 @@ public class FinanceListFragment extends GroupBaseFragment {
                         payment.setType(mType);
                     }
                 }
-                handlePagePayment(list);
+                handlePagePayment(list, pageSize);
             }
-        }).listPaymentByUserId(mQueryId, mUserId, remotePageNumber);
+        }).listPaymentByUserId(mQueryId, mUserId, remotePageNumber, remotePageSize);
     }
 
     private void loadingGroupExpend() {
@@ -204,9 +204,9 @@ public class FinanceListFragment extends GroupBaseFragment {
                         payment.setType(mType);
                     }
                 }
-                handlePagePayment(list);
+                handlePagePayment(list, pageSize);
             }
-        }).listExpend(mQueryId, remotePageNumber);
+        }).listExpend(mQueryId, remotePageNumber, remotePageSize);
     }
 
     private void loadingGroupUnchecked() {
@@ -221,24 +221,24 @@ public class FinanceListFragment extends GroupBaseFragment {
                         payment.setType(mType);
                     }
                 }
-                handlePagePayment(list);
+                handlePagePayment(list, pageSize);
             }
-        }).listUnchecked(mQueryId, remotePageNumber);
+        }).listUnchecked(mQueryId, remotePageNumber, remotePageSize);
     }
 
-    private void handlePagePayment(List<Payment> list) {
+    private void handlePagePayment(List<Payment> list, int pageSize) {
         if (remotePageNumber <= 1) {
             mAdapter.clear();
         }
         int cnt = null == list ? 0 : list.size();
-        remotePageNumber += cnt >= remotePageSize ? 1 : 0;
+        remotePageNumber += cnt >= pageSize ? 1 : 0;
         if (null != list) {
             mAdapter.update(list);
         }
         displayLoading(false);
         displayNothing(mAdapter.getItemCount() <= 0);
         stopRefreshing();
-        isLoadingComplete(cnt < remotePageSize);
+        isLoadingComplete(cnt < pageSize);
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {

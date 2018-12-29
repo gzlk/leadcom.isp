@@ -41,6 +41,8 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
  */
 public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment {
 
+    private static final String PARAM_SINGLE = "gssmpf_single_select";
+
     public static GroupSubordinateSquadMemberPickerFragment newInstance(Bundle bundle) {
         GroupSubordinateSquadMemberPickerFragment gssmpf = new GroupSubordinateSquadMemberPickerFragment();
         gssmpf.setArguments(bundle);
@@ -48,11 +50,16 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
     }
 
     public static void open(BaseFragment fragment, String groupId, String groupName, String title, boolean subordinate, ArrayList<String> groups, ArrayList<SubMember> members) {
+        open(fragment, groupId, groupName, title, subordinate, false, groups, members);
+    }
+
+    public static void open(BaseFragment fragment, String groupId, String groupName, String title, boolean subordinate, boolean single, ArrayList<String> groups, ArrayList<SubMember> members) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putString(PARAM_NAME, groupName);
         bundle.putString(PARAM_JSON, title);
         bundle.putBoolean(PARAM_SQUAD_ID, subordinate);
+        bundle.putBoolean(PARAM_SINGLE, single);
         bundle.putStringArrayList(PARAM_SEARCHED, groups);
         bundle.putSerializable(PARAM_SELECTABLE, members);
         fragment.openActivity(GroupSubordinateSquadMemberPickerFragment.class.getName(), bundle, REQUEST_SELECT, true, false);
@@ -68,7 +75,7 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
     private ArrayList<RelateGroup> groups = new ArrayList<>();
     private ArrayList<SubMember> selectedMembers;
     private PickerAdapter mAdapter;
-    private boolean showSubordinate = true;
+    private boolean showSubordinate = true, isSingleSelect = false;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -77,6 +84,7 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         mGroupName = bundle.getString(PARAM_NAME, "");
         mTitle = bundle.getString(PARAM_JSON, "");
         showSubordinate = bundle.getBoolean(PARAM_SQUAD_ID, true);
+        isSingleSelect = bundle.getBoolean(PARAM_SINGLE, false);
         selectedGroups = bundle.getStringArrayList(PARAM_SEARCHED);
         if (null == selectedGroups) {
             selectedGroups = new ArrayList<>();
@@ -92,6 +100,7 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_NAME, mGroupName);
         bundle.putBoolean(PARAM_SQUAD_ID, showSubordinate);
+        bundle.putBoolean(PARAM_SINGLE, isSingleSelect);
         bundle.putString(PARAM_JSON, mTitle);
         bundle.putStringArrayList(PARAM_SEARCHED, selectedGroups);
         bundle.putSerializable(PARAM_SELECTABLE, selectedMembers);
@@ -250,6 +259,7 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         for (RelateGroup group : groups) {
             // 恢复之前的展开、收缩状态
             group.setSelectable(group.isLocalDeleted());
+            group.setSingleSelectable(isSingleSelect);
             if (!group.getGroupId().equals(mQueryId) && selectedGroups.contains(group.getGroupId())) {
                 group.setSelected(true);
             }
@@ -278,12 +288,14 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
                         member.setSelected(true);
                     }
                 }
+                squad.setSingleSelectable(isSingleSelect);
                 squad.setSelected(isSquadMemberAllSelected(squad));
             }
             squads.addAll(list);
             Squad squad = new Squad();
             squad.setId(mGroupMemberSquadId);
             squad.setName("本组织成员");
+            squad.setSingleSelectable(isSingleSelect);
             squads.add(squad);
             displaySquads();
         }
@@ -327,6 +339,7 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
                 member.setSquadId(mGroupMemberSquadId);
                 SubMember sub = new SubMember();
                 sub.setUserId(member.getUserId());
+                member.setSingleSelectable(isSingleSelect);
                 member.setSelected(isMemberExist(sub, false));
             }
             squad.getGroSquMemberList().addAll(list);
@@ -497,7 +510,7 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
                 case R.id.ui_holder_view_group_interest_select:
                     // 下级组织的选中
                     if (model.getId().equals(mQueryId)) {
-                        if (!isEmpty(searchingText)) {
+                        if (!isEmpty(searchingText) || isSingleSelect) {
                             // 只有不处于搜索列表时才展开、收缩小组列表列表
                             return;
                         }
@@ -567,6 +580,10 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
                     mAdapter.update(model);
                     // 组织成员或小组成员选择
                     Member member = (Member) model;
+                    if (isSingleSelect && model.isSelected()) {
+                        // 如果是单选模式，则在选中此项时，去掉其他项的选中状态
+                        unSelectOtherWithSingleSelectStyle(member.getUserId());
+                    }
                     checkSquadMemberSelectedStatus(member.getSquadId());
                     // 检测是否所有成员都被选中了
                     checkTotalMemberSelected();
@@ -574,6 +591,22 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
             }
         }
     };
+
+    /**
+     * 单选模式下反选其余的选中项
+     */
+    private void unSelectOtherWithSingleSelectStyle(String selectedUserId) {
+        for (Squad squad : squads) {
+            for (Member member : squad.getGroSquMemberList()) {
+                if (member.isSelected() && !member.getUserId().equals(selectedUserId)) {
+                    member.setSelected(false);
+                    if (mAdapter.exist(member)) {
+                        mAdapter.update(member);
+                    }
+                }
+            }
+        }
+    }
 
     private class PickerAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
         private static final int TP_SQUAD = 1, TP_SUBGROUP = 2, TP_MEMBER = 3;
@@ -586,6 +619,7 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
                     ContactViewHolder cvh = new ContactViewHolder(itemView, fragment);
                     cvh.setOnViewHolderElementClickListener(elementClickListener);
                     cvh.showPicker(true);
+                    cvh.showAsSinglePicker(isSingleSelect);
                     cvh.setLeftBlankTimes(2);
                     return cvh;
                 case TP_SQUAD:
