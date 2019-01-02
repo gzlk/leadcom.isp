@@ -72,7 +72,7 @@ public class SettingFragment extends BaseTransparentSupportFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         saveLogView.setVisibility(Cache.isReleasable() ? View.GONE : View.VISIBLE);
-        apiDebugView.setVisibility(Cache.cache().isApiDebug() ? View.VISIBLE : View.GONE);
+        apiDebugView.setVisibility(!Cache.isReleasable() ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -149,7 +149,7 @@ public class SettingFragment extends BaseTransparentSupportFragment {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings("unused")
     @Click({R.id.ui_setting_sign_out})
     private void elementClick(View view) {
         App.app().logout();

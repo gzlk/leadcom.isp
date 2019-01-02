@@ -38,6 +38,7 @@ public class PushMessage extends Model {
         private String groActivityId;
         private String fromGroupId;
         private String h5;
+        private String expendFlowerId;
 
         public String getMsgId() {
             return msgId;
@@ -118,6 +119,14 @@ public class PushMessage extends Model {
         public void setH5(String h5) {
             this.h5 = h5;
         }
+
+        public String getExpendFlowerId() {
+            return expendFlowerId;
+        }
+
+        public void setExpendFlowerId(String expendFlowerId) {
+            this.expendFlowerId = expendFlowerId;
+        }
     }
 
     /**
@@ -188,6 +197,10 @@ public class PushMessage extends Model {
          * 活动回复通知
          */
         String GROUP_ACTIVITY_REPLY = "GROUP_ACTIVITY_REPLY_CODE";
+        /**
+         * 财务审批
+         */
+        String GROUP_FINANCE_EXPEND_CODE = "EXPEND_FLOWER_CODE";
     }
 
     private String userId, userName, headPhoto, templateCode, title, content, createDate;

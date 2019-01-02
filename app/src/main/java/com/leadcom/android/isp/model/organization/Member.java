@@ -35,12 +35,14 @@ public class Member extends Leaguer {
     public interface Code {
 
         //组织成员角色编码
-        String GROUP_ROLE_CODE_MANAGER = "f43c7aedfe22410ea885e707aa79ac6a";        //组织管理员
-        String GROUP_FINANCE_ROLE_CODE_MANAGER = "f43c7aedfe22410ea885e707aa79ac6b"; //组织管理员兼财务
-        String GROUP_ROLE_CODE_COMMON_MEMBER = "a498fcf70a4c48178ee72726be47ce13";  //普通成员
-        String GROUP_ROLE_CODE_DOC_MANAGER = "66a2932a2d5c435bb95a3dc42b435f4e";    //档案管理员
-        String GROUP_ROLE_CODE_SQUAD_MANAGER = "b76a597176ba465e8fd306bb91cb7f3c";  //小组管理员
-        String GROUP_FINANCE_ROLE_CODE_SQUAD_MANAGER = "b76a597176ba465e8fd306bb91cb7f3d";  // 小组管理员兼财务
+        String GROUP_ROLE_CODE_MANAGER = "f43c7aedfe22410ea885e707aa79ac6a";        // 组织管理员
+        String GROUP_ROLE_CODE_MANAGER_FINANCE = "f43c7aedfe22410ea885e707aa79ac6b";// 组织管理员兼财务
+        String GROUP_ROLE_CODE_FINANCE = "f43c7aedfe22410ea885e707aa79ac6c";        // 组织财务
+        String GROUP_ROLE_CODE_COMMON_MEMBER = "a498fcf70a4c48178ee72726be47ce13";  // 普通成员
+        String GROUP_ROLE_CODE_DOC_MANAGER = "66a2932a2d5c435bb95a3dc42b435f4e";    // 档案管理员
+        String GROUP_ROLE_CODE_SQUAD_MANAGER = "b76a597176ba465e8fd306bb91cb7f3c";  // 小组管理员
+        String GROUP_ROLE_CODE_SQUAD_MANAGER_FINANCE = "b76a597176ba465e8fd306bb91cb7f3d";  // 小组管理员兼财务
+        String GROUP_ROLE_CODE_SQUAD_FINANCE = "b76a597176ba465e8fd306bb91cb7f3e";  // 小组财务
 
         // 活动成员角色code
         /**
@@ -395,10 +397,24 @@ public class Member extends Leaguer {
     }
 
     /**
+     * 是否组织财务人员
+     */
+    public boolean isFinance() {
+        return null != getGroRole() && getGroRole().isFinance();
+    }
+
+    /**
      * 是否小组管理员
      */
     public boolean isSquadManager() {
         return null != getGroRole() && getGroRole().isSquadManager();
+    }
+
+    /**
+     * 是否小组财务人员
+     */
+    public boolean isSquadFinance() {
+        return null != getGroRole() && getGroRole().isSquadFinance();
     }
 
     /**

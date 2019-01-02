@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.organization;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CorneredButton;
 import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
+import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.PaymentRequest;
@@ -66,6 +69,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
     private static final String PARAM_PAYMENT = "pcf_param_payment";
     private static final String PARAM_CHOOSE = "pcf_param_choose";
     private static final String PARAM_USER = "pcf_param_user";
+    private static final String PARAM_FOREGROUND = "pcf_param_foreground";
 
     public static FinanceCreatorFragment newInstance(Bundle bundle) {
         FinanceCreatorFragment pcf = new FinanceCreatorFragment();
@@ -73,15 +77,28 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
         return pcf;
     }
 
-    public static void open(BaseFragment fragment, int type, String groupId, String groupName, String squadId, String paymentId, String userId) {
+    private static Bundle getBundle(int type, String paymentId, boolean foreground) {
         Bundle bundle = new Bundle();
-        bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putInt(PARAM_TYPE, type);
+        bundle.putString(PARAM_PAYMENT, paymentId);
+        bundle.putBoolean(PARAM_FOREGROUND, foreground);
+        return bundle;
+    }
+
+    public static void open(BaseFragment fragment, int type, String groupId, String groupName, String squadId, String paymentId, String userId) {
+        Bundle bundle = getBundle(type, paymentId, true);
+        bundle.putString(PARAM_QUERY_ID, groupId);
+        //bundle.putInt(PARAM_TYPE, type);
         bundle.putString(PARAM_NAME, groupName);
         bundle.putString(PARAM_SQUAD, squadId);
-        bundle.putString(PARAM_PAYMENT, paymentId);
+        //bundle.putString(PARAM_PAYMENT, paymentId);
         bundle.putString(PARAM_USER, userId);
         fragment.openActivity(FinanceCreatorFragment.class.getName(), bundle, REQUEST_CREATE, true, true);
+    }
+
+    public static void open(Context context, String paymentId, boolean isForeground) {
+        Bundle bundle = getBundle(Payment.Type.CHECK, paymentId, isForeground);
+        BaseActivity.openActivity(context, FinanceCreatorFragment.class.getName(), bundle, REQUEST_CREATE, true, false);
     }
 
     @ViewId(R.id.ui_group_payment_amount_text)
@@ -125,7 +142,16 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
     private SimpleClickableViewHolder timeHolder, userHolder, referHolder, apprHolder, recvrHolder;
     private String mGroupName, mSquadId, mPaymentId, mUserId;
     private String[] items, warnings;
-    private boolean isCreating = false;
+    private boolean isCreating = false, isForeground = true;
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (!isForeground) {
+            // 打开首页
+            MainActivity.start(Activity());
+        }
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -289,6 +315,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
         mPaymentId = bundle.getString(PARAM_PAYMENT, "");
         chooseType = bundle.getInt(PARAM_CHOOSE, 0);
         mUserId = bundle.getString(PARAM_USER, "");
+        isForeground = bundle.getBoolean(PARAM_FOREGROUND, true);
         mPayment = (Payment) bundle.getSerializable(PARAM_JSON);
         tryCreateEmptyPayment();
     }
@@ -482,9 +509,9 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
         displayLoading(true);
         PaymentRequest request = PaymentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Payment>() {
 
-            private String getState(int state) {
-                return mPayment.getColoredStateText(state);
-            }
+            private String[] certs = StringHelper.getStringArray(R.array.ui_group_finance_cert_status);
+            private String[] apprs = StringHelper.getStringArray(R.array.ui_group_finance_approve_status);
+            private String[] recvs = StringHelper.getStringArray(R.array.ui_group_finance_receive_status);
 
             @Override
             public void onResponse(Payment payment, boolean success, String message) {
@@ -499,10 +526,10 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                     }
                     boolean isPayment = mPayment.isPayment();
                     timeHolder.showContent(format(items[isPayment ? 0 : 2], formatDate(isPayment ? mPayment.getPayDate() : mPayment.getExpendDate())));
-                    userHolder.showContent(format(items[1], mPayment.getUserName()));
-                    referHolder.showContent(format(items[3], mPayment.getCertifierName() + getState(mPayment.getCertifierState())));
-                    apprHolder.showContent(format(items[4], mPayment.getApproverName() + getState(mPayment.getApproverState())));
-                    recvrHolder.showContent(format(items[5], mPayment.getReceiverName() + getState(mPayment.getReceiverState())));
+                    userHolder.showContent(format(items[1].replace("缴费", "填单"), mPayment.getUserName()));
+                    referHolder.showContent(format(items[3], mPayment.getCertifierName() + certs[mPayment.getCertifierState()]));
+                    apprHolder.showContent(format(items[4], mPayment.getApproverName() + apprs[mPayment.getApproverState()]));
+                    recvrHolder.showContent(format(items[5], mPayment.getReceiverName() + recvs[mPayment.getReceiverState()]));
                     double amount = isPayment ? mPayment.getPayAmount() : mPayment.getExpendAmount();
                     amountText.setText(NumberFormat.getCurrencyInstance(Locale.CHINA).format(amount));
                     remarkText.setText(mPayment.getRemark());
@@ -535,6 +562,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
         bundle.putString(PARAM_PAYMENT, mPaymentId);
         bundle.putInt(PARAM_CHOOSE, chooseType);
         bundle.putString(PARAM_USER, mUserId);
+        bundle.putBoolean(PARAM_FOREGROUND, isForeground);
         bundle.putSerializable(PARAM_JSON, mPayment);
     }
 

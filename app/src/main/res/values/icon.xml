@@ -110,8 +110,10 @@
     <string name="ui_icon_system_secretary">&#xe90a;</string>
 
     <!--组织通讯录页面新增两个icon-->
+    <string name="ui_icon_normal_manager">&#xe72a;</string>
     <string name="ui_icon_group_manager">&#xe995;</string>
-    <string name="ui_icon_archive_manager">&#xe996;</string>
+    <string name="ui_icon_archive_manager">&#xe6c8;</string>
+    <string name="ui_icon_finance_manager">&#xe6c7;</string>
     <string name="ui_icon_archive_recommend">&#xe647;</string>
 
     <string name="ui_icon_attachment_unknown">&#xe615;</string>

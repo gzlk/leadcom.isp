@@ -186,11 +186,14 @@ public class ContactViewHolder extends BaseViewHolder {
         boolean isMe = !isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId);
         myselfView.setVisibility(isMe ? View.VISIBLE : View.GONE);
 
-        managerView.setText(member.isGroupManager() || member.isFinanceManager() ? R.string.ui_icon_group_manager :
-                (member.isArchiveManager() ? R.string.ui_icon_archive_manager :
-                        (member.isSquadManager() || member.isSquadFinanceManager() ? R.string.ui_icon_group_manager : R.string.ui_icon_group_manager)));
-        managerView.setTextColor(getColor(member.isGroupManager() ? R.color.color_dfc371 : R.color.colorPrimary));
-        managerView.setVisibility((member.isGroupManager() || member.isFinanceManager() || member.isArchiveManager() || member.isSquadManager() || member.isSquadFinanceManager()) ? View.VISIBLE : View.INVISIBLE);
+        boolean isManager = member.isGroupManager() || member.isSquadManager();
+        boolean isArchive = member.isArchiveManager();
+        boolean isFinance = member.isFinanceManager() || member.isSquadFinanceManager();
+        managerView.setText(isManager ? R.string.ui_icon_group_manager : (isArchive ? R.string.ui_icon_archive_manager : (isFinance ? R.string.ui_icon_finance_manager : R.string.ui_icon_normal_manager)));
+        managerView.setTextColor(getColor(isManager ? R.color.color_dfc371 :
+                (isArchive ? R.color.colorPrimary :
+                        (isFinance ? R.color.colorCaution : R.color.colorPrimary))));
+        managerView.setVisibility((isManager || isArchive || isFinance) ? View.VISIBLE : View.INVISIBLE);
 
         buttonInvite.setVisibility(buttonInviteVisible ? (isMe ? View.GONE : View.VISIBLE) : View.GONE);
         lockFlag.setVisibility(member.isLocalDeleted() ? View.VISIBLE : View.GONE);

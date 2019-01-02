@@ -13,6 +13,7 @@ import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
 import com.leadcom.android.isp.fragment.organization.ActivitiesFragment;
+import com.leadcom.android.isp.fragment.organization.FinanceCreatorFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -58,6 +59,10 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
 
         final boolean isAppForeground = SysInfoUtil.isAppOnForeground(context, BuildConfig.APPLICATION_ID);
         switch (extra.getMessageCode()) {
+            case PushMessage.MsgCode.GROUP_FINANCE_EXPEND_CODE:
+                // 支出申请需要审核
+                FinanceCreatorFragment.open(context, extra.getExpendFlowerId(), isAppForeground);
+                break;
             case PushMessage.MsgCode.GROUP_ACTIVITY_DELIVER:
             case PushMessage.MsgCode.GROUP_ACTIVITY_PUBLISH:
             case PushMessage.MsgCode.GROUP_ACTIVITY_REPLY:

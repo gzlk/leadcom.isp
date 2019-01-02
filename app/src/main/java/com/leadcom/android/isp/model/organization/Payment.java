@@ -1,5 +1,7 @@
 package com.leadcom.android.isp.model.organization;
 
+import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.Attachment;
 

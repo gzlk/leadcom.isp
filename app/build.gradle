@@ -165,9 +165,15 @@ dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
+    // RxJava 组件
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     // 网络框架改为 Square 的 retrofit，逐步淘汰 litehttp
-    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
 
     // richeditor
     implementation(name: 'richeditor-release', ext: 'aar')

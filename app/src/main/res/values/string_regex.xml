@@ -17,7 +17,8 @@
     <string name="regex_normal_input_filter_pwd_only">[a-zA-Z0-9]+</string>
 
     <!--钱相关过滤和验证-->
-    <string name="regex_verify_money_verify">^(([1-9][0-9]*)|(([0]\\.\\d{0,2}|[1-9][0-9]*\\.\\d{0,2})))$</string>
+    <string name="regex_money_filter">[\\d\\.]</string>
+    <string name="regex_money_verify">^(([1-9][0-9]*)|(([0]\\.\\d{0,2}|[1-9][0-9]*\\.\\d{0,2})))$</string>
 
     <!--手机号码-->
     <string name="regex_phone_number_filter">@string/regex_normal_input_filter_num_only</string>

@@ -53,8 +53,8 @@
                     app:cet_corner_size="@dimen/ui_static_dp_5"
                     app:cet_max_length="10"
                     app:cet_normal_border="@color/textColorHintLightLight"
-                    app:cet_value_extract_regex="@string/regex_normal_input_filter_num_only"
-                    app:cet_value_verify_regex="@string/regex_verify_money_verify" />
+                    app:cet_value_extract_regex="@string/regex_money_filter"
+                    app:cet_value_verify_regex="@string/regex_money_verify" />
 
             </LinearLayout>
 

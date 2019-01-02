@@ -200,10 +200,17 @@ public class Role extends Model {
     }
 
     /**
-     * 是否财务管理员
+     * 是否组织管理员兼财务人员
      */
     public boolean isFinanceManager() {
-        return !isEmpty(rolCode) && rolCode.equals(Member.Code.GROUP_FINANCE_ROLE_CODE_MANAGER);
+        return !isEmpty(rolCode) && rolCode.equals(Member.Code.GROUP_ROLE_CODE_MANAGER_FINANCE);
+    }
+
+    /**
+     * 是否组织的财务人员
+     */
+    public boolean isFinance() {
+        return !isEmpty(rolCode) && rolCode.equals(Member.Code.GROUP_ROLE_CODE_FINANCE);
     }
 
     /**
@@ -217,7 +224,14 @@ public class Role extends Model {
      * 是否是小组管理员兼财务
      */
     public boolean isSquadFinanceManager() {
-        return !isEmpty(rolCode) && rolCode.equals(Member.Code.GROUP_FINANCE_ROLE_CODE_SQUAD_MANAGER);
+        return !isEmpty(rolCode) && rolCode.equals(Member.Code.GROUP_ROLE_CODE_SQUAD_MANAGER_FINANCE);
+    }
+
+    /**
+     * 是否小组中的财务人员
+     */
+    public boolean isSquadFinance() {
+        return !isEmpty(rolCode) && rolCode.equals(Member.Code.GROUP_ROLE_CODE_SQUAD_FINANCE);
     }
 
     /**
