@@ -584,6 +584,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      * 打开系统相册选取图片
      */
     protected void startGalleryForResult() {
+        log("start gallery for result.");
         if (chooseImageByAlbum()) {
             if (isChooseImageForCrop) {
                 // 剪切照片时只能选择1张
@@ -594,7 +595,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                     .statusBarColor(getColor(R.color.colorPrimary))
                     .title(getString(R.string.ui_base_text_choose_image, getMaxSelectable()))
                     .checkedList(isSupportCompress ? waitingFroCompressImages : getWaitingForUploadFiles())
-                    .selectCount(getMaxSelectable()).columnCount(3).camera(true).start(REQUEST_GALLERY);
+                    .selectCount(getMaxSelectable()).columnCount(3).camera(App.app().hasCameraFeature()).start(REQUEST_GALLERY);
         } else {
             Intent imageIntent = new Intent();
             imageIntent.setType("image/*");
@@ -607,6 +608,11 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      * 打开相册预览已选择了的照片列表
      */
     protected void startGalleryPreview(int position) {
+        log("start gallery for preview.");
+        if (!App.app().hasCameraFeature()) {
+            ToastHelper.helper().showMsg(R.string.ui_text_permission_camera_feature);
+            return;
+        }
         if (chooseImageByAlbum()) {
             Album.gallery(this).checkFunction(true)
                     .checkedList(isSupportCompress ? waitingFroCompressImages : getWaitingForUploadFiles())

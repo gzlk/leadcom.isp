@@ -209,12 +209,16 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
      */
     protected void showImageHandlingDialog(int resId) {
         showImageHandlingDialog();
-        handlingTextView.setText(resId);
+        if (null != handlingTextView) {
+            handlingTextView.setText(resId);
+        }
     }
 
     protected void showImageHandlingDialog(String text) {
         showImageHandlingDialog();
-        handlingTextView.setText(text);
+        if (null != handlingTextView) {
+            handlingTextView.setText(text);
+        }
     }
 
     /**
