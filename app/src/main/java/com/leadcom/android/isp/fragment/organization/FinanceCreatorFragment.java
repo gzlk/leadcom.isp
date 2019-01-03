@@ -419,11 +419,11 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                         referHolder.showContent(format(items[3], mPayment.getCertifierName() + "(必填项)"));
                     } else if (chooseType == 5) {
                         // 审批人
-                        if (isEquals(member.getUserId(), mPayment.getUserId())) {
-                            // 审核人不能是自己
-                            showWarningText(warnings[2]);
-                            break;
-                        }
+//                        if (isEquals(member.getUserId(), mPayment.getUserId())) {
+//                            // 审核人不能是自己
+//                            showWarningText(warnings[2]);
+//                            break;
+//                        }
                         if (isEquals(member.getUserId(), mPayment.getCertifierId())) {
                             // 审核人和证明人不能是同一人
                             showWarningText(warnings[3]);
