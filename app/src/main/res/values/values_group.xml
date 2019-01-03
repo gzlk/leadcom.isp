@@ -469,4 +469,19 @@
     <string name="ui_group_finance_collection_title_5">月份</string>
     <string name="ui_group_finance_collection_loading">加载账务记录，请稍候&#8230;</string>
     <string name="ui_group_finance_collection_nothing">暂时没有更多账务记录</string>
+    <array name="ui_group_finance_number_sizes">
+        <item>@dimen/ui_static_sp_01</item>
+        <item>@dimen/ui_static_sp_02</item>
+        <item>@dimen/ui_static_sp_03</item>
+        <item>@dimen/ui_static_sp_04</item>
+        <item>@dimen/ui_static_sp_05</item>
+        <item>@dimen/ui_static_sp_06</item>
+        <item>@dimen/ui_static_sp_07</item>
+        <item>@dimen/ui_static_sp_08</item>
+        <item>@dimen/ui_static_sp_09</item>
+        <item>@dimen/ui_static_sp_10</item>
+        <item>@dimen/ui_static_sp_11</item>
+        <item>@dimen/ui_static_sp_12</item>
+        <item>@dimen/ui_static_sp_13</item>
+    </array>
 </resources>

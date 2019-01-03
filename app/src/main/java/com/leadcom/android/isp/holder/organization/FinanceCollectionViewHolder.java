@@ -36,7 +36,7 @@ public class FinanceCollectionViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_finance_collect_expend)
     private AppCompatTextView expendView;
     @ViewId(R.id.ui_holder_view_finance_collect_left)
-    private AppCompatTextView leftView;
+    private TextView leftView;
 
     private static NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.CHINA);
 
