@@ -283,6 +283,9 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
             squads.clear();
             for (Squad squad : list) {
                 for (Member member : squad.getGroSquMemberList()) {
+                    if (member.getUserId().equals(squad.getCreatorId())) {
+                        member.setDefaultSquadManager();
+                    }
                     SubMember sub = new SubMember(member);
                     if (isMemberExist(sub, true)) {
                         member.setSelected(true);
@@ -335,12 +338,17 @@ public class GroupSubordinateSquadMemberPickerFragment extends GroupBaseFragment
         Squad squad = (Squad) mAdapter.get(mGroupMemberSquadId);
         squad.getGroSquMemberList().clear();
         if (null != list && list.size() > 0) {
+//            int i = 0;
             for (Member member : list) {
                 member.setSquadId(mGroupMemberSquadId);
                 SubMember sub = new SubMember();
                 sub.setUserId(member.getUserId());
                 member.setSingleSelectable(isSingleSelect);
                 member.setSelected(isMemberExist(sub, false));
+//                if (member.isMember() && i <= 1) {
+//                    member.getGroRole().setRolCode(i == 0 ? Member.Code.GROUP_ROLE_CODE_FINANCE : Member.Code.GROUP_ROLE_CODE_SQUAD_FINANCE);
+//                    i++;
+//                }
             }
             squad.getGroSquMemberList().addAll(list);
             displaySquadMember(squad, mAdapter.indexOf(squad));

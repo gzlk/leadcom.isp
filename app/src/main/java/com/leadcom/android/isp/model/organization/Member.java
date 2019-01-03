@@ -285,6 +285,16 @@ public class Member extends Leaguer {
         return groRole;
     }
 
+    /**
+     * 设置成员为小组管理员
+     */
+    public void setDefaultSquadManager() {
+        if (null == groRole) {
+            groRole = new Role();
+            groRole.setRolCode(Member.Code.GROUP_ROLE_CODE_SQUAD_MANAGER);
+        }
+    }
+
     public void setGroRole(Role groRole) {
         this.groRole = groRole;
     }
@@ -442,6 +452,13 @@ public class Member extends Leaguer {
      */
     public boolean isArchiveManager() {
         return null != getGroRole() && getGroRole().isArchiveManager();
+    }
+
+    /**
+     * 是否普通成员
+     */
+    public boolean isMember() {
+        return null != getGroRole() && getGroRole().isCommonMember();
     }
 
     /**

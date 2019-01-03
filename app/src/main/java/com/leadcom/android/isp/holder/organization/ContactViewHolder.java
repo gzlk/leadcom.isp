@@ -188,11 +188,22 @@ public class ContactViewHolder extends BaseViewHolder {
 
         boolean isManager = member.isGroupManager() || member.isSquadManager();
         boolean isArchive = member.isArchiveManager();
-        boolean isFinance = member.isFinanceManager() || member.isSquadFinanceManager();
-        managerView.setText(isManager ? R.string.ui_icon_group_manager : (isArchive ? R.string.ui_icon_archive_manager : (isFinance ? R.string.ui_icon_finance_manager : R.string.ui_icon_normal_manager)));
+        boolean isFinance = member.isFinanceManager() || member.isSquadFinanceManager() || member.isFinance() || member.isSquadFinance();
+        managerView.setText(member.isGroupManager() ? R.string.ui_icon_group_manager : (
+                member.isSquadManager() ? R.string.ui_icon_squad_manager : (
+                        member.isArchiveManager() ? R.string.ui_icon_archive_manager : (
+                                member.isFinanceManager() || member.isSquadFinanceManager() ? R.string.ui_icon_finance_manager : (
+                                        member.isFinance() ? R.string.ui_icon_group_finance : (member.isSquadFinance() ? R.string.ui_icon_squad_finance :
+                                                R.string.ui_icon_other_manager))
+                        )
+                )
+        ));
+        //isManager ? R.string.ui_icon_group_manager : (isArchive ? R.string.ui_icon_archive_manager : (isFinance ? R.string.ui_icon_finance_manager : R.string.ui_icon_normal_manager)));
         managerView.setTextColor(getColor(isManager ? R.color.color_dfc371 :
                 (isArchive ? R.color.colorPrimary :
-                        (isFinance ? R.color.colorCaution : R.color.colorPrimary))));
+                        (isFinance ? (member.isFinanceManager() || member.isFinance() ? R.color.colorPpt : R.color.colorBorderActive) :
+                                R.color.colorPrimary)))
+        );
         managerView.setVisibility((isManager || isArchive || isFinance) ? View.VISIBLE : View.INVISIBLE);
 
         buttonInvite.setVisibility(buttonInviteVisible ? (isMe ? View.GONE : View.VISIBLE) : View.GONE);

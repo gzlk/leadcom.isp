@@ -67,6 +67,32 @@ public class ReflectionUtil {
     }
 
     /**
+     * 反射获取对象是否有某个属性
+     */
+    public static boolean hasField(Object object, String fieldName) {
+        if (null == object || TextUtils.isEmpty(fieldName)) {
+            return false;
+        }
+        Class<?> clazz = object.getClass();
+        while (clazz != Object.class) {
+            try {
+                Field[] fields = clazz.getDeclaredFields();
+                if (null != fields && fields.length > 0) {
+                    for (Field field : fields) {
+                        if (field.getName().equals(fieldName)) {
+                            return true;
+                        }
+                    }
+                }
+                clazz = clazz.getSuperclass();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    /**
      * 反射获取对象属性值
      */
     public static Object getFieldValue(Object obj, String fieldName) {
@@ -80,8 +106,7 @@ public class ReflectionUtil {
                 Field field = clazz.getDeclaredField(fieldName);
                 field.setAccessible(true);
                 return field.get(obj);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignore) {
             }
             clazz = clazz.getSuperclass();
         }

@@ -447,11 +447,12 @@ public class ContactFragment extends GroupBaseFragment {
             // 扫描小组管理员
             for (Member member : members) {
                 if (null != mSquad && member.getUserId().equals(mSquad.getCreatorId())) {
-                    if (null == member.getGroRole()) {
-                        Role role = new Role();
-                        role.setRolCode(Member.Code.GROUP_ROLE_CODE_SQUAD_MANAGER);
-                        member.setGroRole(role);
-                    }
+                    member.setDefaultSquadManager();
+//                    if (null == member.getGroRole()) {
+//                        Role role = new Role();
+//                        role.setRolCode(Member.Code.GROUP_ROLE_CODE_SQUAD_MANAGER);
+//                        member.setGroRole(role);
+//                    }
                 }
             }
         }
@@ -780,7 +781,7 @@ public class ContactFragment extends GroupBaseFragment {
 
             if (showType == TYPE_ORG) {
                 // 显示设为管理员或取消管理员
-                holder.button1Text((null != member && member.isGroupManager()) ? R.string.ui_squad_contact_unset_to_admin : R.string.ui_squad_contact_set_to_admin);
+                holder.button1Text((null != member && (member.isGroupManager() || member.isFinanceManager())) ? R.string.ui_squad_contact_unset_to_admin : R.string.ui_squad_contact_set_to_admin);
                 // 我是群主或管理员且有编辑成员角色属性时，可以设置
                 holder.showButton1(!isMe && hasOperation(mQueryId, GRPOperation.MEMBER_ROLE));
             } else {
