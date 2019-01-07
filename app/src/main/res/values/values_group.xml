@@ -484,4 +484,9 @@
         <item>@dimen/ui_static_sp_12</item>
         <item>@dimen/ui_static_sp_13</item>
     </array>
+    <string-array name="ui_group_finance_underway_status">
+        <item><![CDATA[<font color="#3eb135">(未处理)</font>]]></item>
+        <item><![CDATA[<font color="#295391">(处理中)</font>]]></item>
+        <item><![CDATA[<font color="#ff4081">(已否决)</font>]]></item>
+    </string-array>
 </resources>

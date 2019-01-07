@@ -93,6 +93,22 @@ public class ReflectionUtil {
     }
 
     /**
+     * 在指定的类中查找指定的属性名
+     */
+    private static boolean hasField(Class<?> clazz, String fieldName) {
+        if (null == clazz || TextUtils.isEmpty(fieldName)) {
+            return false;
+        }
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            if (field.getName().equals(fieldName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * 反射获取对象属性值
      */
     public static Object getFieldValue(Object obj, String fieldName) {
@@ -103,10 +119,13 @@ public class ReflectionUtil {
         Class<?> clazz = obj.getClass();
         while (clazz != Object.class) {
             try {
-                Field field = clazz.getDeclaredField(fieldName);
-                field.setAccessible(true);
-                return field.get(obj);
-            } catch (Exception ignore) {
+                if (hasField(clazz, fieldName)) {
+                    Field field = clazz.getDeclaredField(fieldName);
+                    field.setAccessible(true);
+                    return field.get(obj);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             clazz = clazz.getSuperclass();
         }

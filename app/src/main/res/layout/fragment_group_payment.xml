@@ -49,6 +49,7 @@
                     android:hint="@string/ui_group_finance_user_payment_create_amount_hint"
                     android:padding="@dimen/ui_static_dp_8"
                     android:singleLine="true"
+                    android:inputType="numberDecimal"
                     app:cet_active_border="@color/colorBorderActive"
                     app:cet_corner_size="@dimen/ui_static_dp_5"
                     app:cet_max_length="10"

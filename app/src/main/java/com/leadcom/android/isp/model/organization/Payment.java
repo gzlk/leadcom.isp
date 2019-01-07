@@ -105,9 +105,10 @@ public class Payment extends Model {
     private String certifierId, approverId, receiverId, certifierName, approverName, receiverName;
     private int state, status, certifierState, approverState, receiverState;
     private String title;
+    private int underwayState;
 
     // 统计相关属性
-    private double totalExpendAmount, usableAmount;
+    private double totalExpendAmount, totalExpendAmountStr, usableAmount;
 
     private ArrayList<Attachment> image;
 
@@ -319,6 +320,14 @@ public class Payment extends Model {
         this.status = status;
     }
 
+    public int getUnderwayState() {
+        return underwayState;
+    }
+
+    public void setUnderwayState(int underwayState) {
+        this.underwayState = underwayState;
+    }
+
     public int getCertifierState() {
         return certifierState;
     }
@@ -357,6 +366,14 @@ public class Payment extends Model {
 
     public void setTotalExpendAmount(double totalExpendAmount) {
         this.totalExpendAmount = totalExpendAmount;
+    }
+
+    public double getTotalExpendAmountStr() {
+        return totalExpendAmountStr;
+    }
+
+    public void setTotalExpendAmountStr(double totalExpendAmountStr) {
+        this.totalExpendAmountStr = totalExpendAmountStr;
     }
 
     public double getUsableAmount() {

@@ -26,11 +26,12 @@ import com.leadcom.android.isp.model.user.UserExtra;
  */
 public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
 
-    private static String[] definedValues;
+    private static String[] definedValues, financeUnderway;
 
     public GroupDetailsViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         definedValues = StringHelper.getStringArray(R.array.ui_text_user_property_self_defined_shown_type);
+        financeUnderway = StringHelper.getStringArray(R.array.ui_group_finance_underway_status);
     }
 
     @Override
@@ -83,7 +84,7 @@ public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
             header = payment.getTitle();
             titleTextView.setText(isEmpty(header) ? "无标题" : header);
             valueTextView.setText(Html.fromHtml(fragment().formatDate(payment.getExpendDate(), R.string.ui_base_text_date_time_format_hhmm) +
-                    (payment.isCheck() ? payment.getColoredStateText(payment.getState()) : "")));
+                    (payment.isCheck() ? financeUnderway[payment.getUnderwayState()] : "")));
         }
     }
 
