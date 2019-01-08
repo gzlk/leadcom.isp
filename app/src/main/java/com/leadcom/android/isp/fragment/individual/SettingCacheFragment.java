@@ -173,6 +173,7 @@ public class SettingCacheFragment extends BaseTransparentSupportFragment {
                     // 清理文件缓存
                     paths.add(App.app().getCachePath(App.ARCHIVE_DIR));
                     paths.add(App.app().getCachePath(App.HTML_DIR));
+                    paths.add(App.app().getCachePath(App.CACHE_DIR));
                     break;
                 case 1:
                     // 清理图片缓存
@@ -263,19 +264,23 @@ public class SettingCacheFragment extends BaseTransparentSupportFragment {
                 case 0:
                     size = FileUtils.getFileSize(App.app().getCachePath(App.ARCHIVE_DIR));
                     size += FileUtils.getFileSize(App.app().getCachePath(App.HTML_DIR));
+                    size += FileUtils.getFileSize(App.app().getCachePath(App.CACHE_DIR));
                     break;
                 case 1:
                     size = FileUtils.getFileSize(App.app().getCachePath(App.IMAGE_DIR));
                     size += FileUtils.getFileSize(App.app().getCachePath(App.CAMERA_DIR));
                     size += FileUtils.getFileSize(App.app().getCachePath(App.THUMB_DIR));
                     size += FileUtils.getFileSize(App.app().getCachePath(App.CROPPED_DIR));
+                    size += FileUtils.getFileSize(App.app().getCachePath(App.IMAGE_UIL));
                     break;
                 case 2:
                     size = FileUtils.getFileSize(App.app().getCachePath(App.VIDEO_DIR));
+                    size += FileUtils.getFileSize(App.app().getCachePath(App.VOICE_DIR));
                     break;
                 case 3:
                     size = FileUtils.getFileSize(App.app().getCachePath(App.TEMP_DIR));
                     size += FileUtils.getFileSize(App.app().getCachePath(App.OTHER_DIR));
+                    size += FileUtils.getFileSize(App.app().getCachePath(App.LOGCAT_DIR));
                     break;
             }
             return null;

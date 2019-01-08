@@ -12,6 +12,7 @@ import com.litesuits.http.request.AbstractRequest;
 import com.litesuits.http.request.JsonRequest;
 import com.litesuits.http.request.content.multi.FilePart;
 import com.litesuits.http.request.content.multi.MultipartBody;
+import com.litesuits.http.request.param.CacheMode;
 import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
 
@@ -146,6 +147,8 @@ public class UploadRequest extends Request<Upload> {
         };
         JsonRequest<Upload> request = new JsonRequest<Upload>(path, Upload.class)
                 .setHttpListener(listener)
+                // 上传时默认仅使用网络模式，不使用缓存
+                .setCacheMode(CacheMode.NetOnly)
                 .addHeader("accessToken", accessToken)
                 .addHeader("terminalType", "android")
                 .setHttpBody(body, HttpMethods.Post);
