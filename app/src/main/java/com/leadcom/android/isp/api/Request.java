@@ -131,7 +131,7 @@ public abstract class Request<T> {
         // 15 秒网络超时
         http.getConfig().setDebugged(false)
                 .setDefaultCacheDir(App.app().getCachePath(App.CACHE_DIR))
-                .setDefaultCacheExpireMillis(24 * 3600 * 1000)// 缓存失效1天
+                .setDefaultCacheExpireMillis(7 * 24 * 3600 * 1000)// 缓存失效1周
                 .setMaxMemCacheBytesSize(5 * 1024 * 1024)
                 .setConnectTimeout(15000)
                 .setSocketTimeout(15000);

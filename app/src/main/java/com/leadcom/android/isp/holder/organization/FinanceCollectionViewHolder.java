@@ -49,7 +49,7 @@ public class FinanceCollectionViewHolder extends BaseViewHolder {
         nameView.setText(payment.getUserName());
         boolean isUser = !isEmpty(payment.getUserId());
         paymentView.setText(numberFormat.format(payment.getTotalPayAmount()));
-        expendView.setText(isUser ? "-" : numberFormat.format(payment.getTotalExpendAmountStr()));
+        expendView.setText(isUser ? "-" : numberFormat.format(payment.getTotalExpendAmount()));
         leftView.setText(isUser ? "-" : numberFormat.format(payment.getUsableAmount()));
     }
 }

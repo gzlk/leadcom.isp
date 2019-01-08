@@ -118,7 +118,6 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
                     @Override
                     public void onPicked(Date date) {
                         searchYear = Utils.format(("yyyy" + (hasMonth ? "-MM" : "")), date);
-                        //hideChooser();
                         fetchingPaymentCollection();
                     }
 
@@ -415,6 +414,10 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
                 stopRefreshing();
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() <= 0);
+                //if (cnt > 0) {
+                // 有数据时，隐藏条件筛选UI
+                hideChooser();
+                //}
             }
         }).collectPayment(mQueryId, searchSquad, searchYear, remotePageNumber, remotePageSize);
     }
@@ -442,6 +445,7 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
                 }
             }
             if (squad.isSelected()) {
+                function1Text.setText(squad.getName());
                 fetchingPaymentCollection();
             }
         }

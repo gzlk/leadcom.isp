@@ -298,8 +298,12 @@ public class Payment extends Model {
     public boolean isStateHandleable(String userId) {
         if (isEmpty(userId)) {
             return false;
-        } else if (userId.equals(certifierId) || userId.equals(approverId) || userId.equals(receiverId)) {
-            return true;
+        } else if (userId.equals(certifierId)) {
+            return certifierState <= State.NORMAL;
+        } else if (userId.equals(approverId)) {
+            return approverState <= State.NORMAL;
+        } else if (userId.equals(receiverId)) {
+            return receiverState <= State.NORMAL;
         }
         return false;
     }

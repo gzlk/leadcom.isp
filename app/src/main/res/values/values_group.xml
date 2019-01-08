@@ -468,7 +468,7 @@
     <string name="ui_group_finance_collection_title_4">年份</string>
     <string name="ui_group_finance_collection_title_5">月份</string>
     <string name="ui_group_finance_collection_loading">加载账务记录，请稍候&#8230;</string>
-    <string name="ui_group_finance_collection_nothing">暂时没有更多账务记录</string>
+    <string name="ui_group_finance_collection_nothing">没有更多记录！</string>
     <array name="ui_group_finance_number_sizes">
         <item>@dimen/ui_static_sp_01</item>
         <item>@dimen/ui_static_sp_02</item>
@@ -487,6 +487,6 @@
     <string-array name="ui_group_finance_underway_status">
         <item><![CDATA[<font color="#3eb135">(未处理)</font>]]></item>
         <item><![CDATA[<font color="#295391">(处理中)</font>]]></item>
-        <item><![CDATA[<font color="#ff4081">(已否决)</font>]]></item>
+        <item><![CDATA[<font color="#ff4081">(被否决)</font>]]></item>
     </string-array>
 </resources>

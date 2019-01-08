@@ -23,6 +23,7 @@ import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.PaymentRequest;
+import com.leadcom.android.isp.api.org.SquadRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -42,6 +43,8 @@ import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.organization.Payment;
+import com.leadcom.android.isp.model.organization.Role;
+import com.leadcom.android.isp.model.organization.Squad;
 import com.leadcom.android.isp.model.organization.SubMember;
 
 import java.text.NumberFormat;
@@ -204,6 +207,27 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
         approverView.setVisibility(!isPayment ? View.VISIBLE : View.GONE);
         receiverView.setVisibility(!isPayment ? View.VISIBLE : View.GONE);
         remarkTitle.setText(isPayment ? R.string.ui_group_finance_user_payment_item_remark : R.string.ui_group_finance_user_payment_item_remark_expend);
+        if (Role.isSquadFinanceManager(mQueryId) || Role.isSquadFinance(mQueryId)) {
+            // 小组财务或小组管理员，需要拉取小组id
+            fetchMySquad();
+        }
+    }
+
+    private void fetchMySquad() {
+        SquadRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Squad>() {
+            @Override
+            public void onResponse(Squad squad, boolean success, String message) {
+                super.onResponse(squad, success, message);
+                if (success && null != squad) {
+                    if (null == mPayment) {
+                        tryCreateEmptyPayment();
+                    }
+                    if (isEmpty(mPayment.getSquadId())) {
+                        mPayment.setSquadId(squad.getId());
+                    }
+                }
+            }
+        }).findFirstJoinedSquad(mQueryId);
     }
 
     private void tryCreatePayment() {
@@ -399,7 +423,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                     if (chooseType == 2) {
                         mPayment.setUserId(member.getUserId());
                         mPayment.setUserName(member.getUserName());
-                        mPayment.setSquadId(member.getSquadId());
+                        //mPayment.setSquadId(member.getSquadId());
                         userHolder.showContent(format(items[1], mPayment.getUserName() + "(必填项)"));
                     } else if (chooseType == 4) {
                         // 证明人
@@ -534,7 +558,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                     double amount = isPayment ? mPayment.getPayAmount() : mPayment.getExpendAmount();
                     amountText.setText(NumberFormat.getCurrencyInstance(Locale.CHINA).format(amount));
                     remarkText.setText(mPayment.getRemark());
-                    if (mPayment.isCheck() && mPayment.getStatus() < Payment.State.AGREE && mPayment.isStateHandleable(Cache.cache().userId)) {
+                    if (mPayment.isCheck() && mPayment.isStateHandleable(Cache.cache().userId)) {
                         controlView.setVisibility(View.VISIBLE);
                     }
                 } else {
@@ -551,7 +575,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return true;
+        return false;
     }
 
     @Override

@@ -69,6 +69,14 @@ public class Role extends Model {
     }
 
     /**
+     * 查询当前用户是否是小组财务
+     */
+    public static boolean isSquadFinance(String groupId) {
+        Role role = Cache.cache().getGroupRole(groupId);
+        return null != role && role.isSquadFinance();
+    }
+
+    /**
      * 是否需要重新拉取角色列表
      */
     public static boolean roleGettable = true;
