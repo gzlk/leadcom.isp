@@ -119,12 +119,14 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
                     @Override
                     public void onPicked(Date date) {
                         searchYear = Utils.format(("yyyy" + (hasMonth ? "-MM" : "")), date);
+                        function0Text.setText(Utils.format(("yyyy年" + (hasMonth ? "MM月" : "")), date));
                         fetchingPaymentCollection();
                     }
 
                     @Override
                     public void onReset() {
                         searchYear = "";
+                        function0Text.setText("全部时间");
                         fetchingPaymentCollection();
                     }
                 }).setCancelText(null);
@@ -370,7 +372,6 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
             dateTimePicker.setSelectionType(hasYear, hasMonth, false, false, false, false);
             dateTimePicker.show(timePickerView);
         }
-        function0Text.setText(hasMonth ? "年月" : (hasYear ? "年" : "全部时间"));
     }
 
     private void initializeSquadAdapter() {
