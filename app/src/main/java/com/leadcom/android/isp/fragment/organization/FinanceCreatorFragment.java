@@ -423,7 +423,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                     if (chooseType == 2) {
                         mPayment.setUserId(member.getUserId());
                         mPayment.setUserName(member.getUserName());
-                        //mPayment.setSquadId(member.getSquadId());
+                        mPayment.setSquadId(member.getSquadId());
                         userHolder.showContent(format(items[1], mPayment.getUserName() + "(必填项)"));
                     } else if (chooseType == 4) {
                         // 证明人

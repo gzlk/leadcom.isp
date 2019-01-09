@@ -6,7 +6,9 @@ import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.query.StringQuery;
 import com.leadcom.android.isp.model.organization.Squad;
+import com.litesuits.http.request.StringRequest;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONException;
@@ -27,6 +29,9 @@ public class SquadRequest extends Request<Squad> {
 
     public static SquadRequest request() {
         return new SquadRequest();
+    }
+
+    private static class StringSquad extends StringQuery<Squad> {
     }
 
     private static class SingleSquad extends SingleQuery<Squad> {
@@ -102,7 +107,7 @@ public class SquadRequest extends Request<Squad> {
      * 查找用户加入的第一个支部信息
      */
     public void findFirstJoinedSquad(String groupId) {
-        executeHttpRequest(getRequest(SingleSquad.class, format("/group/groSquMember%sGroSquadByUserIdAndGroupId?groupId=%s", FIND, groupId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(StringSquad.class, format("/group/groSquMember%sGroSquadByUserIdAndGroupId?groupId=%s", FIND, groupId), "", HttpMethods.Get));
     }
 
     /**

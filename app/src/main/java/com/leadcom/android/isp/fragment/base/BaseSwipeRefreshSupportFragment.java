@@ -148,7 +148,7 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
         localPageCount = bundle.getInt(PARAM_LOCAL_PAGE_TOTAL, 0);
         remotePageNumber = bundle.getInt(PARAM_REMOTE_PAGE_NUM, 1);
         remoteTotalPages = bundle.getInt(PARAM_REMOTE_PAGE_TOTAL, 0);
-        remotePageSize = bundle.getInt(PARAM_REMOTE_PAGE_SIZE, 0);
+        remotePageSize = bundle.getInt(PARAM_REMOTE_PAGE_SIZE, Request.PAGE_SIZE);
         remoteTotalCount = bundle.getInt(PARAM_REMOTE_TOTAL_COUNT, 0);
         super.getParamsFromBundle(bundle);
     }
@@ -396,7 +396,7 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
     /**
      * 远程页大小
      */
-    protected int remotePageSize = Request.PAGE_SIZE;
+    protected int remotePageSize = 0;
     /**
      * 远程总条数
      */

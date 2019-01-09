@@ -189,22 +189,10 @@ public class FileUtils {
             if (file.isDirectory()) {
                 size = getFileSizes(file);
             } else {
-                size = getFileSize(file);
+                size = file.length();
             }
-        } catch (Exception ignore) {
-            ignore.printStackTrace();
-        }
-        return size;
-    }
-
-    /**
-     * 获取指定文件大小
-     */
-    private static long getFileSize(File file) throws Exception {
-        long size = 0;
-        if (file.exists()) {
-            FileInputStream fis = new FileInputStream(file);
-            size = fis.available();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return size;
     }
@@ -212,14 +200,14 @@ public class FileUtils {
     /**
      * 获取指定文件夹大小
      */
-    private static long getFileSizes(File f) throws Exception {
+    private static long getFileSizes(File f) {
         long size = 0;
         File list[] = f.listFiles();
         for (File file : list) {
             if (file.isDirectory()) {
                 size = size + getFileSizes(file);
             } else {
-                size = size + getFileSize(file);
+                size = size + file.length();
             }
         }
         return size;
@@ -232,6 +220,7 @@ public class FileUtils {
         removeFile(new File(path));
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void removeFile(File file) {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
