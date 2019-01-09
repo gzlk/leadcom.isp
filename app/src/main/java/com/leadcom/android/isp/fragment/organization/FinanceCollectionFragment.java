@@ -111,6 +111,7 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
             title = format("%s(%s)", title, mGroupName);
         }
         setCustomTitle(title);
+        function0Text.setText("全部时间");
         setNothingText(R.string.ui_group_finance_collection_nothing);
         setLoadingText(R.string.ui_group_finance_collection_loading);
         dateTimePicker = DateTimePicker.picker().setSelectionType(true, false, false, false, false, false)
@@ -336,7 +337,8 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
     }
 
     private void resetFunction() {
-        int color1 = getColor(R.color.colorPrimary), color2 = getColor(R.color.textColorHint);
+        int color1 = getColor(R.color.colorPrimary),
+                color2 = getColor(R.color.textColorHint);
 
         function0Text.setTextColor(function == TYPE_DATE ? color1 : color2);
         function0Icon.setTextColor(function == TYPE_DATE ? color1 : color2);
@@ -346,7 +348,9 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
     }
 
     private void resetTimePickerTitle() {
-        int color1 = getColor(R.color.colorPrimary), color2 = getColor(R.color.textColorHint), color3 = getColor(R.color.textColorHintLight);
+        int color1 = getColor(R.color.colorPrimary),
+                color2 = getColor(R.color.textColorHint),
+                color3 = getColor(R.color.textColorHintLight);
 
         boolean none = !hasYear && !hasMonth;
         allIcon.setTextColor(none ? color1 : color3);
@@ -366,6 +370,7 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
             dateTimePicker.setSelectionType(hasYear, hasMonth, false, false, false, false);
             dateTimePicker.show(timePickerView);
         }
+        function0Text.setText(hasMonth ? "年月" : (hasYear ? "年" : "全部时间"));
     }
 
     private void initializeSquadAdapter() {
@@ -377,6 +382,7 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
             squad.setId("-");
             squad.setName("本组织");
             squad.setSelected(true);
+            function1Text.setText(squad.getName());
             sAdapter.add(squad);
             fetchingRemoteSquads(mQueryId);
         }
