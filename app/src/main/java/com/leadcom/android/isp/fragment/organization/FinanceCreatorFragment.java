@@ -1,5 +1,7 @@
 package com.leadcom.android.isp.fragment.organization;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -17,6 +19,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CorneredButton;
 import com.hlk.hlklib.lib.view.CorneredEditText;
+import com.hlk.hlklib.lib.view.CorneredView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.activity.MainActivity;
@@ -29,8 +32,8 @@ import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseImageSelectableSupportFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
+import com.leadcom.android.isp.helper.DateTimePicker;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.helper.popup.DateTimeHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
@@ -118,6 +121,8 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
     private View timeView;
     @ViewId(R.id.ui_group_payment_user)
     private View userView;
+    @ViewId(R.id.ui_group_payment_creator)
+    private View creatorView;
     @ViewId(R.id.ui_group_payment_reference)
     private View referenceView;
     @ViewId(R.id.ui_group_payment_approver)
@@ -132,6 +137,10 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
     private View imageClearView;
     @ViewId(R.id.ui_archive_creator_rich_editor_template_images)
     private RecyclerView templateRecyclerView;
+    @ViewId(R.id.ui_group_payment_time_picker_background)
+    private View timePickerBackground;
+    @ViewId(R.id.ui_group_payment_time_picker)
+    private CorneredView timePickerRoot;
     @ViewId(R.id.ui_group_payment_amount_controls)
     private View controlView;
     @ViewId(R.id.ui_group_payment_amount_agree)
@@ -142,10 +151,11 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
     private ImageAdapter imageAdapter;
     private Payment mPayment;
     private int mType;
-    private SimpleClickableViewHolder timeHolder, userHolder, referHolder, apprHolder, recvrHolder;
+    private SimpleClickableViewHolder timeHolder, userHolder, creatorHolder, referHolder, apprHolder, recvrHolder;
     private String mGroupName, mSquadId, mPaymentId, mUserId;
     private String[] items, warnings;
     private boolean isCreating = false, isForeground = true;
+    private DateTimePicker dateTimePicker;
 
     @Override
     public void onDestroy() {
@@ -203,14 +213,94 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
 
         boolean isPayment = mPayment.isPayment();
         userView.setVisibility(isPayment ? View.VISIBLE : View.GONE);
+        creatorView.setVisibility(isPayment && !isEmptyId ? View.VISIBLE : View.GONE);
         referenceView.setVisibility(!isPayment ? View.VISIBLE : View.GONE);
         approverView.setVisibility(!isPayment ? View.VISIBLE : View.GONE);
         receiverView.setVisibility(!isPayment ? View.VISIBLE : View.GONE);
         remarkTitle.setText(isPayment ? R.string.ui_group_finance_user_payment_item_remark : R.string.ui_group_finance_user_payment_item_remark_expend);
-        if (isEmpty(mPaymentId) && mPayment.isPayment() && (Role.isSquadFinanceManager(mQueryId) || Role.isSquadFinance(mQueryId))) {
+        dateTimePicker = DateTimePicker.picker().setSelectedTitleFormat("yyyy年MM月dd日").setOnDateTimePickedListener(new DateTimePicker.OnDateTimePickedListener() {
+            @Override
+            public void onPicked(Date date) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                calendar.set(Calendar.HOUR, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                String time = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), calendar.getTime());
+                mPayment.setPayDate(time);
+                mPayment.setExpendDate(time);
+                timeHolder.showContent(format(items[mPayment.isPayment() ? 0 : 2], formatDate(time) + "(可修改)"));
+                showTimePicker(false);
+            }
+
+            @Override
+            public void onReset() {
+                showTimePicker(false);
+            }
+        }).setSelectionType(true, true, true, false, false, false).setCancelText(R.string.ui_base_text_quite);
+
+        Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                dateTimePicker.show(timePickerRoot);
+                showTimePicker(false);
+            }
+        });
+        if (isEmpty(mPaymentId) && (Role.isSquadFinanceManager(mQueryId) || Role.isSquadFinance(mQueryId))) {
             // 小组财务或小组管理员，需要拉取小组id
             fetchMySquad();
         }
+    }
+
+    @Override
+    protected boolean onBackKeyPressed() {
+        if (!super.onBackKeyPressed()) {
+            if (null != timePickerBackground && timePickerBackground.getVisibility() == View.VISIBLE) {
+                showTimePicker(false);
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private void showTimePicker(final boolean shown) {
+        //if (shown && timePickerBackground.getVisibility() == View.VISIBLE) return;
+        //if (!shown && timePickerBackground.getVisibility() == View.GONE) return;
+        timePickerBackground.animate().setDuration(duration()).alpha(shown ? 1.0f : 0f).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (!shown) {
+                    timePickerBackground.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                if (shown) {
+                    timePickerBackground.setVisibility(View.VISIBLE);
+                }
+            }
+        }).start();
+        timePickerRoot.animate().setDuration(duration()).alpha(shown ? 1.0f : 0f).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (!shown) {
+                    timePickerRoot.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                if (shown) {
+                    timePickerRoot.setVisibility(View.VISIBLE);
+                }
+            }
+        }).translationY(shown ? 0 : timePickerRoot.getMeasuredHeight() * 1.1f).scaleX(shown ? 1.0f : 0.2f).scaleY(shown ? 1.0f : 0.2f).start();
     }
 
     private void fetchMySquad() {
@@ -375,7 +465,8 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                 case 1:
                 case 3:
                     // 选择缴费时间
-                    openDateDialog();
+                    //openDateDialog();
+                    showTimePicker(true);
                     break;
                 case 2:// 缴费人
                 case 4:// 证明人
@@ -386,23 +477,6 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                     GroupSubordinateSquadMemberPickerFragment.open(FinanceCreatorFragment.this, mQueryId, mGroupName, title[index], false, true, null, null);
                     break;
             }
-        }
-
-        private void openDateDialog() {
-            DateTimeHelper.helper().setOnDateTimePickListener(new DateTimeHelper.OnDateTimePickListener() {
-                @Override
-                public void onPicked(Date date) {
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(date);
-                    calendar.set(Calendar.HOUR, 0);
-                    calendar.set(Calendar.MINUTE, 0);
-                    calendar.set(Calendar.SECOND, 0);
-                    String time = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), calendar.getTime());
-                    mPayment.setPayDate(time);
-                    mPayment.setExpendDate(time);
-                    timeHolder.showContent(format(items[mPayment.isPayment() ? 0 : 2], formatDate(time) + "(可修改)"));
-                }
-            }).show(FinanceCreatorFragment.this, true, true, true, true, mPayment.getPayDate());
         }
     };
 
@@ -423,7 +497,6 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                     if (chooseType == 2) {
                         mPayment.setUserId(member.getUserId());
                         mPayment.setUserName(member.getUserName());
-                        mPayment.setSquadId(member.getSquadId());
                         userHolder.showContent(format(items[1], mPayment.getUserName() + "(必填项)"));
                     } else if (chooseType == 4) {
                         // 证明人
@@ -480,8 +553,6 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                         // 收款人
                         mPayment.setReceiverId(member.getUserId());
                         mPayment.setReceiverName(member.getUserName());
-                        // 收款人所在小组可以更改小组信息
-                        mPayment.setSquadId(member.getSquadId());
                         recvrHolder.showContent(format(items[5], mPayment.getReceiverName() + "(必填项)"));
                     }
                 }
@@ -503,6 +574,10 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
             userHolder = new SimpleClickableViewHolder(userView, this);
             userHolder.addOnViewHolderClickListener(clickListener);
             userHolder.showContent(format(items[1], mPayment.getUserName()));
+        }
+        if (null == creatorHolder) {
+            creatorHolder = new SimpleClickableViewHolder(creatorView, this);
+            creatorHolder.showContent(format(items[6], mPayment.getCreateUserName()));
         }
         if (null == referHolder) {
             referHolder = new SimpleClickableViewHolder(referenceView, this);
@@ -552,8 +627,10 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                         imageAdapter.add(attachment);
                     }
                     boolean isPayment = mPayment.isPayment();
-                    timeHolder.showContent(format(items[isPayment ? 0 : 2], formatDate(isPayment ? mPayment.getPayDate() : mPayment.getExpendDate())));
-                    userHolder.showContent(format(items[1].replace("缴费", "填单"), mPayment.getUserName()));
+                    String date = isPayment ? mPayment.getPayDate() : mPayment.getExpendDate();
+                    timeHolder.showContent(format(items[isPayment ? 0 : 2], (isEmpty(date) ? "-" : formatDate(date))));
+                    userHolder.showContent(format(items[1], mPayment.getUserName()));
+                    creatorHolder.showContent(format(items[6], mPayment.getCreateUserName()));
                     referHolder.showContent(format(items[3], mPayment.getCertifierName() + certs[mPayment.getCertifierState()]));
                     apprHolder.showContent(format(items[4], mPayment.getApproverName() + apprs[mPayment.getApproverState()]));
                     recvrHolder.showContent(format(items[5], mPayment.getReceiverName() + recvs[mPayment.getReceiverState()]));
@@ -577,7 +654,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return false;
+        return true;
     }
 
     @Override
@@ -599,6 +676,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
     }
 
     @Click({R.id.ui_archive_creator_rich_editor_template_images_clear,
+            R.id.ui_group_payment_time_picker_background,
             R.id.ui_group_payment_amount_agree,
             R.id.ui_group_payment_amount_disagree})
     private void viewClick(View view) {
@@ -607,6 +685,9 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                 if (null != imageAdapter && imageAdapter.getItemCount() > 1) {
                     warningClearSelectedImages();
                 }
+                break;
+            case R.id.ui_group_payment_time_picker_background:
+                showTimePicker(false);
                 break;
             case R.id.ui_group_payment_amount_agree:
                 // 同意

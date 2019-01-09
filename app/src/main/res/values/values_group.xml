@@ -410,6 +410,7 @@
         <item>4|证明人：|%s|1|0xe6c2</item>
         <item>5|审批人：|%s|1|0xe6c2</item>
         <item>6|收款人：|%s|1|0xe6c2</item>
+        <item>7|填单人：|%s|1|0xe6c2</item>
     </string-array>
     <string-array name="ui_group_finance_user_payment_create_user_select_title">
         <item>-</item>
