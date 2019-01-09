@@ -207,7 +207,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
         approverView.setVisibility(!isPayment ? View.VISIBLE : View.GONE);
         receiverView.setVisibility(!isPayment ? View.VISIBLE : View.GONE);
         remarkTitle.setText(isPayment ? R.string.ui_group_finance_user_payment_item_remark : R.string.ui_group_finance_user_payment_item_remark_expend);
-        if (isEmpty(mPaymentId) && (Role.isSquadFinanceManager(mQueryId) || Role.isSquadFinance(mQueryId))) {
+        if (isEmpty(mPaymentId) && mPayment.isPayment() && (Role.isSquadFinanceManager(mQueryId) || Role.isSquadFinance(mQueryId))) {
             // 小组财务或小组管理员，需要拉取小组id
             fetchMySquad();
         }
@@ -480,6 +480,8 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                         // 收款人
                         mPayment.setReceiverId(member.getUserId());
                         mPayment.setReceiverName(member.getUserName());
+                        // 收款人所在小组可以更改小组信息
+                        mPayment.setSquadId(member.getSquadId());
                         recvrHolder.showContent(format(items[5], mPayment.getReceiverName() + "(必填项)"));
                     }
                 }
