@@ -202,19 +202,13 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
                 break;
             case R.id.ui_group_payment_collection_time_picker_title_all:
                 // 选择所有时间
-                boolean refresh = false;
                 if (hasYear) {
                     hasYear = false;
-                    refresh = true;
                 }
                 if (hasMonth) {
                     hasMonth = false;
-                    refresh = true;
                 }
                 resetTimePickerTitle();
-                if (refresh) {
-                    fetchingPaymentCollection();
-                }
                 break;
             case R.id.ui_group_payment_collection_time_picker_title_year:
                 // 选择了年
@@ -371,6 +365,11 @@ public class FinanceCollectionFragment extends GroupBaseFragment {
             dateTimePicker.setSelectedTitleFormat(hasMonth ? "yyyy年MM月" : "yyyy年");
             dateTimePicker.setSelectionType(hasYear, hasMonth, false, false, false, false);
             dateTimePicker.show(timePickerView);
+        }
+        if (!hasYear && !hasMonth) {
+            searchYear = "";
+            function0Text.setText("全部时间");
+            fetchingPaymentCollection();
         }
     }
 
