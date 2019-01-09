@@ -371,7 +371,7 @@ public abstract class Request<T> {
         JsonRequest<Api<T>> request = new JsonRequest<Api<T>>(url, resultType)
                 .setHttpListener(listener)
                 .setCacheMode(isNetOk ? CacheMode.NetFirst : CacheMode.CacheOnly)
-                .setCacheKey(Cryptography.md5(url + (isEmpty(body) ? "" : body)))
+                .setCacheKey(Cryptography.md5(format("url:%s, body:%s, accessToken:%s", url, (isEmpty(body) ? "" : body), accessToken)))
                 .addHeader("accessToken", accessToken)
                 .addHeader("terminalType", "android")
                 .setHttpBody(new JsonBody(body), methods);
