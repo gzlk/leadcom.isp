@@ -193,40 +193,75 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:padding="@dimen/ui_base_dimen_margin_padding"
+        android:orientation="vertical"
         android:visibility="gone">
 
-        <com.hlk.hlklib.lib.view.CorneredButton
-            android:id="@+id/ui_group_payment_amount_agree"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:minHeight="@dimen/ui_base_dimen_button_height"
-            android:text="@string/ui_base_text_agree"
-            android:textColor="@color/textColorLight"
-            app:active_color="@color/colorWord"
-            app:background_type="fill"
-            app:corner_size="@dimen/ui_static_dp_5"
-            app:disable_when_click="false"
-            app:normal_color="@color/colorPrimary" />
+            android:background="@color/windowBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <com.hlk.hlklib.lib.view.CorneredButton
-            android:id="@+id/ui_group_payment_amount_disagree"
-            android:layout_width="0dp"
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                android:layout_marginTop="@dimen/ui_static_dp_5"
+                android:layout_marginEnd="@dimen/ui_static_dp_5"
+                android:layout_marginBottom="@dimen/ui_static_dp_5"
+                android:text="@string/ui_icon_caution_oval"
+                android:textColor="@color/colorCaution" />
+
+            <TextView
+                android:id="@+id/ui_group_payment_amount_controls_warning"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+                android:layout_weight="1"
+                android:text="@string/ui_group_finance_user_payment_approve_warning0"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_little" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/ui_static_dp_8"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:minHeight="@dimen/ui_base_dimen_button_height"
-            android:text="@string/ui_base_text_disagree"
-            android:textColor="@color/textColorLight"
-            app:active_color="@color/colorPpt"
-            app:background_type="fill"
-            app:corner_size="@dimen/ui_static_dp_5"
-            app:disable_when_click="false"
-            app:normal_color="@color/colorCaution" />
+            android:orientation="horizontal"
+            android:padding="@dimen/ui_base_dimen_margin_padding">
+
+            <com.hlk.hlklib.lib.view.CorneredButton
+                android:id="@+id/ui_group_payment_amount_controls_agree"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:minHeight="@dimen/ui_base_dimen_button_height"
+                android:text="@string/ui_base_text_agree"
+                android:textColor="@color/textColorLight"
+                app:active_color="@color/colorWord"
+                app:background_type="fill"
+                app:corner_size="@dimen/ui_static_dp_5"
+                app:disable_when_click="false"
+                app:normal_color="@color/colorPrimary" />
+
+            <com.hlk.hlklib.lib.view.CorneredButton
+                android:id="@+id/ui_group_payment_amount_controls_disagree"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ui_static_dp_8"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:minHeight="@dimen/ui_base_dimen_button_height"
+                android:text="@string/ui_base_text_disagree"
+                android:textColor="@color/textColorLight"
+                app:active_color="@color/colorPpt"
+                app:background_type="fill"
+                app:corner_size="@dimen/ui_static_dp_5"
+                app:disable_when_click="false"
+                app:normal_color="@color/colorCaution" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <RelativeLayout

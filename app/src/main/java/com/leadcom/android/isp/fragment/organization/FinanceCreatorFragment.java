@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
@@ -143,9 +144,11 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
     private CorneredView timePickerRoot;
     @ViewId(R.id.ui_group_payment_amount_controls)
     private View controlView;
-    @ViewId(R.id.ui_group_payment_amount_agree)
+    @ViewId(R.id.ui_group_payment_amount_controls_warning)
+    private TextView controlTitle;
+    @ViewId(R.id.ui_group_payment_amount_controls_agree)
     private CorneredButton agreeButton;
-    @ViewId(R.id.ui_group_payment_amount_agree)
+    @ViewId(R.id.ui_group_payment_amount_controls_disagree)
     private CorneredButton rejectButton;
 
     private ImageAdapter imageAdapter;
@@ -611,6 +614,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
         displayLoading(true);
         PaymentRequest request = PaymentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Payment>() {
 
+            private String[] colors = StringHelper.getStringArray(R.array.ui_group_finance_status_colors);
             private String[] certs = StringHelper.getStringArray(R.array.ui_group_finance_cert_status);
             private String[] apprs = StringHelper.getStringArray(R.array.ui_group_finance_approve_status);
             private String[] recvs = StringHelper.getStringArray(R.array.ui_group_finance_receive_status);
@@ -631,13 +635,21 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                     timeHolder.showContent(format(items[isPayment ? 0 : 2], (isEmpty(date) ? "-" : formatDate(date))));
                     userHolder.showContent(format(items[1], mPayment.getUserName()));
                     creatorHolder.showContent(format(items[6], mPayment.getCreateUserName()));
-                    referHolder.showContent(format(items[3], mPayment.getCertifierName() + certs[mPayment.getCertifierState()]));
-                    apprHolder.showContent(format(items[4], mPayment.getApproverName() + apprs[mPayment.getApproverState()]));
-                    recvrHolder.showContent(format(items[5], mPayment.getReceiverName() + recvs[mPayment.getReceiverState()]));
+                    int state = mPayment.getCertifierState();
+                    referHolder.showContent(format(items[3], mPayment.getCertifierName() + format(colors[state], certs[state])));
+                    state = mPayment.getApproverState();
+                    apprHolder.showContent(format(items[4], mPayment.getApproverName() + format(colors[state], apprs[state])));
+                    state = mPayment.getReceiverState();
+                    recvrHolder.showContent(format(items[5], mPayment.getReceiverName() + format(colors[state], recvs[state])));
                     double amount = isPayment ? mPayment.getPayAmount() : mPayment.getExpendAmount();
                     amountText.setText(NumberFormat.getCurrencyInstance(Locale.CHINA).format(amount));
                     remarkText.setText(mPayment.getRemark());
-                    if (mPayment.isCheck() && mPayment.isStateHandleable(Cache.cache().userId)) {
+                    String me = Cache.cache().userId;
+                    if (mPayment.isCheck() && mPayment.isStateHandleable(me)) {
+                        String type = mPayment.getUserType(me);
+                        controlTitle.setText(Html.fromHtml(StringHelper.getString(R.string.ui_group_finance_user_payment_approve_warning0, type, type.replace("人", ""))));
+                        agreeButton.setText(mPayment.isCertificator(me) ? certs[1] : (mPayment.isApprovor(me) ? apprs[1] : recvs[1]));
+                        rejectButton.setText(mPayment.isCertificator(me) ? certs[2] : (mPayment.isApprovor(me) ? apprs[2] : recvs[2]));
                         controlView.setVisibility(View.VISIBLE);
                     }
                 } else {
@@ -677,8 +689,8 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
 
     @Click({R.id.ui_archive_creator_rich_editor_template_images_clear,
             R.id.ui_group_payment_time_picker_background,
-            R.id.ui_group_payment_amount_agree,
-            R.id.ui_group_payment_amount_disagree})
+            R.id.ui_group_payment_amount_controls_agree,
+            R.id.ui_group_payment_amount_controls_disagree})
     private void viewClick(View view) {
         switch (view.getId()) {
             case R.id.ui_archive_creator_rich_editor_template_images_clear:
@@ -689,13 +701,13 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
             case R.id.ui_group_payment_time_picker_background:
                 showTimePicker(false);
                 break;
-            case R.id.ui_group_payment_amount_agree:
+            case R.id.ui_group_payment_amount_controls_agree:
                 // 同意
-                warningUpdateExpend(Payment.State.AGREE);
+                updateExpend(Payment.State.AGREE);
                 break;
-            case R.id.ui_group_payment_amount_disagree:
+            case R.id.ui_group_payment_amount_controls_disagree:
                 // 拒绝
-                warningUpdateExpend(Payment.State.REJECT);
+                updateExpend(Payment.State.REJECT);
                 break;
         }
     }
@@ -721,6 +733,8 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
     }
 
     private void updateExpend(final int state) {
+        agreeButton.setEnabled(false);
+        rejectButton.setEnabled(false);
         setLoadingText(R.string.ui_group_finance_user_payment_approving);
         displayLoading(true);
         PaymentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Payment>() {

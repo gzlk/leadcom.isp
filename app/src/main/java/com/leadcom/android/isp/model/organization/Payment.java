@@ -4,6 +4,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.Attachment;
+import com.leadcom.android.isp.model.user.User;
 
 import java.util.ArrayList;
 
@@ -53,6 +54,16 @@ public class Payment extends Model {
          * 已拒绝
          */
         int REJECT = 2;
+    }
+
+    /**
+     * 用户类别
+     */
+    public interface UserType {
+        String NONE = "";
+        String CERTIFICATION = "证明人";
+        String APPROVER = "审批人";
+        String RECEIVER = "收款人";
     }
 
     /**
@@ -314,6 +325,35 @@ public class Payment extends Model {
             return receiverState <= State.NORMAL;
         }
         return false;
+    }
+
+    public String getUserType(String userId) {
+        if (isEmpty(userId)) return UserType.NONE;
+        if (userId.equals(certifierId)) return UserType.CERTIFICATION;
+        if (userId.equals(approverId)) return UserType.APPROVER;
+        if (userId.equals(receiverId)) return UserType.RECEIVER;
+        return UserType.NONE;
+    }
+
+    /**
+     * 是否是证明人
+     */
+    public boolean isCertificator(String userId) {
+        return !isEmpty(userId) && userId.equals(certifierId);
+    }
+
+    /**
+     * 是否是审核人
+     */
+    public boolean isApprovor(String userId) {
+        return !isEmpty(userId) && userId.equals(approverId);
+    }
+
+    /**
+     * 是否是收款人
+     */
+    public boolean isReceiver(String userId) {
+        return !isEmpty(userId) && userId.equals(receiverId);
     }
 
     public int getState() {

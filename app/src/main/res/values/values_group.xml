@@ -432,8 +432,11 @@
     <string name="ui_group_finance_user_payment_creating">正在处理，请稍候&#8230;</string>
     <string name="ui_group_finance_user_payment_creating_waiting">正在等待网络请求，请稍候&#8230;</string>
     <string name="ui_group_finance_user_payment_creating_failed">操作失败，请重试&#8230;</string>
-    <string name="ui_group_finance_user_payment_approve_warning">
+    <string name="ui_group_finance_user_payment_approve_warning" formatted="false">
         <![CDATA[您正在审核这个费用支出单，确定要 %s 吗？]]>
+    </string>
+    <string name="ui_group_finance_user_payment_approve_warning0" formatted="false">
+        <![CDATA[您是【<font color="#566da9">%s</font>】还需您对此单进行如下【<font color="#db7763">%s</font>】操作：]]>
     </string>
     <string name="ui_group_finance_user_payment_approving">处理审核请求，请稍候&#8230;</string>
     <string name="ui_group_finance_user_payment_fetch_failed">获取缴费记录失败</string>
@@ -446,20 +449,25 @@
         <item>收款人和证明人不能是同一人。</item>
         <item>收款人和审批人不能是同一人。</item>
     </string-array>
+    <string-array name="ui_group_finance_status_colors">
+        <item><![CDATA[<font color="#3eb135">(%s)</font>]]></item>
+        <item><![CDATA[<font color="#295391">(%s)</font>]]></item>
+        <item><![CDATA[<font color="#ff4081">(%s)</font>]]></item>
+    </string-array>
     <string-array name="ui_group_finance_cert_status">
-        <item><![CDATA[<font color="#3eb135">(未处理)</font>]]></item>
-        <item><![CDATA[<font color="#295391">(是)</font>]]></item>
-        <item><![CDATA[<font color="#ff4081">(否)</font>]]></item>
+        <item>未处理</item>
+        <item>是</item>
+        <item>否</item>
     </string-array>
     <string-array name="ui_group_finance_approve_status">
-        <item><![CDATA[<font color="#3eb135">(未处理)</font>]]></item>
-        <item><![CDATA[<font color="#295391">(同意)</font>]]></item>
-        <item><![CDATA[<font color="#ff4081">(不同意)</font>]]></item>
+        <item>未处理</item>
+        <item>同意</item>
+        <item>不同意</item>
     </string-array>
     <string-array name="ui_group_finance_receive_status">
-        <item><![CDATA[<font color="#3eb135">(未处理)</font>]]></item>
-        <item><![CDATA[<font color="#295391">(确认)</font>]]></item>
-        <item><![CDATA[<font color="#ff4081">(不确认)</font>]]></item>
+        <item>未处理</item>
+        <item>确认</item>
+        <item>不确认</item>
     </string-array>
     <string name="ui_group_finance_collection_title_00">支部</string>
     <string name="ui_group_finance_collection_title_0">成员</string>
