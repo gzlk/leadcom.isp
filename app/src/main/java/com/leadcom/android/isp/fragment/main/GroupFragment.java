@@ -604,16 +604,12 @@ public class GroupFragment extends GroupBaseFragment {
         }
         // 是否可以查看履职统计数据
         SimpleClickableItem item = new SimpleClickableItem(items[2]);
-        if (!isNeedPermission || isMember(group.getId())) {
+        if (!isNeedPermission || hasOperation(group.getId(), GRPOperation.MEMBER_DUTY) || hasOperation(group.getId(), GRPOperation.SQUAD_DUTY)) {
             // 履职统计在组织架构后面
             int in = dAdapter.indexOf(new SimpleClickableItem(items[1]));
             if (dAdapter.indexOf(item) < 0) {
                 dAdapter.add(item, in + 1);
             }
-            //dAdapter.update(item);
-            //if (isSingle) {
-            //    dAdapter.remove(item);
-            //}
         } else {
             dAdapter.remove(item);
         }
@@ -639,6 +635,8 @@ public class GroupFragment extends GroupBaseFragment {
                 //if (isSingle) {
                 //    dAdapter.remove(item);
                 //}
+            } else {
+                dAdapter.remove(item);
             }
         } else {
             dAdapter.remove(item);

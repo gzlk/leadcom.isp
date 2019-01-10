@@ -85,7 +85,7 @@
     <string name="ui_group_details_self_define_hint">栏目名称(最大限10字)</string>
     <string name="ui_group_details_self_define_name_blank">栏目名称不能为空</string>
     <string name="ui_group_details_self_define_delete">您确定要删除这个自定义的栏目吗？</string>
-    <string name="ui_group_details_no_permission_to_duty">您没有查看组织成员/支部的履职统计信息</string>
+    <string name="ui_group_details_no_permission_to_duty">您没有权限查看组织或支部履职统计</string>
     <string name="ui_group_details_no_permission_to_member_duty">您没有权限查看组织成员的履职统计信息</string>
     <string name="ui_group_details_no_permission_to_squad_duty">您没有权限查看支部履职统计</string>
     <string name="ui_group_header_minmeng_flag">&#xe68d;&#xe68e;&#xe693;&#xe694;&#xe697;&#xe699;</string>
