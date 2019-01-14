@@ -50,7 +50,7 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_simple_clickable_progress)
     private CircleProgressBar progress;
     @ViewId(R.id.ui_tool_view_contact_button2)
-    private TextView deleteView;
+    public TextView deleteView;
 
     public SimpleClickableViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -123,6 +123,18 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
     public void showDelete(boolean shown) {
         if (null != deleteView) {
             deleteView.setVisibility(shown ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    public void setDeleteText(int resText) {
+        if (null != deleteView) {
+            deleteView.setText(resText);
+        }
+    }
+
+    public void setDeleteText(String text) {
+        if (null != deleteView) {
+            deleteView.setText(text);
         }
     }
 

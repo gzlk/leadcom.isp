@@ -21,6 +21,7 @@ import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.organization.Payment;
 import com.leadcom.android.isp.model.organization.Role;
+import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.List;
 
@@ -152,6 +153,7 @@ public class FinanceListFragment extends GroupBaseFragment {
     public void doingInResume() {
         if (null == mAdapter) {
             mAdapter = new PaymentAdapter();
+            mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(mRecyclerView.getContext()));
             mRecyclerView.setAdapter(mAdapter);
             loading();
         }
@@ -285,7 +287,7 @@ public class FinanceListFragment extends GroupBaseFragment {
         displayNothing(mAdapter.getItemCount() <= 0);
         stopRefreshing();
         isLoadingComplete(cnt < pageSize);
-        setUncheckRightTitleClick(mAdapter.getItemCount() > 0);
+        //setUncheckRightTitleClick(mAdapter.getItemCount() > 0);
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
@@ -344,6 +346,7 @@ public class FinanceListFragment extends GroupBaseFragment {
                 case TP_DELETE:
                     GroupDetailsViewHolder gdvh = new GroupDetailsViewHolder(itemView, FinanceListFragment.this);
                     gdvh.setOnViewHolderElementClickListener(elementClickListener);
+                    gdvh.setDeleteText(R.string.ui_base_text_delete);
                     return gdvh;
                 case TP_DETAILS:
                     PaymentUserDetailsViewHolder pudvh = new PaymentUserDetailsViewHolder(itemView, FinanceListFragment.this);
