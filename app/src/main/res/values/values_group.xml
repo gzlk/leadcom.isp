@@ -79,7 +79,7 @@
         <item>4|活动管理||1|0xe62e</item>
         <item>5|组织档案||1|0xe670</item>
         <item>6|成员信息统计||1|0xe6a1</item>
-        <item>7|财务记账||1|0xe9cf</item>
+        <item>7|财务表||1|0xe9cf</item>
     </string-array>
     <string name="ui_group_details_self_define">自定义创建栏目</string>
     <string name="ui_group_details_self_define_hint">栏目名称(最大限10字)</string>
@@ -377,18 +377,18 @@
 
     <string name="ui_group_finance_management_main_title">财务记账</string>
     <string-array name="ui_group_finance_management_items">
-        <item>1|缴费记账||1|0xe6c2</item>
-        <item>2|支出记账||1|0xe6c3</item>
+        <item>1|缴费表||1|0xe6c2</item>
+        <item>2|支出表||1|0xe6c3</item>
         <item>3|我的审批||1|0xe8f7</item>
         <item>4|收支统计||1|0xe6ca</item>
     </string-array>
-    <string name="ui_group_finance_1">缴费记账</string>
-    <string name="ui_group_finance_2">支出记账</string>
+    <string name="ui_group_finance_1">缴费表</string>
+    <string name="ui_group_finance_2">支出表</string>
     <string name="ui_group_finance_3">我的审批</string>
     <string name="ui_group_finance_4">收支统计</string>
-    <string name="ui_group_finance_list_loading_title">加载缴费记账列表，请稍候&#8230;</string>
-    <string name="ui_group_finance_list_nothing">目前没有缴费记账记录</string>
-    <string name="ui_group_finance_list_expend_loading_title">加载支出记账列表，请稍候&#8230;</string>
+    <string name="ui_group_finance_list_loading_title">加载缴费表，请稍候&#8230;</string>
+    <string name="ui_group_finance_list_nothing">目前没有缴费记录</string>
+    <string name="ui_group_finance_list_expend_loading_title">加载支出表，请稍候&#8230;</string>
     <string name="ui_group_finance_list_expend_nothing">目前没有支出记账记录</string>
     <string name="ui_group_finance_list_check_loading_title">加载待审批项目，请稍候&#8230;</string>
     <string name="ui_group_finance_list_check_nothing">目前没有需要您审批的记账项目</string>
@@ -412,7 +412,7 @@
         <item>3|支出时间：|%s|1|0xe6c2</item>
         <item>4|证明人：|%s|1|0xe6c2</item>
         <item>5|审批人：|%s|1|0xe6c2</item>
-        <item>6|收款人：|%s|1|0xe6c2</item>
+        <item>6|经办人：|%s|1|0xe6c2</item>
         <item>7|填单人：|%s|1|0xe6c2</item>
     </string-array>
     <string-array name="ui_group_finance_user_payment_create_user_select_title">
@@ -422,16 +422,20 @@
         <item>-</item>
         <item>选择证明人</item>
         <item>审批负责人</item>
-        <item>选择收款人</item>
+        <item>选择经办人</item>
+        <item>(必填项)</item>
+        <item>(可修改)</item>
     </string-array>
     <string name="ui_group_finance_user_payment_create_amount_hint">费用金额(精确到分，如1.00)</string>
     <string name="ui_group_finance_user_payment_create_remark_hint">输入费用说明</string>
+    <string name="ui_group_finance_user_payment_create_remark_hint_expend">输入支出事由(必填项，2&#8211;10个字)</string>
     <string name="ui_group_finance_user_payment_create_files_title">凭证(最多8张)</string>
     <string name="ui_group_finance_user_payment_create_files_title1">凭证</string>
     <string name="ui_group_finance_user_payment_create_amount_error">请输入正确的费用金额(精确到分，如1.00)</string>
+    <string name="ui_group_finance_user_payment_create_remark_error">请正确填写支出事由(2&#8211;10个字)</string>
     <string name="ui_group_finance_user_payment_create_reference_error">请选择证明人</string>
     <string name="ui_group_finance_user_payment_create_approver_error">请选择审核人</string>
-    <string name="ui_group_finance_user_payment_create_receiver_error">请选择收款人</string>
+    <string name="ui_group_finance_user_payment_create_receiver_error">请选择经办人</string>
     <string name="ui_group_finance_user_payment_creating">正在处理，请稍候&#8230;</string>
     <string name="ui_group_finance_user_payment_creating_waiting">正在等待网络请求，请稍候&#8230;</string>
     <string name="ui_group_finance_user_payment_creating_failed">操作失败，请重试&#8230;</string>
@@ -445,12 +449,12 @@
     <string name="ui_group_finance_user_payment_fetch_failed">获取缴费记录失败</string>
     <string-array name="ui_group_finace_user_payment_create_user_control">
         <item>证明人和审批人不能是同一人。</item>
-        <item>证明人和收款人不能是同一人。</item>
+        <item>证明人和经办人不能是同一人。</item>
         <item>审核人不能是您自己。</item>
         <item>审核人和证明人不能是同一人。</item>
-        <item>审核人和收款人不能是同一人。</item>
-        <item>收款人和证明人不能是同一人。</item>
-        <item>收款人和审批人不能是同一人。</item>
+        <item>审核人和经办人不能是同一人。</item>
+        <item>经办人和证明人不能是同一人。</item>
+        <item>经办人和审批人不能是同一人。</item>
     </string-array>
     <string-array name="ui_group_finance_status_colors">
         <item><![CDATA[<font color="#3eb135">(%s)</font>]]></item>

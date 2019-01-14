@@ -63,7 +63,7 @@ public class Payment extends Model {
         String NONE = "";
         String CERTIFICATION = "证明人";
         String APPROVER = "审批人";
-        String RECEIVER = "收款人";
+        String RECEIVER = "经办人";
     }
 
     /**
