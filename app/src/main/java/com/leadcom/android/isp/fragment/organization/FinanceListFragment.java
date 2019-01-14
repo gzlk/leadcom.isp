@@ -8,9 +8,12 @@ import android.view.View;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
+import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.PaymentRequest;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.holder.organization.PaymentUserDetailsViewHolder;
@@ -74,6 +77,49 @@ public class FinanceListFragment extends GroupBaseFragment {
         }
     }
 
+    private boolean isUncheck() {
+        return mType == Payment.Type.CHECK;
+    }
+
+    private void setUncheckRightTitleClick(boolean shown) {
+        if (isUncheck()) {
+            setRightText(shown ? R.string.ui_base_text_clear : 0);
+            setRightTitleClickListener(shown ? new OnTitleButtonClickListener() {
+                @Override
+                public void onClick() {
+                    // 清空审批列表
+                    warningClearUncheckList();
+                }
+            } : null);
+        }
+    }
+
+    private void warningClearUncheckList() {
+        DeleteDialogHelper.helper().init(this).setTitleText(R.string.ui_group_finance_list_check_clean_warning).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                clearUncheckList();
+                return true;
+            }
+        }).show();
+    }
+
+    private void clearUncheckList() {
+        setLoadingText(R.string.ui_group_finance_list_check_cleaning);
+        displayLoading(true);
+        PaymentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Payment>() {
+            @Override
+            public void onResponse(Payment payment, boolean success, String message) {
+                super.onResponse(payment, success, message);
+                if (success) {
+                    mAdapter.clear();
+                }
+                displayLoading(false);
+                displayNothing(mAdapter.getItemCount() <= 0);
+            }
+        }).clearUncheck(mQueryId);
+    }
+
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
@@ -119,7 +165,7 @@ public class FinanceListFragment extends GroupBaseFragment {
     @Override
     public void onActivityResult(int requestCode, Intent data) {
         if (requestCode == REQUEST_CREATE) {
-            if (mType == Payment.Type.CHECK) {
+            if (isUncheck()) {
                 // 表示审批完毕
                 String id = getResultedData(data);
                 if (!isEmpty(id)) {
@@ -239,6 +285,7 @@ public class FinanceListFragment extends GroupBaseFragment {
         displayNothing(mAdapter.getItemCount() <= 0);
         stopRefreshing();
         isLoadingComplete(cnt < pageSize);
+        setUncheckRightTitleClick(mAdapter.getItemCount() > 0);
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
@@ -246,29 +293,55 @@ public class FinanceListFragment extends GroupBaseFragment {
         public void onClick(View view, int index) {
             Payment payment = mAdapter.get(index);
             String id = mType == Payment.Type.PAYMENT ? payment.getId() : payment.getExpendFlowerId();
-            if (isEmpty(mUserId)) {
-                if (payment.isPayment()) {
-                    // 打开某个用户的记账记录
-                    FinanceListFragment.open(FinanceListFragment.this, mQueryId, mGroupName, payment.getUserId(), mType);
-                } else {
-                    // 打开查看支出申请详情或审批页面
-                    FinanceCreatorFragment.open(FinanceListFragment.this, mType, mQueryId, mGroupName, "", id, payment.getUserId());
-                }
-            } else {
-                // 打开某个记账记录详情，查看凭证图片
-                FinanceCreatorFragment.open(FinanceListFragment.this, mType, mQueryId, mGroupName, "", id, payment.getUserId());
+            switch (view.getId()) {
+                case R.id.ui_tool_view_contact_button2:
+                    // 删除审核通知
+                    deleteUncheck(id);
+                    break;
+                case R.id.ui_holder_view_simple_clickable:
+                case R.id.ui_holder_view_payment_user_details_more:
+                    if (isEmpty(mUserId)) {
+                        if (payment.isPayment()) {
+                            // 打开某个用户的记账记录
+                            FinanceListFragment.open(FinanceListFragment.this, mQueryId, mGroupName, payment.getUserId(), mType);
+                        } else {
+                            // 打开查看支出申请详情或审批页面
+                            FinanceCreatorFragment.open(FinanceListFragment.this, mType, mQueryId, mGroupName, "", id, payment.getUserId());
+                        }
+                    } else {
+                        // 打开某个记账记录详情，查看凭证图片
+                        FinanceCreatorFragment.open(FinanceListFragment.this, mType, mQueryId, mGroupName, "", id, payment.getUserId());
+                    }
+                    break;
             }
+        }
+
+        private void deleteUncheck(final String paymentId) {
+            setLoadingText(R.string.ui_group_finance_list_check_deleting);
+            displayLoading(true);
+            PaymentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Payment>() {
+                @Override
+                public void onResponse(Payment payment, boolean success, String message) {
+                    super.onResponse(payment, success, message);
+                    if (success) {
+                        mAdapter.remove(paymentId);
+                    }
+                    displayLoading(false);
+                    displayNothing(mAdapter.getItemCount() <= 0);
+                }
+            }).deleteUncheck(paymentId);
         }
     };
 
     private class PaymentAdapter extends RecyclerViewAdapter<BaseViewHolder, Payment> {
 
-        private static final int TP_USER = 0, TP_DETAILS = 1;
+        private static final int TP_USER = 0, TP_DETAILS = 1, TP_DELETE = 2;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
             switch (viewType) {
                 case TP_USER:
+                case TP_DELETE:
                     GroupDetailsViewHolder gdvh = new GroupDetailsViewHolder(itemView, FinanceListFragment.this);
                     gdvh.setOnViewHolderElementClickListener(elementClickListener);
                     return gdvh;
@@ -282,12 +355,19 @@ public class FinanceListFragment extends GroupBaseFragment {
 
         @Override
         public int itemLayout(int viewType) {
-            return viewType == TP_USER ? R.layout.holder_view_group_details : R.layout.holder_view_payment_user_details;
+            switch (viewType) {
+                case TP_DELETE:
+                    return R.layout.holder_view_group_details_deletable;
+                case TP_USER:
+                    return R.layout.holder_view_group_details;
+                default:
+                    return R.layout.holder_view_payment_user_details;
+            }
         }
 
         @Override
         public int getItemViewType(int position) {
-            return get(position).isLocalDeleted() ? TP_DETAILS : TP_USER;
+            return get(position).isLocalDeleted() ? TP_DETAILS : (isUncheck() ? TP_DELETE : TP_USER);
         }
 
         @Override

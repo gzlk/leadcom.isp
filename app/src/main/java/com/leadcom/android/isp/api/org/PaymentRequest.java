@@ -3,6 +3,7 @@ package com.leadcom.android.isp.api.org;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.query.NumericQuery;
 import com.leadcom.android.isp.api.query.PageQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.model.common.Attachment;
@@ -33,6 +34,9 @@ public class PaymentRequest extends Request<Payment> {
     }
 
     private static class SinglePayment extends SingleQuery<Payment> {
+    }
+
+    private static class NumericPayment extends NumericQuery<Payment> {
     }
 
     @Override
@@ -178,5 +182,21 @@ public class PaymentRequest extends Request<Payment> {
     public void listUnchecked(String groupId, int pageNumber, int pageSize) {
         directlySave = false;
         executeHttpRequest(getRequest(PagePayment.class, format("%s?groupId=%s%s", check(LIST), groupId, page(pageNumber, pageSize)), "", HttpMethods.Get));
+    }
+
+    /**
+     * 删除待审核记录
+     */
+    public void deleteUncheck(String uncheckId) {
+        directlySave = false;
+        executeHttpRequest(getRequest(NumericPayment.class, format("%s?expendFlowerId=%s", check(DELETE), uncheckId), "", HttpMethods.Get));
+    }
+
+    /**
+     * 清空某个组织下的待审核记录(仅清空通知)
+     */
+    public void clearUncheck(String groupId) {
+        directlySave = false;
+        executeHttpRequest(getRequest(NumericPayment.class, format("%s?groupId=%s", check("/empty"), groupId), "", HttpMethods.Get));
     }
 }

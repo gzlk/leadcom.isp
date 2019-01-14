@@ -392,6 +392,9 @@
     <string name="ui_group_finance_list_expend_nothing">目前没有支出记账记录</string>
     <string name="ui_group_finance_list_check_loading_title">加载待审批项目，请稍候&#8230;</string>
     <string name="ui_group_finance_list_check_nothing">目前没有需要您审批的记账项目</string>
+    <string name="ui_group_finance_list_check_deleting">删除审批通知，请稍候&#8230;</string>
+    <string name="ui_group_finance_list_check_clean_warning">清空后您将无法再对这些项目进行操作，您确定要这样做吗？</string>
+    <string name="ui_group_finance_list_check_cleaning">清空审批通知，请稍候&#8230;</string>
     <string name="ui_group_finance_user_payment_item_title">缴费支付凭证</string>
     <string name="ui_group_finance_user_payment_item_amount">缴费金额</string>
     <string name="ui_group_finance_user_payment_item_amount_number">金额：</string>
