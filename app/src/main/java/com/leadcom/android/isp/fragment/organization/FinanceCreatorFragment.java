@@ -654,31 +654,32 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                     amountText.setText(NumberFormat.getCurrencyInstance(Locale.CHINA).format(amount));
                     remarkText.setText(mPayment.getRemark());
                     String me = Cache.cache().userId;
-                    if (mPayment.isCheck() && mPayment.isStateHandleable(me)) {
-                        String type = mPayment.getUserType(me);
-                        controlTitle.setText(Html.fromHtml(StringHelper.getString(R.string.ui_group_finance_user_payment_approve_warning0, type, type.replace("人", ""))));
-                        agreeButton.setText(mPayment.isCertificator(me) ? certs[1] : (mPayment.isApprovor(me) ? apprs[1] : recvs[1]));
-                        rejectButton.setText(mPayment.isCertificator(me) ? certs[2] : (mPayment.isApprovor(me) ? apprs[2] : recvs[2]));
-                        if (mPayment.isCertificator(me)) {
-                            if (mPayment.isApproved() || mPayment.isReceived()) {
-                                showWarningText(R.string.ui_group_finance_user_payment_has_rejected);
-                            } else {
-                                controlView.setVisibility(mPayment.isCertified() ? View.GONE : View.VISIBLE);
+                    if (mPayment.isCheck()) {
+                        if (mPayment.isStateHandleable(me)) {
+                            String type = mPayment.getUserType(me);
+                            controlTitle.setText(Html.fromHtml(StringHelper.getString(R.string.ui_group_finance_user_payment_approve_warning0, type, type.replace("人", ""))));
+                            agreeButton.setText(mPayment.isCertificator(me) ? certs[1] : (mPayment.isApprovor(me) ? apprs[1] : recvs[1]));
+                            rejectButton.setText(mPayment.isCertificator(me) ? certs[2] : (mPayment.isApprovor(me) ? apprs[2] : recvs[2]));
+                            if (mPayment.isCertificator(me)) {
+                                // 当前用户是证明人
+                                if (mPayment.isRejectApproved() || mPayment.isRejectReceived()) {
+                                    showWarningText(R.string.ui_group_finance_user_payment_has_rejected);
+                                } else {
+                                    controlView.setVisibility(mPayment.isCertified() ? View.GONE : View.VISIBLE);
+                                }
+                            } else if (mPayment.isApprovor(me)) {
+                                if (mPayment.isRejectCertified() || mPayment.isRejectReceived()) {
+                                    showWarningText(R.string.ui_group_finance_user_payment_has_rejected);
+                                } else {
+                                    controlView.setVisibility(mPayment.isApproved() ? View.GONE : View.VISIBLE);
+                                }
+                            } else if (mPayment.isReceiver(me)) {
+                                if (mPayment.isRejectCertified() || mPayment.isRejectApproved()) {
+                                    showWarningText(R.string.ui_group_finance_user_payment_has_rejected);
+                                } else {
+                                    controlView.setVisibility(mPayment.isReceived() ? View.GONE : View.VISIBLE);
+                                }
                             }
-                        } else if (mPayment.isApprovor(me)) {
-                            if (mPayment.isCertified() || mPayment.isReceived()) {
-                                showWarningText(R.string.ui_group_finance_user_payment_has_rejected);
-                            } else {
-                                controlView.setVisibility(mPayment.isApproved() ? View.GONE : View.VISIBLE);
-                            }
-                        } else if (mPayment.isReceiver(me)) {
-                            if (mPayment.isCertified() || mPayment.isApproved()) {
-                                showWarningText(R.string.ui_group_finance_user_payment_has_rejected);
-                            } else {
-                                controlView.setVisibility(mPayment.isReceived() ? View.GONE : View.VISIBLE);
-                            }
-                        } else {
-                            controlView.setVisibility(View.VISIBLE);
                         }
                     }
                 } else {

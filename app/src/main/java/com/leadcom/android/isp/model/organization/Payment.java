@@ -389,10 +389,17 @@ public class Payment extends Model {
     }
 
     /**
-     * 是否已证明（同意或拒绝）
+     * 是否已证明
      */
     public boolean isCertified() {
-        return certifierState > State.NORMAL;
+        return certifierState >= State.AGREE;
+    }
+
+    /**
+     * 是否已拒绝证明
+     */
+    public boolean isRejectCertified() {
+        return certifierState == State.REJECT;
     }
 
     public int getApproverState() {
@@ -404,10 +411,17 @@ public class Payment extends Model {
     }
 
     /**
-     * 是否已审批（同意或拒绝）
+     * 是否已审批
      */
     public boolean isApproved() {
-        return approverState > State.NORMAL;
+        return approverState >= State.AGREE;
+    }
+
+    /**
+     * 是否已拒绝审批
+     */
+    public boolean isRejectApproved() {
+        return approverState == State.REJECT;
     }
 
     public int getReceiverState() {
@@ -419,10 +433,17 @@ public class Payment extends Model {
     }
 
     /**
-     * 是否已接受（已接受或拒绝）
+     * 是否已接受
      */
     public boolean isReceived() {
-        return receiverState > State.NORMAL;
+        return receiverState >= State.AGREE;
+    }
+
+    /**
+     * 是否已拒绝接受
+     */
+    public boolean isRejectReceived() {
+        return receiverState == State.REJECT;
     }
 
     public String getTitle() {
