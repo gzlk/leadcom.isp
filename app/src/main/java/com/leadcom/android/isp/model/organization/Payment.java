@@ -388,6 +388,13 @@ public class Payment extends Model {
         this.certifierState = certifierState;
     }
 
+    /**
+     * 是否已证明（同意或拒绝）
+     */
+    public boolean isCertified() {
+        return certifierState > State.NORMAL;
+    }
+
     public int getApproverState() {
         return approverState;
     }
@@ -396,12 +403,26 @@ public class Payment extends Model {
         this.approverState = approverState;
     }
 
+    /**
+     * 是否已审批（同意或拒绝）
+     */
+    public boolean isApproved() {
+        return approverState > State.NORMAL;
+    }
+
     public int getReceiverState() {
         return receiverState;
     }
 
     public void setReceiverState(int receiverState) {
         this.receiverState = receiverState;
+    }
+
+    /**
+     * 是否已接受（已接受或拒绝）
+     */
+    public boolean isReceived() {
+        return receiverState > State.NORMAL;
     }
 
     public String getTitle() {

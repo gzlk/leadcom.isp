@@ -263,7 +263,7 @@ public class ContactViewHolder extends BaseViewHolder {
             R.id.ui_tool_view_contact_button0,
             R.id.ui_tool_view_contact_button0d5,
             R.id.ui_tool_view_contact_button1,
-            R.id.ui_tool_view_contact_button2,
+            R.id.ui_tool_view_contact_button2_text,
             R.id.ui_holder_view_contact_phone,
             R.id.ui_holder_view_contact_invite_button,
             R.id.ui_holder_view_contact_picker})

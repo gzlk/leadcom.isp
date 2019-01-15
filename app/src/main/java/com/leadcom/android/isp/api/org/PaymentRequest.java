@@ -3,6 +3,7 @@ package com.leadcom.android.isp.api.org;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.NumericQuery;
 import com.leadcom.android.isp.api.query.PageQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
@@ -36,7 +37,7 @@ public class PaymentRequest extends Request<Payment> {
     private static class SinglePayment extends SingleQuery<Payment> {
     }
 
-    private static class NumericPayment extends NumericQuery<Payment> {
+    private static class BoolPayment extends BoolQuery<Payment> {
     }
 
     @Override
@@ -189,7 +190,7 @@ public class PaymentRequest extends Request<Payment> {
      */
     public void deleteUncheck(String uncheckId) {
         directlySave = false;
-        executeHttpRequest(getRequest(NumericPayment.class, format("%s?expendFlowerId=%s", check(DELETE), uncheckId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(BoolPayment.class, format("%s?expendFlowerId=%s", check(DELETE), uncheckId), "", HttpMethods.Get));
     }
 
     /**
@@ -197,6 +198,6 @@ public class PaymentRequest extends Request<Payment> {
      */
     public void clearUncheck(String groupId) {
         directlySave = false;
-        executeHttpRequest(getRequest(NumericPayment.class, format("%s?groupId=%s", check("/empty"), groupId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(BoolPayment.class, format("%s?groupId=%s", check("/empty"), groupId), "", HttpMethods.Get));
     }
 }

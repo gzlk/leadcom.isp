@@ -49,8 +49,8 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
     public CustomTextView rightIcon;
     @ViewId(R.id.ui_holder_view_simple_clickable_progress)
     private CircleProgressBar progress;
-    @ViewId(R.id.ui_tool_view_contact_button2)
-    public TextView deleteView;
+    @ViewId(R.id.ui_tool_view_contact_button2_text)
+    public TextView deleteViewText;
 
     public SimpleClickableViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -83,7 +83,7 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
             showContent((SimpleClickableItem) model);
         } else if (model instanceof UserExtra) {
             UserExtra ue = (UserExtra) model;
-            boolean deletable = null != deleteView && deleteView.getVisibility() == View.VISIBLE;
+            boolean deletable = null != deleteViewText && deleteViewText.getVisibility() == View.VISIBLE;
             showContent(-1, ue.getTitle(), StringHelper.getString(R.string.ui_text_user_property_self_defined_value, ue.getContent(), deletable ? format("(%s)", StringHelper.getStringArray(R.array.ui_text_user_property_self_defined_shown_type)[ue.getShow()]) : ""));
         } else {
             showContent(model.getId());
@@ -121,20 +121,20 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
     }
 
     public void showDelete(boolean shown) {
-        if (null != deleteView) {
-            deleteView.setVisibility(shown ? View.VISIBLE : View.GONE);
+        if (null != deleteViewText) {
+            deleteViewText.setVisibility(shown ? View.VISIBLE : View.GONE);
         }
     }
 
     public void setDeleteText(int resText) {
-        if (null != deleteView) {
-            deleteView.setText(resText);
+        if (null != deleteViewText) {
+            deleteViewText.setText(resText);
         }
     }
 
     public void setDeleteText(String text) {
-        if (null != deleteView) {
-            deleteView.setText(text);
+        if (null != deleteViewText) {
+            deleteViewText.setText(text);
         }
     }
 

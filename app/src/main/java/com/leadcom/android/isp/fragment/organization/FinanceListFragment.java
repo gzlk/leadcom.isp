@@ -23,6 +23,7 @@ import com.leadcom.android.isp.model.organization.Payment;
 import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.view.SwipeItemLayout;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -171,7 +172,7 @@ public class FinanceListFragment extends GroupBaseFragment {
                 // 表示审批完毕
                 String id = getResultedData(data);
                 if (!isEmpty(id)) {
-                    mAdapter.remove(id);
+                    removePayment(id);
                 }
             } else {
                 // 创建、修改状态操作完毕之后，拉取列表
@@ -334,6 +335,17 @@ public class FinanceListFragment extends GroupBaseFragment {
             }).deleteUncheck(paymentId);
         }
     };
+
+    private void removePayment(String paymentId) {
+        Iterator<Payment> iterator = mAdapter.iterator();
+        while (iterator.hasNext()) {
+            Payment payment = iterator.next();
+            if (payment.getExpendFlowerId().equals(paymentId)) {
+                mAdapter.remove(payment);
+                break;
+            }
+        }
+    }
 
     private class PaymentAdapter extends RecyclerViewAdapter<BaseViewHolder, Payment> {
 

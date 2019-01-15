@@ -439,6 +439,7 @@
     <string name="ui_group_finance_user_payment_creating">正在处理，请稍候&#8230;</string>
     <string name="ui_group_finance_user_payment_creating_waiting">正在等待网络请求，请稍候&#8230;</string>
     <string name="ui_group_finance_user_payment_creating_failed">操作失败，请重试&#8230;</string>
+    <string name="ui_group_finance_user_payment_has_rejected">本支出单已作废</string>
     <string name="ui_group_finance_user_payment_approve_warning" formatted="false">
         <![CDATA[您正在审核这个费用支出单，确定要 %s 吗？]]>
     </string>
