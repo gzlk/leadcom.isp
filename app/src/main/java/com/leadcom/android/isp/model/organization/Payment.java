@@ -215,6 +215,13 @@ public class Payment extends Model {
         this.createUserId = createUserId;
     }
 
+    /**
+     * 是否是填单人
+     */
+    public boolean isCreator(String userId) {
+        return !isEmpty(createUserId) && createUserId.equals(userId);
+    }
+
     public String getCreateUserName() {
         return createUserName;
     }

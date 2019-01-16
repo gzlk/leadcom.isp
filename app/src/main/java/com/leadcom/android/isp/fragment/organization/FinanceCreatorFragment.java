@@ -773,7 +773,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                 super.onResponse(payment, success, message);
                 displayLoading(false);
                 if (success) {
-                    resultData(mPaymentId);
+                    resultData(mPaymentId + (mPayment.isCreator(Cache.cache().userId) ? "_creator" : ""));
                 } else {
                     agreeButton.setEnabled(true);
                     rejectButton.setEnabled(true);
