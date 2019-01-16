@@ -224,7 +224,9 @@ public class SettingCacheFragment extends BaseTransparentSupportFragment {
         @Override
         protected void doAfterExecute() {
             super.doAfterExecute();
-            refresh(type);
+            if (isAdded() && !isStopped && !isDetached()) {
+                refresh(type);
+            }
         }
     }
 
@@ -236,6 +238,13 @@ public class SettingCacheFragment extends BaseTransparentSupportFragment {
 
         @Override
         protected void doAfterExecute() {
+            if (isAdded() && !isStopped && !isDetached()) {
+                refresh();
+            }
+            super.doAfterExecute();
+        }
+
+        private void refresh() {
             switch (type) {
                 case 0:
                     fileHolder.showContent(format(items[0], Utils.formatSize(size)));
@@ -254,7 +263,6 @@ public class SettingCacheFragment extends BaseTransparentSupportFragment {
                     otherHolder.showProgress(false);
                     break;
             }
-            super.doAfterExecute();
         }
 
         @Override
