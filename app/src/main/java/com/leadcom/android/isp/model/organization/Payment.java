@@ -1,10 +1,7 @@
 package com.leadcom.android.isp.model.organization;
 
-import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.Attachment;
-import com.leadcom.android.isp.model.user.User;
 
 import java.util.ArrayList;
 
@@ -19,6 +16,12 @@ import java.util.ArrayList;
  * <b>修改备注：</b><br />
  */
 public class Payment extends Model {
+
+    public interface ETC {
+        String AGREE = "_isAgree";
+        String CREATOR = "_isCreator";
+        String LAST = "_isLast";
+    }
 
     /**
      * 财务类型
@@ -54,6 +57,24 @@ public class Payment extends Model {
          * 已拒绝
          */
         int REJECT = 2;
+    }
+
+    /**
+     * 支出单进行状态
+     */
+    public interface UnderwayState {
+        /**
+         * 待处理
+         */
+        int WAITING = 0;
+        /**
+         * 进行中，至少有一个人已经同意了
+         */
+        int PROCESSING = 1;
+        /**
+         * 被否决，至少有一个人否决了
+         */
+        int REJECTED = 2;
     }
 
     /**
@@ -330,6 +351,22 @@ public class Payment extends Model {
             return approverState <= State.NORMAL;
         } else if (userId.equals(receiverId)) {
             return receiverState <= State.NORMAL;
+        }
+        return false;
+    }
+
+    /**
+     * 是否是最后一个操作者
+     */
+    public boolean isLastHandler(String userId) {
+        if (isCertificator(userId)) {
+            return approverState > State.NORMAL && receiverState > State.NORMAL;
+        }
+        if (isApprovor(userId)) {
+            return certifierState > State.NORMAL && receiverState > State.NORMAL;
+        }
+        if (isReceiver(userId)) {
+            return certifierState > State.NORMAL && approverState > State.NORMAL;
         }
         return false;
     }

@@ -157,7 +157,7 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
     private SimpleClickableViewHolder timeHolder, userHolder, creatorHolder, referHolder, apprHolder, recvrHolder;
     private String mGroupName, mSquadId, mPaymentId, mUserId;
     private String[] items, warnings, itemTitles;
-    private boolean isCreating = false, isForeground = true;
+    private boolean isCreating = false, isForeground = true, isLast = false;
     private DateTimePicker dateTimePicker;
 
     @Override
@@ -773,7 +773,10 @@ public class FinanceCreatorFragment extends BaseImageSelectableSupportFragment {
                 super.onResponse(payment, success, message);
                 displayLoading(false);
                 if (success) {
-                    resultData(mPaymentId + (mPayment.isCreator(Cache.cache().userId) ? "_creator" : ""));
+                    String me = Cache.cache().userId;
+                    resultData(mPaymentId + (mPayment.isCreator(me) ? Payment.ETC.CREATOR : "") +
+                            (state == Payment.State.AGREE ? Payment.ETC.AGREE : "") +
+                            (mPayment.isLastHandler(me) ? Payment.ETC.LAST : ""));
                 } else {
                     agreeButton.setEnabled(true);
                     rejectButton.setEnabled(true);

@@ -172,7 +172,26 @@ public class FinanceListFragment extends GroupBaseFragment {
                 // 表示审批完毕
                 String id = getResultedData(data);
                 if (!isEmpty(id)) {
-                    removePayment(id);
+                    boolean isCreator = id.contains(Payment.ETC.CREATOR);
+                    boolean isAgree = id.contains(Payment.ETC.AGREE);
+                    boolean isLast = id.contains(Payment.ETC.LAST);
+                    id = id.replace(Payment.ETC.CREATOR, "").replace(Payment.ETC.AGREE, "").replace(Payment.ETC.LAST, "");
+                    if (isCreator) {
+                        Payment payment = getPayment(id);
+                        if (null != payment) {
+                            if (payment.isCheck()) {
+                                if (!isLast) {
+                                    payment.setUnderwayState(isAgree ? Payment.UnderwayState.PROCESSING : Payment.UnderwayState.REJECTED);
+                                    mAdapter.update(payment);
+                                } else {
+                                    removePayment(id);
+                                }
+                            }
+                        }
+                    } else {
+                        removePayment(id);
+                    }
+                    displayNothing(mAdapter.getItemCount() <= 0);
                 }
             } else {
                 // 创建、修改状态操作完毕之后，拉取列表
@@ -180,6 +199,17 @@ public class FinanceListFragment extends GroupBaseFragment {
             }
         }
         super.onActivityResult(requestCode, data);
+    }
+
+    private Payment getPayment(String paymentId) {
+        Iterator<Payment> iterator = mAdapter.iterator();
+        while (iterator.hasNext()) {
+            Payment payment = iterator.next();
+            if (payment.getExpendFlowerId().equals(paymentId)) {
+                return payment;
+            }
+        }
+        return null;
     }
 
     private void loading() {
@@ -327,7 +357,7 @@ public class FinanceListFragment extends GroupBaseFragment {
                 public void onResponse(Payment payment, boolean success, String message) {
                     super.onResponse(payment, success, message);
                     if (success) {
-                        mAdapter.remove(paymentId);
+                        removePayment(paymentId);
                     }
                     displayLoading(false);
                     displayNothing(mAdapter.getItemCount() <= 0);
