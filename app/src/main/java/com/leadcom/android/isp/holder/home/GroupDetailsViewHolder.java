@@ -2,12 +2,15 @@ package com.leadcom.android.isp.holder.home;
 
 import android.text.Html;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
+import com.leadcom.android.isp.lib.DepthViewPager;
 import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.organization.Payment;
@@ -27,6 +30,9 @@ import com.leadcom.android.isp.model.user.UserExtra;
 public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
 
     private static String[] definedValues, financeUnderway;
+
+    @ViewId(R.id.ui_holder_view_simple_clickable_bottom_line)
+    private View bottomLine;
 
     public GroupDetailsViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -70,18 +76,23 @@ public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
     }
 
     public void showContent(Payment payment) {
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) bottomLine.getLayoutParams();
+        params.leftMargin = 0;
+        bottomLine.setLayoutParams(params);
+
         valueIcon.setVisibility(View.GONE);
-        imageView.setVisibility(payment.isLocalDeleted() ? View.GONE : View.VISIBLE);
-        String header = payment.getUserHeadPhoto();
-        if (isEmpty(header) || header.length() < 20) {
-            header = "drawable://" + R.drawable.img_default_user_header;
-        }
-        imageView.displayImage(header, getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
+        //imageView.setVisibility(payment.isLocalDeleted() ? View.GONE : View.VISIBLE);
+        imageView.setVisibility(View.GONE);
+        //String header = payment.getUserHeadPhoto();
+        //if (isEmpty(header) || header.length() < 20) {
+        //    header = "drawable://" + R.drawable.img_default_user_header;
+        //}
+        //imageView.displayImage(header, getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
         if (payment.isPayment()) {
             titleTextView.setText(payment.getUserName());
             valueTextView.setText(format("%.2f", payment.getTotalPayAmount()));
         } else {
-            header = payment.getTitle();
+            String header = payment.getTitle();
             if (!isEmpty(header) && header.length() > 7) {
                 header = header.substring(0, 7) + "...";
             }
