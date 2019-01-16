@@ -82,6 +82,9 @@ public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
             valueTextView.setText(format("%.2f", payment.getTotalPayAmount()));
         } else {
             header = payment.getTitle();
+            if (!isEmpty(header) && header.length() > 7) {
+                header = header.substring(0, 7) + "...";
+            }
             titleTextView.setText(isEmpty(header) ? "无标题" : header);
             valueTextView.setText(Html.fromHtml(fragment().formatDate(payment.getExpendDate(), R.string.ui_base_text_date_format) +
                     (payment.isCheck() ? financeUnderway[payment.getUnderwayState()] : "")));
