@@ -38,7 +38,7 @@ public class ContactViewHolder extends BaseViewHolder {
     private TextView buttonArchiveManager;
     @ViewId(R.id.ui_tool_view_contact_button1)
     private TextView buttonSetToManager;
-    @ViewId(R.id.ui_tool_view_contact_button2)
+    @ViewId(R.id.ui_tool_view_contact_button2_text)
     private TextView buttonKickOut;
     @ViewId(R.id.ui_holder_view_contact_header)
     private ImageDisplayer headerView;
@@ -296,7 +296,7 @@ public class ContactViewHolder extends BaseViewHolder {
                     mOnHandlerBoundDataListener.onHandlerBoundData(ContactViewHolder.this);
                 }
                 break;
-            case R.id.ui_tool_view_contact_button2:
+            case R.id.ui_tool_view_contact_button2_text:
                 // 删除用户
                 if (null != onUserDeleteListener) {
                     onUserDeleteListener.onDelete(ContactViewHolder.this);

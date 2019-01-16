@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 abstract class BaseApi implements Serializable {
 
+    protected static final String VERSION = StringHelper.getString(R.string.app_internal_version);
     /**
      * 所有网络调用的网址前缀
      */
