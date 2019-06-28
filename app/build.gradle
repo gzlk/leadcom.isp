@@ -106,11 +106,12 @@ android {
     applicationVariants.all { variant ->
         if (variant.buildType.name == "release") {
             variant.outputs.all { output ->
-                def outputFile = output.outputFile
-                if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                    def fileName = "${variant.flavorName}_v${variant.versionName}_${variant.buildType.name}_${getInternalVersion()}.apk"
-                    outputFileName = fileName
-                }
+                outputFileName = "${variant.flavorName}_v${variant.versionName}_${variant.buildType.name}_${getInternalVersion()}.apk"
+//                def outputFile = output.outputFile
+//                if (outputFile != null && outputFile.name.endsWith('.apk')) {
+//                    def fileName = "${variant.flavorName}_v${variant.versionName}_${variant.buildType.name}_${getInternalVersion()}.apk"
+//                    outputFileName = fileName
+//                }
             }
         }
     }
